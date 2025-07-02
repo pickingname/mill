@@ -32,7 +32,7 @@ export function initMap() {
   map.touchZoomRotate.disableRotation();
 
   map.on("load", async () => {
-    const response = await fetch("/assets/geojsons/bounds.json");
+    const response = await fetch("/assets/map/bounds.json");
     const geojson = await response.json();
 
     const bounds = new mapboxgl.LngLatBounds();

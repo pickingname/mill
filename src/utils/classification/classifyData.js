@@ -11,6 +11,7 @@ export function classifyData(code) {
         case 561:
             return 'earthquake_detection' // special case
         default:
+            console.warn(`[classifyData] bad code: ${code}`);
             return 'unsupported'
     }
 }
