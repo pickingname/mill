@@ -1,6 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import getMapPreset from "../date/getMapPreset.js";
-import { config } from "../config.js";
+import {config} from "../config.js";
+import {startMainLoop} from "../main.js";
 
 let map;
 
@@ -40,9 +41,11 @@ export function initMap() {
     });
 
     map.fitBounds(bounds, {
-      padding: config.MAP.DEFAULT_BOUND_PADDING,
+      padding: config.map.bound_padding,
       duration: 0,
     });
+
+    startMainLoop()
   });
 }
 

@@ -1,6 +1,10 @@
 export const config = {
-  MAP: {
-    DEFAULT_BOUND_PADDING: 20,
-    THEME: 'dawn', // dawn, day, dusk, night OR 'auto'
+  map: {
+    bound_padding: 20,
+    theme: 'dawn', // dawn, day, dusk, night OR 'auto'
   },
+  api: {
+    base_url: '/assets/geojsons/bounds.json',
+    interval: 3000,
+  }
 };
