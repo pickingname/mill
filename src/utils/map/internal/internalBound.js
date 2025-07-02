@@ -1,5 +1,5 @@
 import { config } from "../../config";
-import { map } from "../../../thread";
+import { map } from "../initMap.js";
 
 export function internalBound(bound) {
   map.fitBounds(bound, {
