@@ -13,8 +13,6 @@ export async function mainLoop() {
 }
 
 export function startMainLoop() {
-    mainLoop().then(() => {
-
-    });
-    setInterval(mainLoop, config.api.interval); // 60 FPS
+    mainLoop().then()
+    setInterval(mainLoop, config.api.interval);
 }
