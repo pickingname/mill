@@ -5,16 +5,27 @@ import {classifyData} from "./classification/classifyData.js";
 import {renderDS} from "./map/renderConditions/hypocenterReport/ds.js";
 
 let currentData = []
+let previousData = []
 let currentDataType;
 
 initMap();
 
 export async function mainLoop() {
     currentData = await fetchData(config.api.base_url);
-    currentDataType = classifyData(currentData[0].code)
+
+    if (JSON.stringify(currentData) === JSON.stringify(previousData)) {
+        // it's looking like nothing
+        return;
+    }
+
+    console.info('[mainLoop] new data recieved')
+    previousData = JSON.parse(JSON.stringify(currentData));
+
+    currentDataType = classifyData(currentData[0].code);
 
     if (currentDataType === 'unsupported') {
         console.warn('[mainLoop] Unsupported data type received, skipping update.');
+        return;
     }
 
     if (currentDataType === 'hypocenter_report') {
