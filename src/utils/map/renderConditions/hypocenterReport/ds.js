@@ -51,9 +51,6 @@ export function renderDS(data) {
     const epicenterLat = data.earthquake.hypocenter.latitude
     const epicenterLng = data.earthquake.hypocenter.longitude;
 
-    console.log(epicenterLng, epicenterLat);
-
     updateEpicenterIcon(epicenterLng, epicenterLat);
-
 
 }
