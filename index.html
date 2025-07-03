@@ -11,6 +11,38 @@
 
 <body>
     <div id="map" class="w-full h-screen"></div>
+
+    <div class="absolute top-4 left-4 w-48 border-0 bg-white/95 backdrop-blur-sm rounded-lg hidden" id="infoContainer">
+        <div class="p-4 space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="text-xs text-gray-500 font-medium" id="reportType">--</div>
+                <div class="aspect-square w-8 h-8 rounded-md flex items-center justify-center p-0 font-bold text-xs">
+                    <img src="public/assets/basemap/icons/scales/40.png" alt="intensity icon" class="w-8 h-8"/>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-semibold text-sm leading-tight text-gray-900" id="location"></h3>
+            </div>
+
+            <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-gray-900" id="magnitude"></span>
+                <span class="text-xs text-gray-500 font-medium">Mw</span>
+            </div>
+
+            <div class="space-y-1.5 text-xs">
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Depth</span>
+                    <span class="font-medium text-gray-900"><span id="depth"></span> km</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Time</span>
+                    <span class="font-medium text-gray-900" id="time"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/src/utils/main.js"></script>
 </body>
 
