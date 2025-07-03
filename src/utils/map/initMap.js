@@ -1,6 +1,5 @@
 import mapboxgl from "mapbox-gl";
 import getMapPreset from "../date/getMapPreset.js";
-import {config} from "../config.js";
 import {startMainLoop} from "../main.js";
 
 let map;
@@ -17,13 +16,14 @@ export function initMap() {
       lng: 136.073149,
       lat: 34.7666345,
     },
-    zoom: "3",
+    zoom: "5",
     config: {
       basemap: {
         lightPreset: getMapPreset() || "day",
         showPointOfInterestLabels: false,
         showPedestrianRoads: false,
         showLandmarkIcons: true,
+        antialiasing: true,
       },
     },
   });
@@ -31,8 +31,18 @@ export function initMap() {
   map.dragRotate.disable();
   map.touchZoomRotate.disableRotation();
 
-  map.on("load", async () => {
-    const response = await fetch("/assets/map/bounds.json");
+  /*map.on('style.load', () => {
+    map.addSource('mapbox-dem', {
+      'type': 'raster-dem',
+      'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+      'tileSize': 512,
+      'maxzoom': 14
+    });
+    map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1 });
+  });*/
+
+  map.on("style.load", async () => {
+    /*const response = await fetch("/assets/map/bounds.json");
     const geojson = await response.json();
 
     const bounds = new mapboxgl.LngLatBounds();
@@ -43,7 +53,7 @@ export function initMap() {
     map.fitBounds(bounds, {
       padding: config.map.bound_padding,
       duration: 0,
-    });
+    });*/
 
     startMainLoop()
   });

@@ -1,6 +1,8 @@
 import {map} from "../../initMap.js";
+import mapboxgl from "mapbox-gl";
+import {internalBound} from "../../internal/internalBound.js";
 
-export function updateEpicenterIcon(epicenterLng, epicenterLat) {
+export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
     if (map.getLayer('epicenterIcon')) {
         map.removeLayer('epicenterIcon');
     }
@@ -9,40 +11,41 @@ export function updateEpicenterIcon(epicenterLng, epicenterLat) {
     }
 
     if (!map.hasImage('epicenter')) {
-        map.loadImage('/assets/basemap/icons/epicenter.png', (error, image) => {
-            if (error) throw error;
-            map.addImage('epicenter', image, {pixelRatio: 1});
-            addEpicenterLayer();
-        });
-    } else {
-        addEpicenterLayer();
-    }
-
-    function addEpicenterLayer() {
-        map.addSource('epicenterIcon', {
-            type: 'geojson',
-            data: {
-                type: 'FeatureCollection',
-                features: [{
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [epicenterLng, epicenterLat]
-                    }
-                }]
-            }
-        });
-
-        map.addLayer({
-            id: 'epicenterIcon',
-            type: 'symbol',
-            source: 'epicenterIcon',
-            layout: {
-                'icon-image': 'epicenter',
-                'icon-size': 30 / 61 // USAGE: mapIconSizePX / imageSizePX
-            }
+        await new Promise((resolve, reject) => {
+            map.loadImage('/assets/basemap/icons/epicenter.png', (error, image) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                map.addImage('epicenter', image);
+                resolve();
+            });
         });
     }
+
+    map.addSource('epicenterIcon', {
+        type: 'geojson',
+        data: {
+            type: 'FeatureCollection',
+            features: [{
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [epicenterLng, epicenterLat]
+                }
+            }]
+        }
+    });
+
+    map.addLayer({
+        id: 'epicenterIcon',
+        type: 'symbol',
+        source: 'epicenterIcon',
+        layout: {
+            'icon-image': 'epicenter',
+            'icon-size': 30 / 61 // USAGE: mapIconSizePX / imageSizePX
+        }
+    });
 }
 
 export async function plotStations(data) {
@@ -139,32 +142,58 @@ export async function plotStations(data) {
             source: 'stationsLayer',
             layout: {
                 'icon-image': ['concat', 'intensity-', ['to-string', ['get', 'scale']]],
-                'icon-size': 0.5,
+                'icon-size': 25 / 300, // USAGE: mapIconSizePX / imageSizePX
                 'icon-allow-overlap': true,
-                'text-field': ['get', 'name'],
-                'text-font': ['Open Sans Regular'],
-                'text-offset': [0, 1.5],
-                'text-size': 12
             },
             paint: {
                 'text-color': '#000000',
                 'text-halo-color': '#ffffff',
-                'text-halo-width': 1
+                'text-halo-width': 1,
+                'symbol-sort': ['get', 'scale']
             }
-        });
+        }, 'epicenterIcon');
 
     } catch (error) {
         console.error('Error plotting stations:', error);
     }
 }
 
-export function renderDS(data) {
+export async function boundMarkers(epicenter, stations) {
+    const bounds = new mapboxgl.LngLatBounds();
+
+    bounds.extend([epicenter.longitude, epicenter.latitude]);
+
+    const response = await fetch('/assets/comparision/stationRef.csv');
+    if (!response.ok) {
+        console.error('[ds] bad stationRef data for bounding');
+        return;
+    }
+    const csvText = await response.text();
+    const stationMap = new Map();
+    const lines = csvText.trim().split('\n');
+    for (let i = 1; i < lines.length; i++) {
+        const [name, , , lat, long] = lines[i].split(',');
+        stationMap.set(name, {lat: parseFloat(lat), long: parseFloat(long)});
+    }
+
+    for (const station of stations) {
+        const stationInfo = stationMap.get(station.addr);
+        if (stationInfo) {
+            bounds.extend([stationInfo.long, stationInfo.lat]);
+        }
+    }
+
+    internalBound(bounds);
+}
+
+export async function renderDS(data) {
     const epicenterLat = data.earthquake.hypocenter.latitude
     const epicenterLng = data.earthquake.hypocenter.longitude;
 
-    updateEpicenterIcon(epicenterLng, epicenterLat);
+    await updateEpicenterIcon(epicenterLng, epicenterLat);
 
     console.log('all points:', data.points);
-    plotStations(data);
+    await plotStations(data);
+    await boundMarkers(data.earthquake.hypocenter, data.points);
     console.log('renderDS completed');
 }
