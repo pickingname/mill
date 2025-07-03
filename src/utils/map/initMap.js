@@ -17,6 +17,7 @@ export function initMap() {
       lat: 34.7666345,
     },
     zoom: "5",
+    projection: 'mercator',
     config: {
       basemap: {
         lightPreset: getMapPreset() || "day",
@@ -41,7 +42,7 @@ export function initMap() {
     map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1 });
   });*/
 
-  map.on("style.load", async () => {
+  map.on("load", async () => {
     /*const response = await fetch("/assets/map/bounds.json");
     const geojson = await response.json();
 
