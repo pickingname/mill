@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import getMapPreset from "../date/getMapPreset.js";
-import {startMainLoop} from "../main.js";
+import { startMainLoop } from "../main.js";
 
 let map;
 
@@ -13,11 +13,11 @@ export function initMap() {
     worldview: "jp",
     language: "en",
     center: {
-      lng: 136.073149,
-      lat: 34.7666345,
+      lng: 139.691711,
+      lat: 35.689487,
     },
     zoom: "5",
-    projection: 'mercator',
+    projection: "mercator",
     config: {
       basemap: {
         lightPreset: getMapPreset() || "day",
@@ -56,7 +56,7 @@ export function initMap() {
       duration: 0,
     });*/
 
-    startMainLoop()
+    startMainLoop();
   });
 }
 
