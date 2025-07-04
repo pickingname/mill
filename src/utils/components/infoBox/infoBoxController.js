@@ -18,7 +18,7 @@ export function updateInfoBox(
   additionalInfo,
   maxInt
 ) {
-  // document.getElementById('reportType').textContent = reportType;
+  document.getElementById("reportType").textContent = reportType;
   document.getElementById("location").textContent = translateEpicenter(
     unTranslatedEpicenter
   );

@@ -13,10 +13,10 @@ export function initMap() {
     worldview: "jp",
     language: "en",
     center: {
-      lng: 139.691711,
-      lat: 35.689487,
+      lng: 136.073149,
+      lat: 34.7666345,
     },
-    zoom: "5",
+    zoom: "4",
     projection: "mercator",
     config: {
       basemap: {

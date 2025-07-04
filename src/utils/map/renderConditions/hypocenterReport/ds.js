@@ -211,7 +211,7 @@ export async function boundMarkers(epicenter, stations) {
 export async function renderDS(data) {
   const hyp = data.earthquake.hypocenter;
   updateInfoBox(
-    "Epicenter Information",
+    "Detailed Epicenter Information",
     hyp.name,
     hyp.magnitude,
     hyp.depth,
