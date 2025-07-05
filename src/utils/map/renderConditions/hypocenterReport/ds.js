@@ -163,7 +163,7 @@ export async function plotStations(data) {
             "intensity-",
             ["to-string", ["get", "scale"]],
           ],
-          "icon-size": 25 / 300, // USAGE: mapIconSizePX / imageSizePX
+          "icon-size": 20 / 300, // USAGE: mapIconSizePX / imageSizePX
           "icon-allow-overlap": true,
         },
         paint: {

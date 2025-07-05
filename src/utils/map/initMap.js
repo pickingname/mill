@@ -26,7 +26,6 @@ export function initMap() {
         showPointOfInterestLabels: false,
         showPedestrianRoads: false,
         showLandmarkIcons: true,
-        antialiasing: true,
       },
     },
   });
