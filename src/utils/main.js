@@ -3,12 +3,14 @@ import { config } from "./config.js";
 import { fetchData } from "./fetch/fetchData.js";
 import { classifyData } from "./classification/classifyData.js";
 import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
+import autoTheme from "./components/themeChanger.js";
 
 let currentData = [];
 let previousData = [];
 let currentDataType;
 
 initMap();
+autoTheme();
 
 export async function mainLoop() {
   currentData = await fetchData(config.api.base_url);
