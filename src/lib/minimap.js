@@ -1,4 +1,5 @@
 import mapboxgl from "mapbox-gl";
+import getMapPreset from "../utils/date/getMapPreset.js";
 
 function Minimap(options) {
   Object.assign(this.options, options);
@@ -57,6 +58,11 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
       zoom: opts.zoom,
       center: opts.center,
       interactive: opts.interactive,
+      config: {
+        basemap: {
+          lightPreset: getMapPreset() || "day",
+        },
+      },
     }));
 
     if (opts.maxBounds) miniMap.setMaxBounds(opts.maxBounds);
