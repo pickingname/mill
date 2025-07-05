@@ -24,6 +24,6 @@ export function updateInfoBox(
   );
   document.getElementById("magnitude").textContent = magnitude;
   document.getElementById("depth").textContent = depth + "km";
-  document.getElementById("time").textContent = time;
+  document.getElementById("time").textContent = time + " JST";
   document.getElementById("maxInt").textContent = classifyIntensity(maxInt);
 }
