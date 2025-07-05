@@ -125,6 +125,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
         "line-color": opts.lineColor,
         "line-width": opts.lineWidth,
         "line-opacity": opts.lineOpacity,
+        "line-emissive-strength": 1,
       },
     });
 

@@ -35,7 +35,7 @@ export function initMap() {
       new Minimap({
         lineColor: "#FF0000",
         lineWidth: 2,
-        lineOpacity: 0.5,
+        lineOpacity: getMapPreset() === "day" ? 0.5 : 1 || 1,
         fillOpacity: 0,
         center: {
           lng: 136.073149,
