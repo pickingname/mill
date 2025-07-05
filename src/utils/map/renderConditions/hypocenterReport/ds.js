@@ -63,6 +63,9 @@ export async function plotStations(data) {
     const response = await fetch("/assets/comparision/stationRef.csv");
     if (!response.ok) {
       console.error("[ds] bad stationRef data");
+      throw new Error(
+        `[ds] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`
+      );
     }
 
     const csvText = await response.text();
@@ -77,6 +80,7 @@ export async function plotStations(data) {
     const features = [];
     const iconPromises = [];
     const loadedIcons = new Set();
+    const stationCoordinates = [];
 
     const scaleValues = new Set(data.points.map((point) => point.scale));
 
@@ -139,6 +143,7 @@ export async function plotStations(data) {
             pref: point.pref,
           },
         });
+        stationCoordinates.push([stationInfo.long, stationInfo.lat]);
       } else {
         console.warn(`[ds] station not found in ref data: ${point.addr}`);
       }
@@ -175,34 +180,27 @@ export async function plotStations(data) {
       },
       "epicenterIcon"
     );
+
+    return stationCoordinates;
   } catch (error) {
     console.error("[ds] error plotting stations: ", error);
+    return [];
   }
 }
 
-export async function boundMarkers(epicenter, stations) {
+export async function boundMarkers(epicenter, stationCoordinates) {
   const bounds = new mapboxgl.LngLatBounds();
 
   bounds.extend([epicenter.longitude, epicenter.latitude]);
 
-  const response = await fetch("/assets/comparision/stationRef.csv");
-  if (!response.ok) {
-    console.error("[ds] bad stationRef data for bounding");
-    return;
-  }
-  const csvText = await response.text();
-  const stationMap = new Map();
-  const lines = csvText.trim().split("\n");
-  for (let i = 1; i < lines.length; i++) {
-    const [name, , , lat, long] = lines[i].split(",");
-    stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
-  }
-
-  for (const station of stations) {
-    const stationInfo = stationMap.get(station.addr);
-    if (stationInfo) {
-      bounds.extend([stationInfo.long, stationInfo.lat]);
+  if (stationCoordinates && stationCoordinates.length > 0) {
+    for (const [long, lat] of stationCoordinates) {
+      bounds.extend([long, lat]);
     }
+  } else {
+    console.warn(
+      "[ds] no station coordinates available for bounding, using epicenter only"
+    );
   }
 
   internalBound(bounds);
@@ -224,7 +222,7 @@ export async function renderDS(data) {
 
   await updateEpicenterIcon(epicenterLng, epicenterLat);
 
-  await plotStations(data);
-  await boundMarkers(data.earthquake.hypocenter, data.points);
+  const stationCoordinates = await plotStations(data);
+  await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
   console.log("[ds] renderDS completed");
 }
