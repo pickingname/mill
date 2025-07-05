@@ -19,7 +19,6 @@ export default function autoTheme() {
 }
 
 export function setTheme(theme) {
-  console.log(theme, "a");
   if (theme === "dark") {
     document.getElementById("infoContainer").classList.remove("light");
     document.getElementById("infoContainer").classList.add("dark");
