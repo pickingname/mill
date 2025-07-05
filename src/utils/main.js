@@ -31,17 +31,17 @@ export async function mainLoop() {
   if (currentDataType === "hypocenter_report") {
     switch (currentData[0].issue.type) {
       case "DetailScale":
-        console.log("ds");
+        console.debug("ds");
         renderDS(currentData[0]);
         break;
       case "ScalePrompt":
-        console.log("sp");
+        console.debug("sp");
         break;
       case "Destination":
-        console.log("de");
+        console.debug("de");
         break;
       case "Foreign":
-        console.log("fo");
+        console.debug("fo");
         break;
       default:
         console.warn(`[mainLoop] bad issue type: ${currentData[0].issue.type}`);

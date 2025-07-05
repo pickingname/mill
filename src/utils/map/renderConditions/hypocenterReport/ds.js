@@ -100,7 +100,7 @@ export async function plotStations(data) {
                   (fallbackError, fallbackImage) => {
                     if (fallbackError) {
                       console.error(
-                        `Failed to load fallback icon:`,
+                        `[ds] failed to load fallback icon: ${iconName} `,
                         fallbackError
                       );
                       reject(fallbackError);
@@ -140,7 +140,7 @@ export async function plotStations(data) {
           },
         });
       } else {
-        console.warn(`Station not found in reference data: ${point.addr}`);
+        console.warn(`[ds] station not found in ref data: ${point.addr}`);
       }
     }
 
@@ -176,7 +176,7 @@ export async function plotStations(data) {
       "epicenterIcon"
     );
   } catch (error) {
-    console.error("Error plotting stations:", error);
+    console.error("[ds] error plotting stations: ", error);
   }
 }
 
@@ -226,5 +226,5 @@ export async function renderDS(data) {
 
   await plotStations(data);
   await boundMarkers(data.earthquake.hypocenter, data.points);
-  console.log("renderDS completed");
+  console.log("[ds] renderDS completed");
 }
