@@ -7,10 +7,6 @@ function Minimap(options) {
   this._ticking = false;
   this._lastMouseMoveEvent = null;
   this._parentMap = null;
-  this._isDragging = false;
-  this._isCursorOverFeature = false;
-  this._previousPoint = [0, 0];
-  this._currentPoint = [0, 0];
   this._trackingRectCoordinates = [[[], [], [], [], []]];
 }
 
@@ -147,80 +143,9 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
 
     parentMap.on("move", this._update.bind(this));
 
-    miniMap.on("mousemove", this._mouseMove.bind(this));
-    miniMap.on("mousedown", this._mouseDown.bind(this));
-    miniMap.on("mouseup", this._mouseUp.bind(this));
-
-    miniMap.on("touchmove", this._mouseMove.bind(this));
-    miniMap.on("touchstart", this._mouseDown.bind(this));
-    miniMap.on("touchend", this._mouseUp.bind(this));
-
     this._miniMapCanvas = miniMap.getCanvasContainer();
     this._miniMapCanvas.addEventListener("wheel", this._preventDefault);
     this._miniMapCanvas.addEventListener("mousewheel", this._preventDefault);
-  },
-
-  _mouseDown: function (e) {
-    if (this._isCursorOverFeature) {
-      this._isDragging = true;
-      this._previousPoint = this._currentPoint;
-      this._currentPoint = [e.lngLat.lng, e.lngLat.lat];
-    }
-  },
-
-  _mouseMove: function (e) {
-    this._ticking = false;
-
-    var miniMap = this._miniMap;
-    var features = miniMap.queryRenderedFeatures(e.point, {
-      layers: ["trackingRectFill"],
-    });
-
-    // don't update if we're still hovering the area
-    if (!(this._isCursorOverFeature && features.length > 0)) {
-      this._isCursorOverFeature = features.length > 0;
-      this._miniMapCanvas.style.cursor = this._isCursorOverFeature
-        ? "move"
-        : "";
-    }
-
-    if (this._isDragging) {
-      this._previousPoint = this._currentPoint;
-      this._currentPoint = [e.lngLat.lng, e.lngLat.lat];
-
-      var offset = [
-        this._previousPoint[0] - this._currentPoint[0],
-        this._previousPoint[1] - this._currentPoint[1],
-      ];
-
-      var newBounds = this._moveTrackingRect(offset);
-
-      this._parentMap.fitBounds(newBounds, {
-        duration: 80,
-        noMoveStart: true,
-      });
-    }
-  },
-
-  _mouseUp: function () {
-    this._isDragging = false;
-    this._ticking = false;
-  },
-
-  _moveTrackingRect: function (offset) {
-    var source = this._trackingRect;
-    var data = source._data;
-    var bounds = data.properties.bounds;
-
-    bounds._ne.lat -= offset[1];
-    bounds._ne.lng -= offset[0];
-    bounds._sw.lat -= offset[1];
-    bounds._sw.lng -= offset[0];
-
-    this._convertBoundsToPoints(bounds);
-    source.setData(data);
-
-    return bounds;
   },
 
   _setTrackingRectBounds: function (bounds) {
@@ -250,10 +175,6 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _update: function (e) {
-    if (this._isDragging) {
-      return;
-    }
-
     var parentBounds = this._parentMap.getBounds();
 
     this._setTrackingRectBounds(parentBounds);
