@@ -3,6 +3,7 @@ import { config } from "./config.js";
 import { fetchData } from "./fetch/fetchData.js";
 import { classifyData } from "./classification/classifyData.js";
 import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
+import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
 import autoTheme from "./components/themeChanger.js";
 
 let currentData = [];
@@ -38,6 +39,7 @@ export async function mainLoop() {
         break;
       case "ScalePrompt":
         console.debug("sp");
+        renderSP(currentData[0]);
         break;
       case "Destination":
         console.debug("de");

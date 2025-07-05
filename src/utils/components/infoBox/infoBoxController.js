@@ -23,7 +23,10 @@ export function updateInfoBox(
     unTranslatedEpicenter
   );
   document.getElementById("magnitude").textContent = magnitude;
-  document.getElementById("depth").textContent = depth + "km";
-  document.getElementById("time").textContent = time + " JST";
+  document.getElementById("depth").textContent =
+    depth == "Unknown" || !depth ? depth : depth + " km";
+  document.getElementById("time").textContent = !time
+    ? "Unknown"
+    : time + " JST";
   document.getElementById("maxInt").textContent = classifyIntensity(maxInt);
 }

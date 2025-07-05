@@ -2,14 +2,10 @@ import { map } from "../../initMap.js";
 import mapboxgl from "mapbox-gl";
 import { internalBound } from "../../internal/internalBound.js";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import clear551 from "../../internal/clear551.js";
 
 export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
-  if (map.getLayer("epicenterIcon")) {
-    map.removeLayer("epicenterIcon");
-  }
-  if (map.getSource("epicenterIcon")) {
-    map.removeSource("epicenterIcon");
-  }
+  clear551();
 
   if (!map.hasImage("epicenter")) {
     await new Promise((resolve, reject) => {
