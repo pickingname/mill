@@ -1,0 +1,21 @@
+{
+  "name": "mill/quake",
+  "short_name": "mill",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/icons/appIcon192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/appIcon512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "landscape",
+  "theme_color": "#141414",
+  "background_color": "#141414"
+}
