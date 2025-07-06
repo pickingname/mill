@@ -1,7 +1,25 @@
-## The Normal Vite Boilerplate
+## mill/quake
 
-a boilerplate containing the starter code for a simple vite project, ther are also a branch that contains the vite + leaflet template
+A visual p2pquake API decoder (json API to a web map)
 
-## mapbox branch
+---
 
-this contains mapbox, define your mapbox api key in `.env`
+### development
+
+```bash
+pnpm i && pnpm dev
+```
+
+vite hosts to localhost:5173 by default
+
+---
+
+### required for development
+
+1. mapbox API key
+
+> note: put your API key into `.env`
+>
+> example: `VITE_MAPBOX_GL_ACCESS_TOKEN=pk.eyJ...`
+
+---
