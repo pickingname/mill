@@ -27,3 +27,7 @@ html {
     overscroll-behavior: none;
     background-color: #141414 !important;
 }
+
+.minimap {
+    @apply hidden sm:block
+}

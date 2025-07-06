@@ -216,7 +216,8 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
     var opts = this.options;
     var container = document.createElement("div");
 
-    container.className = "mapboxgl-ctrl-minimap mapboxgl-ctrl rounded-md";
+    container.className =
+      "mapboxgl-ctrl-minimap mapboxgl-ctrl rounded-md minimap";
     container.setAttribute(
       "style",
       "width: " + opts.width + "; height: " + opts.height + ";"
