@@ -22,11 +22,14 @@ export function updateInfoBox(
   document.getElementById("location").textContent = translateEpicenter(
     unTranslatedEpicenter
   );
-  document.getElementById("magnitude").textContent = magnitude;
+  document.getElementById("magnitude").textContent =
+    magnitude == -1 || !magnitude ? "--" : magnitude;
   document.getElementById("depth").textContent =
-    depth == "Unknown" || !depth ? depth : depth + " km";
+    depth == "Unknown" || !depth || depth == "" || depth == -1
+      ? "Unavailable"
+      : depth + " km";
   document.getElementById("time").textContent = !time
-    ? "Unknown"
+    ? "Unavailable"
     : time + " JST";
   document.getElementById("maxInt").textContent = classifyIntensity(maxInt);
 }

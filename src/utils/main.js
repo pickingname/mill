@@ -5,6 +5,7 @@ import { classifyData } from "./classification/classifyData.js";
 import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
 import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
 import autoTheme from "./components/themeChanger.js";
+import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
 
 let currentData = [];
 let previousData = [];
@@ -46,6 +47,7 @@ export async function mainLoop() {
         break;
       case "Foreign":
         console.debug("fo");
+        renderFO(currentData[0]);
         break;
       default:
         console.warn(`[mainLoop] bad issue type: ${currentData[0].issue.type}`);

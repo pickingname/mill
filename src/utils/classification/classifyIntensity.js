@@ -19,6 +19,6 @@ export default function classifyIntensity(intensity) {
     case 70:
       return "7";
     default:
-      return "Unknown";
+      return "--";
   }
 }

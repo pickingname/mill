@@ -5,8 +5,6 @@ import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js"
 import clear551 from "../../internal/clear551.js";
 
 export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
-  clear551();
-
   if (!map.hasImage("epicenter")) {
     await new Promise((resolve, reject) => {
       map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
@@ -203,6 +201,7 @@ export async function boundMarkers(epicenter, stationCoordinates) {
 }
 
 export async function renderDS(data) {
+  clear551();
   const hyp = data.earthquake.hypocenter;
   updateInfoBox(
     "Detailed Epicenter Information",

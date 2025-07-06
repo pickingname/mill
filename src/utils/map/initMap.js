@@ -51,6 +51,7 @@ export function initMap() {
   map.touchZoomRotate.disableRotation();
 
   map.on("load", async () => {
+    map.resize();
     startMainLoop();
   });
 }
