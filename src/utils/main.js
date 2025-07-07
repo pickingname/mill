@@ -8,6 +8,7 @@ import autoTheme from "./components/themeChanger.js";
 import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
 import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
 import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
+import { showSidebar } from "./components/sidebarHandler.js";
 
 let currentData = [];
 let previousData = [];
@@ -18,6 +19,7 @@ let currentDataType;
 
 initMap();
 autoTheme();
+showSidebar();
 
 export async function secondaryLoop() {
   currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
