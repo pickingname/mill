@@ -10,25 +10,25 @@
       "hypocenter": {
         "depth": 20,
         "latitude": 29.3,
-        "longitude": 129.3,
-        "magnitude": 4.4,
+        "longitude": 129.4,
+        "magnitude": 5.2,
         "name": "トカラ列島近海"
       },
       "maxScale": -1,
-      "time": "2025/06/22 09:15:00"
+      "time": "2025/06/22 17:15:00"
     },
-    "id": "68574bf58f770d3befa558e0",
+    "id": "6857bc3a8f770d3befa55914",
     "issue": {
       "correct": "None",
       "source": "気象庁",
-      "time": "2025/06/22 09:19:00",
+      "time": "2025/06/22 17:18:02",
       "type": "Destination"
     },
     "points": [],
-    "time": "2025/06/22 09:19:01.734",
+    "time": "2025/06/22 17:18:02.861",
     "timestamp": {
-      "convert": "2025/06/22 09:19:01.731",
-      "register": "2025/06/22 09:19:01.734"
+      "convert": "2025/06/22 17:18:02.858",
+      "register": "2025/06/22 17:18:02.861"
     },
     "user_agent": "jmaxml-seis-parser-go, relay, register-api",
     "ver": "20231023"

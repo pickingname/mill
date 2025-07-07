@@ -6,6 +6,7 @@ import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
 import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
 import autoTheme from "./components/themeChanger.js";
 import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
+import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
 
 let currentData = [];
 let previousData = [];
@@ -44,6 +45,7 @@ export async function mainLoop() {
         break;
       case "Destination":
         console.debug("de");
+        renderDE(currentData[0]);
         break;
       case "Foreign":
         console.debug("fo");
