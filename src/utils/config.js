@@ -5,7 +5,9 @@ export const config = {
     theme: "auto", // dawn, day, dusk, night OR 'auto'
   },
   api: {
-    base_url: "/assets/map/testData.json", // https://api.p2pquake.net/v2/history?codes=551&codes=552&codes=554&codes=556&limit=1
+    base_url: import.meta.env.DEV
+      ? "/assets/map/testData.json"
+      : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // app only supports 551 codes for now
     interval: 3000,
   },
 };
