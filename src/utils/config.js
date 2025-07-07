@@ -6,8 +6,13 @@ export const config = {
   },
   api: {
     base_url: import.meta.env.DEV
-      ? "/assets/map/testData.json"
-      : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // app only supports 551 codes for now
-    interval: 3000,
+      ? "https://api-v2-sandbox.p2pquake.net/v2/history?codes=551&limit=1&offset=0"
+      : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
+    interval: 5000,
+
+    jmaTsunamiURL: import.meta.env.DEV
+      ? "/assets/map/testTsData.json"
+      : "https://api.p2pquake.net/v2/jma/tsunami?limit=1", // 10 リクエスト/分 (IP アドレス毎)
+    jmaTsunamiInterval: 10000,
   },
 };

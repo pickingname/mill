@@ -11,10 +11,29 @@ import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
 
 let currentData = [];
 let previousData = [];
+let currentTsunamiData = [];
+let previousTsunamiData = [];
+
 let currentDataType;
 
 initMap();
 autoTheme();
+
+export async function secondaryLoop() {
+  currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
+  if (
+    JSON.stringify(currentTsunamiData) === JSON.stringify(previousTsunamiData)
+  ) {
+    // it's looking like nothing
+    return;
+  }
+
+  previousTsunamiData = JSON.parse(JSON.stringify(currentTsunamiData));
+
+  if (currentTsunamiData.length > 0) {
+    renderTS(currentTsunamiData[0]);
+  }
+}
 
 export async function mainLoop() {
   currentData = await fetchData(config.api.base_url);
@@ -56,13 +75,13 @@ export async function mainLoop() {
         console.warn(`[mainLoop] bad issue type: ${currentData[0].issue.type}`);
         break;
     }
-  } else if (currentDataType === "tsunami_forecast") {
-    renderTS(currentData[0]);
-    console.debug("ts");
   }
 }
 
 export function startMainLoop() {
   mainLoop().then();
   setInterval(mainLoop, config.api.interval);
+
+  secondaryLoop().then();
+  setInterval(secondaryLoop, config.api.jmaTsunamiInterval);
 }
