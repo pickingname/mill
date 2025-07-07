@@ -7,6 +7,7 @@ import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
 import autoTheme from "./components/themeChanger.js";
 import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
 import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
+import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
 
 let currentData = [];
 let previousData = [];
@@ -55,6 +56,9 @@ export async function mainLoop() {
         console.warn(`[mainLoop] bad issue type: ${currentData[0].issue.type}`);
         break;
     }
+  } else if (currentDataType === "tsunami_forecast") {
+    renderTS(currentData[0]);
+    console.debug("ts");
   }
 }
 

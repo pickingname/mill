@@ -1,36 +1,125 @@
 [
   {
-    "code": 551,
-    "comments": {
-      "freeFormComment": ""
-    },
-    "earthquake": {
-      "domesticTsunami": "None",
-      "foreignTsunami": "Unknown",
-      "hypocenter": {
-        "depth": 20,
-        "latitude": 29.3,
-        "longitude": 129.4,
-        "magnitude": 5.2,
-        "name": "トカラ列島近海"
+    "areas": [
+      {
+        "firstHeight": {
+          "condition": "津波到達中と推測"
+        },
+        "grade": "Watch",
+        "immediate": true,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "千葉県九十九里・外房"
       },
-      "maxScale": -1,
-      "time": "2025/06/22 17:15:00"
-    },
-    "id": "6857bc3a8f770d3befa55914",
+      {
+        "firstHeight": {
+          "condition": "第１波の到達を確認"
+        },
+        "grade": "Watch",
+        "immediate": false,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "千葉県内房"
+      },
+      {
+        "firstHeight": {
+          "condition": "第１波の到達を確認"
+        },
+        "grade": "Watch",
+        "immediate": false,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "伊豆諸島"
+      },
+      {
+        "firstHeight": {
+          "condition": "第１波の到達を確認"
+        },
+        "grade": "Watch",
+        "immediate": false,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "小笠原諸島"
+      },
+      {
+        "firstHeight": {
+          "condition": "第１波の到達を確認"
+        },
+        "grade": "Watch",
+        "immediate": false,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "高知県"
+      },
+      {
+        "firstHeight": {
+          "condition": "津波到達中と推測"
+        },
+        "grade": "Watch",
+        "immediate": true,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "宮崎県"
+      },
+      {
+        "firstHeight": {
+          "condition": "津波到達中と推測"
+        },
+        "grade": "Watch",
+        "immediate": true,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "鹿児島県東部"
+      },
+      {
+        "firstHeight": {
+          "condition": "津波到達中と推測"
+        },
+        "grade": "Watch",
+        "immediate": true,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "種子島・屋久島地方"
+      },
+      {
+        "firstHeight": {
+          "condition": "津波到達中と推測"
+        },
+        "grade": "Watch",
+        "immediate": true,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "奄美群島・トカラ列島"
+      }
+    ],
+    "cancelled": false,
+    "code": 552,
+    "id": "686ac5bb1c5584323b6fc1c9",
     "issue": {
-      "correct": "None",
       "source": "気象庁",
-      "time": "2025/06/22 17:18:02",
-      "type": "Destination"
+      "time": "2023/10/09 08:24:34",
+      "type": "Focus"
     },
-    "points": [],
-    "time": "2025/06/22 17:18:02.861",
-    "timestamp": {
-      "convert": "2025/06/22 17:18:02.858",
-      "register": "2025/06/22 17:18:02.861"
-    },
+    "time": "2025/07/07 03:51:39.721",
     "user_agent": "jmaxml-seis-parser-go, relay, register-api",
-    "ver": "20231023"
+    "ver": "20220813"
   }
 ]

@@ -19,7 +19,7 @@ export function initMap() {
     },
     zoom: "4",
     projection: "mercator",
-    interactive: false,
+    interactive: true,
     config: {
       basemap: {
         lightPreset: getMapPreset() || "day",
