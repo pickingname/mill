@@ -109,13 +109,13 @@ export function showSidebar() {
     return;
   }
 
-  if (sidebar.offsetHeight >= 200) {
+  if (sidebar.offsetHeight >= 225) {
     sidebarHeightUsage++;
     return;
   }
 
   if (sidebarHeightUsage === 0) {
-    sidebar.style.height = 200 + "px";
+    sidebar.style.height = 225 + "px";
     sidebarHeightUsage++;
   }
 }
