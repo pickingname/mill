@@ -29,6 +29,6 @@ export function internalBound(bound) {
     duration: config.map.bound_duration,
     easing: (t) => 1 - Math.pow(1 - t, 5),
     linear: true,
-    maxZoom: 8,
+    maxZoom: 7,
   });
 }
