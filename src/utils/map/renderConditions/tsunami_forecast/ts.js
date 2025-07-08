@@ -28,9 +28,78 @@ function clearTsunamiLayers() {
   currentTsunamiBounds = null;
 }
 
+function updateTsunamiSidebar(areas, geojsonFeatures) {
+  const gradeMap = {
+    MajorWarning: {
+      containerId: "tsunami-major-warning-list",
+      color: "#FF00FF",
+    },
+    Warning: {
+      containerId: "tsunami-warning-list",
+      color: "#FF0000",
+    },
+    Watch: {
+      containerId: "tsunami-watch-list",
+      color: "#FFFF00",
+    },
+  };
+
+  Object.values(gradeMap).forEach(({ containerId }) => {
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = "";
+  });
+
+  const geoMap = new Map();
+  geojsonFeatures.forEach((feature) => {
+    geoMap.set(feature.properties.name, feature);
+  });
+
+  const grouped = { MajorWarning: [], Warning: [], Watch: [] };
+  areas.forEach((area) => {
+    if (grouped[area.grade]) grouped[area.grade].push(area);
+  });
+
+  Object.entries(grouped).forEach(([grade, areaList]) => {
+    const { containerId, color } = gradeMap[grade];
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    areaList.forEach((area) => {
+      const feature = geoMap.get(area.name);
+      const nameEn = feature?.properties?.nameEn || area.name;
+      const condition = area.firstHeight?.condition || "Unknown";
+      const maxHeight =
+        area.maxHeight?.value != null
+          ? `${parseFloat(area.maxHeight.value).toFixed(1)}m`
+          : "Unknown";
+      const row = document.createElement("div");
+      row.className = `border-l-2 py-1.5 pl-3`;
+      row.style.borderLeftColor = color;
+      row.innerHTML = `
+        <div class="flex items-start justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-white">${nameEn}</p>
+            <p class="text-xs text-neutral-300">${
+              condition === "第１波の到達を確認"
+                ? "First wave confirmed"
+                : condition === "津波到達中と推測"
+                ? "Wave is expected to be reached"
+                : condition
+            }</p>
+          </div>
+          <div class="ml-2 text-right">
+            <p class="text-sm font-medium text-neutral-100">${maxHeight}</p>
+          </div>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+  });
+}
+
 export async function renderTS(data) {
   if (data.cancelled) {
     clearTsunamiLayers();
+    disarmTsComponent();
     return;
   }
   clear551();
@@ -96,6 +165,7 @@ export async function renderTS(data) {
     if (matchedFeatures.length === 0) {
       console.warn("[ts] no matching areas found in geojson");
       currentTsunamiBounds = null;
+      disarmTsComponent();
       return;
     }
 
@@ -184,7 +254,53 @@ export async function renderTS(data) {
     }
 
     console.log(`[ts] job rendered ${matchedFeatures.length} tsunami areas`);
+    [
+      "tsunami-major-warning-list",
+      "tsunami-warning-list",
+      "tsunami-watch-list",
+    ].forEach((id) => {
+      if (!document.getElementById(id)) {
+        const h3 = Array.from(document.querySelectorAll("#sidebar h3")).find(
+          (h) =>
+            h.textContent &&
+            h.textContent.includes(
+              id.includes("major")
+                ? "Major Warning"
+                : id.includes("warning")
+                ? "Warning"
+                : "Watch"
+            )
+        );
+        if (
+          h3 &&
+          h3.parentElement &&
+          !h3.parentElement.nextElementSibling?.querySelector(`#${id}`)
+        ) {
+          const sect = h3.parentElement.parentElement;
+          const div = document.createElement("div");
+          div.id = id;
+          div.className = "space-y-1";
+          sect.appendChild(div);
+        }
+      }
+    });
+    updateTsunamiSidebar(data.areas || [], tsunamiAreasGeoJSON.features);
+    armTsComponent();
   } catch (error) {
-    console.error("[ts] error rendering tsunami data: ", error);
+    console.error(
+      "[ts/forecastComponent] error rendering tsunami data: ",
+      error
+    );
+    disarmTsComponent();
   }
+}
+
+function armTsComponent() {
+  document.getElementById("tsInfoContainer").classList.remove("hidden");
+  document.getElementById("noInfoIssuedText").classList.add("hidden");
+}
+
+function disarmTsComponent() {
+  document.getElementById("tsInfoContainer").classList.add("hidden");
+  document.getElementById("noInfoIssuedText").classList.remove("hidden");
 }
