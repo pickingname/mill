@@ -67,6 +67,7 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
       const feature = geoMap.get(area.name);
       const nameEn = feature?.properties?.nameEn || area.name;
       const condition = area.firstHeight?.condition || "Unknown";
+      const arrivalTime = area.firstHeight?.arrivalTime;
       const maxHeight =
         area.maxHeight?.value != null
           ? `${parseFloat(area.maxHeight.value).toFixed(1)}m`
@@ -79,10 +80,14 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium text-white">${nameEn}</p>
             <p class="text-xs text-neutral-300">${
-              condition === "第１波の到達を確認"
+              arrivalTime
+                ? `First wave is expected to arrive at ${arrivalTime} JST`
+                : condition === "第１波の到達を確認"
                 ? "First wave confirmed"
                 : condition === "津波到達中と推測"
                 ? "Wave is expected to be reached"
+                : condition === "ただちに津波来襲と予測"
+                ? "Immediate tsunami expected"
                 : condition
             }</p>
           </div>
