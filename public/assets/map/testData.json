@@ -8,6 +8,14 @@
         "pref": "鹿児島",
         "scaleFrom": 40,
         "scaleTo": 45
+      },
+      {
+        "arrivalTime": null,
+        "kindCode": "13",
+        "name": "石狩地方北部",
+        "pref": "鹿児島",
+        "scaleFrom": 60,
+        "scaleTo": 70
       }
     ],
     "cancelled": false,
