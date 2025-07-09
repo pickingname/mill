@@ -1,0 +1,50 @@
+[
+  {
+    "areas": [
+      {
+        "arrivalTime": null,
+        "kindCode": "11",
+        "name": "鹿児島県十島村",
+        "pref": "鹿児島",
+        "scaleFrom": 40,
+        "scaleTo": 45
+      },
+      {
+        "arrivalTime": null,
+        "kindCode": "13",
+        "name": "石狩地方北部",
+        "pref": "鹿児島",
+        "scaleFrom": 60,
+        "scaleTo": 70
+      }
+    ],
+    "cancelled": false,
+    "code": 556,
+    "earthquake": {
+      "arrivalTime": "2025/07/06 14:07:11",
+      "condition": "",
+      "hypocenter": {
+        "depth": 10,
+        "latitude": 29.4,
+        "longitude": 129.5,
+        "magnitude": 5.6,
+        "name": "トカラ列島近海",
+        "reduceName": "薩南諸島近海"
+      },
+      "originTime": "2025/07/06 14:07:04"
+    },
+    "id": "686a04918f770d3befa55e94",
+    "issue": {
+      "eventId": "20250706140711",
+      "serial": "1",
+      "time": "2025/07/06 14:07:29"
+    },
+    "time": "2025/07/06 14:07:29.503",
+    "timestamp": {
+      "convert": "2025/07/06 14:07:29.497",
+      "register": "2025/07/06 14:07:29.503"
+    },
+    "user_agent": "jmaxml-seis-parser-go, relay, register-api",
+    "ver": "20231023"
+  }
+]

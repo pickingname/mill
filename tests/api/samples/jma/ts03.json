@@ -1,0 +1,46 @@
+[
+  {
+    "areas": [
+      {
+        "firstHeight": {
+          "condition": "第１波の到達を確認"
+        },
+        "grade": "Watch",
+        "immediate": false,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "伊豆諸島"
+      },
+      {
+        "firstHeight": {
+          "condition": "津波到達中と推測"
+        },
+        "grade": "Watch",
+        "immediate": true,
+        "maxHeight": {
+          "description": "１ｍ",
+          "value": 1
+        },
+        "name": "小笠原諸島"
+      }
+    ],
+    "cancelled": false,
+    "code": 552,
+    "created_at": "2024/09/24 09:12:08.317",
+    "id": "66f203d864680b0007d7a4ef",
+    "issue": {
+      "source": "気象庁",
+      "time": "2024/09/24 09:11:34",
+      "type": "Focus"
+    },
+    "time": "2024/09/24 09:11:35.297",
+    "timestamp": {
+      "convert": "2024/09/24 09:11:35.294",
+      "register": "2024/09/24 09:11:35.297"
+    },
+    "user_agent": "jmaxml-seis-parser-go, relay, register-api",
+    "ver": "20231023"
+  }
+]
