@@ -1,4 +1,4 @@
-import {config} from "../config.js";
+import { config } from "../config.js";
 
 /**
  * gets the current time period from the browser time
@@ -7,7 +7,7 @@ import {config} from "../config.js";
  * @returns {string} - returns "day", "dawn", "dusk", or "night"
  */
 function getMapPreset() {
-  if (config.map.theme === 'auto') {
+  if (config.map.theme === "auto") {
     const now = new Date();
     const hour = now.getHours();
 

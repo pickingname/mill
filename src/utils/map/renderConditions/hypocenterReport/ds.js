@@ -1,8 +1,8 @@
-import { map } from "../../initMap.js";
 import mapboxgl from "mapbox-gl";
-import { internalBound } from "../../internal/internalBound.js";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
+import { internalBound } from "../../internal/internalBound.js";
 
 export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
   if (!map.hasImage("epicenter")) {

@@ -1,7 +1,7 @@
 import mapboxgl from "mapbox-gl";
+import Minimap from "../../lib/minimap.js";
 import getMapPreset from "../date/getMapPreset.js";
 import { startMainLoop } from "../main.js";
-import Minimap from "../../lib/minimap.js";
 
 let map;
 

@@ -1,7 +1,5 @@
-import classifyIntensity from "../../../classification/classifyIntensity.js";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
-import { map } from "../../initMap.js";
-import { mapboxgl } from "../../initMap.js";
+import { map, mapboxgl } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 

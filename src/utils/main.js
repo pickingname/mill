@@ -1,15 +1,15 @@
-import { initMap } from "./map/initMap.js";
+import { classifyData } from "./classification/classifyData.js";
+import { showSidebar } from "./components/sidebarHandler.js";
+import autoTheme from "./components/themeChanger.js";
 import { config } from "./config.js";
 import { fetchData } from "./fetch/fetchData.js";
-import { classifyData } from "./classification/classifyData.js";
-import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
-import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
-import autoTheme from "./components/themeChanger.js";
-import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
-import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
-import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
-import { showSidebar } from "./components/sidebarHandler.js";
+import { initMap } from "./map/initMap.js";
 import renderEEW from "./map/renderConditions/eew/eew.js";
+import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
+import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
+import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
+import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
+import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
 
 let currentData = [];
 let previousData = [];
