@@ -9,6 +9,7 @@ import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
 import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
 import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
 import { showSidebar } from "./components/sidebarHandler.js";
+import renderEEW from "./map/renderConditions/eew/eew.js";
 
 let currentData = [];
 let previousData = [];
@@ -77,6 +78,9 @@ export async function mainLoop() {
         console.warn(`[mainLoop] bad issue type: ${currentData[0].issue.type}`);
         break;
     }
+  } else if (currentDataType === "eew") {
+    console.debug("eew");
+    renderEEW(currentData[0]);
   }
 }
 

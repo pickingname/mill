@@ -1,38 +1,40 @@
 [
   {
-    "code": 551,
-    "earthquake": {
-      "domesticTsunami": "None",
-      "foreignTsunami": "Unknown",
-      "hypocenter": {
-        "depth": 0,
-        "latitude": 37.5,
-        "longitude": 137.2,
-        "magnitude": 7.6,
-        "name": "石川県能登地方"
-      },
-      "maxScale": 70,
-      "time": "2024/05/29 18:12:00"
-    },
-    "id": "6656f23cd616be440743d1ff",
-    "issue": {
-      "correct": "None",
-      "source": "気象庁",
-      "time": "2024/05/29 18:15:39",
-      "type": "DetailScale"
-    },
-    "points": [
+    "areas": [
       {
-        "addr": "志賀町香能",
-        "isArea": false,
-        "pref": "石川県",
-        "scale": 70
+        "arrivalTime": null,
+        "kindCode": "11",
+        "name": "鹿児島県十島村",
+        "pref": "鹿児島",
+        "scaleFrom": 40,
+        "scaleTo": 45
       }
     ],
-    "time": "2024/05/29 18:15:40.062",
+    "cancelled": false,
+    "code": 556,
+    "earthquake": {
+      "arrivalTime": "2025/07/06 14:07:11",
+      "condition": "",
+      "hypocenter": {
+        "depth": 10,
+        "latitude": 29.4,
+        "longitude": 129.5,
+        "magnitude": 5.6,
+        "name": "トカラ列島近海",
+        "reduceName": "薩南諸島近海"
+      },
+      "originTime": "2025/07/06 14:07:04"
+    },
+    "id": "686a04918f770d3befa55e94",
+    "issue": {
+      "eventId": "20250706140711",
+      "serial": "1",
+      "time": "2025/07/06 14:07:29"
+    },
+    "time": "2025/07/06 14:07:29.503",
     "timestamp": {
-      "convert": "2024/05/29 18:15:40.052",
-      "register": "2024/05/29 18:15:40.062"
+      "convert": "2025/07/06 14:07:29.497",
+      "register": "2025/07/06 14:07:29.503"
     },
     "user_agent": "jmaxml-seis-parser-go, relay, register-api",
     "ver": "20231023"
