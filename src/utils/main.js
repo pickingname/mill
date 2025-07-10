@@ -59,19 +59,19 @@ export async function mainLoop() {
   if (currentDataType === "hypocenter_report") {
     switch (currentData[0].issue.type) {
       case "DetailScale":
-        console.debug("ds");
+        console.debug("[mainLoop] received DetailScale");
         renderDS(currentData[0]);
         break;
       case "ScalePrompt":
-        console.debug("sp");
+        console.debug("[mainLoop] received ScalePrompt");
         renderSP(currentData[0]);
         break;
       case "Destination":
-        console.debug("de");
+        console.debug("[mainLoop] received Destination");
         renderDE(currentData[0]);
         break;
       case "Foreign":
-        console.debug("fo");
+        console.debug("[mainLoop] received Foreign");
         renderFO(currentData[0]);
         break;
       default:
@@ -79,7 +79,7 @@ export async function mainLoop() {
         break;
     }
   } else if (currentDataType === "eew") {
-    console.debug("eew");
+    console.debug("[mainLoop] received EEW");
     renderEEW(currentData[0]);
   }
 }

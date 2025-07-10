@@ -56,9 +56,9 @@ export async function plotStations(data) {
   try {
     const response = await fetch("/assets/comparision/stationRef.csv");
     if (!response.ok) {
-      console.error("[ds] bad stationRef data");
+      console.error("[ds/plotStations] bad stationRef data");
       throw new Error(
-        `[ds] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`
+        `[ds/plotStations] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`
       );
     }
 
@@ -89,7 +89,7 @@ export async function plotStations(data) {
             (error, image) => {
               if (error) {
                 console.warn(
-                  `[ds] bad scale image: ${scale}, `,
+                  `[ds/plotStations] bad scale image: ${scale}, `,
                   error,
                   " using fallback"
                 );
@@ -98,7 +98,7 @@ export async function plotStations(data) {
                   (fallbackError, fallbackImage) => {
                     if (fallbackError) {
                       console.error(
-                        `[ds] failed to load fallback icon: ${iconName} `,
+                        `[ds/plotStations] failed to load fallback icon: ${iconName} `,
                         fallbackError
                       );
                       reject(fallbackError);
@@ -139,7 +139,9 @@ export async function plotStations(data) {
         });
         stationCoordinates.push([stationInfo.long, stationInfo.lat]);
       } else {
-        console.warn(`[ds] station not found in ref data: ${point.addr}`);
+        console.warn(
+          `[ds/plotStations] station not found in ref data: ${point.addr}`
+        );
       }
     }
 
@@ -177,7 +179,7 @@ export async function plotStations(data) {
 
     return stationCoordinates;
   } catch (error) {
-    console.error("[ds] error plotting stations: ", error);
+    console.error("[ds/plotStations] error plotting stations: ", error);
     return [];
   }
 }

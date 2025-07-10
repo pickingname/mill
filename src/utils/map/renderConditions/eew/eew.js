@@ -18,9 +18,9 @@ export default async function renderEEW(data) {
   try {
     const response = await fetch("/assets/comparision/prefectureRef.csv");
     if (!response.ok) {
-      console.error("[eew] bad prefectureRef data");
+      console.error("[renderEEW] bad prefectureRef data");
       throw new Error(
-        `[eew] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
+        `[renderEEW] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
       );
     }
     const csvText = await response.text();
@@ -52,7 +52,7 @@ export default async function renderEEW(data) {
             (error, image) => {
               if (error) {
                 console.warn(
-                  `[eew] bad scale image: ${scaleTo}, `,
+                  `[renderEEW] bad scale image: ${scaleTo}, `,
                   error,
                   " using fallback"
                 );
@@ -61,7 +61,7 @@ export default async function renderEEW(data) {
                   (fallbackError, fallbackImage) => {
                     if (fallbackError) {
                       console.error(
-                        `[eew] failed to load fallback icon: ${iconName} `,
+                        `[renderEEW] failed to load fallback icon: ${iconName} `,
                         fallbackError
                       );
                       reject(fallbackError);
@@ -101,7 +101,7 @@ export default async function renderEEW(data) {
         });
         areaCoordinates.push([prefectureInfo.lng, prefectureInfo.lat]);
       } else {
-        console.warn(`[eew] area not found in ref data: ${areaName}`);
+        console.warn(`[renderEEW] area not found in ref data: ${areaName}`);
       }
     }
     map.addSource("eewAreasSource", {
@@ -132,7 +132,7 @@ export default async function renderEEW(data) {
       "epicenterIcon"
     );
   } catch (error) {
-    console.error("[eew] error plotting areas: ", error);
+    console.error("[renderEEW] error plotting areas: ", error);
   }
 
   const bounds = new mapboxgl.LngLatBounds();

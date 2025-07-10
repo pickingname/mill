@@ -111,9 +111,9 @@ export async function renderTS(data) {
   try {
     const response = await fetch("/assets/comparision/tsunami_areas.geojson");
     if (!response.ok) {
-      console.error("[ts] failed to fetch tsunami areas geojson");
+      console.error("[ts/renderTS] failed to fetch tsunami areas geojson");
       throw new Error(
-        `[ts] failed to fetch tsunami areas: ${response.status} ${response.statusText}`
+        `[ts/renderTS] failed to fetch tsunami areas: ${response.status} ${response.statusText}`
       );
     }
 
@@ -160,13 +160,15 @@ export async function renderTS(data) {
             });
           }
         } else {
-          console.warn(`[ts] area given not found in geojson: ${areaName}`);
+          console.warn(
+            `[ts/renderTS] area given not found in geojson: ${areaName}`
+          );
         }
       }
     }
 
     if (matchedFeatures.length === 0) {
-      console.warn("[ts] no matching areas found in geojson");
+      console.warn("[ts/renderTS] no matching areas found in geojson");
       currentTsunamiBounds = null;
       disarmTsComponent();
       return;
@@ -256,7 +258,9 @@ export async function renderTS(data) {
       currentTsunamiBounds = null;
     }
 
-    console.log(`[ts] job rendered ${matchedFeatures.length} tsunami areas`);
+    console.log(
+      `[ts/renderTS] job rendered ${matchedFeatures.length} tsunami areas`
+    );
     [
       "tsunami-major-warning-list",
       "tsunami-warning-list",
