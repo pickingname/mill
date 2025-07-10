@@ -62,6 +62,13 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
     const { containerId, color } = gradeMap[grade];
     const container = document.getElementById(containerId);
     if (!container) return;
+    if (areaList.length === 0) {
+      const p = document.createElement("p");
+      p.className = "text-xs text-slate-400";
+      p.textContent = "No area issued.";
+      container.appendChild(p);
+      return;
+    }
     areaList.forEach((area) => {
       const feature = geoMap.get(area.name);
       const nameEn = feature?.properties?.nameEn || area.name;
