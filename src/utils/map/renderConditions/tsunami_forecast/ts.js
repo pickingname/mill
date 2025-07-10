@@ -258,7 +258,7 @@ export async function renderTS(data) {
       currentTsunamiBounds = null;
     }
 
-    console.log(
+    console.info(
       `[ts/renderTS] job rendered ${matchedFeatures.length} tsunami areas`
     );
     [

@@ -221,5 +221,5 @@ export async function renderDS(data) {
 
   const stationCoordinates = await plotStations(data);
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
-  console.log("[ds] renderDS completed");
+  console.info("[ds] renderDS completed");
 }
