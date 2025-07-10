@@ -1,17 +1,30 @@
 import { map } from "../initMap";
 
 export default function clear551() {
-  if (map.getLayer("prefsLayer")) {
-    map.removeLayer("prefsLayer");
-  }
-  if (map.getSource("prefsSource")) {
-    map.removeSource("prefsSource");
-  }
+  const layersToRemove = [
+    "prefsLayer",
+    "epicenterIcon",
+    "stationsLayer",
+    "eewAreasLayer",
+  ];
 
-  if (map.getLayer("epicenterIcon")) {
-    map.removeLayer("epicenterIcon");
-  }
-  if (map.getSource("epicenterIcon")) {
-    map.removeSource("epicenterIcon");
-  }
+  const sourcesToRemove = [
+    "prefsSource",
+    "epicenterIcon",
+    "eewAreasSource",
+    "stationsLayer",
+    "prefsSource",
+  ];
+
+  layersToRemove.forEach((layerId) => {
+    if (map.getLayer(layerId)) {
+      map.removeLayer(layerId);
+    }
+  });
+
+  sourcesToRemove.forEach((sourceId) => {
+    if (map.getSource(sourceId)) {
+      map.removeSource(sourceId);
+    }
+  });
 }

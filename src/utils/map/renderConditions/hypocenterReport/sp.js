@@ -150,8 +150,6 @@ export async function boundRegions(prefectureCoordinates) {
     });
 
     internalBound(bounds);
-
-    console.log("[sp] map bounds updated to show all regions");
   } catch (error) {
     console.error("[sp] error setting map bounds: ", error);
   }

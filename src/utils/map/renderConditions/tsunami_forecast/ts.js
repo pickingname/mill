@@ -1,6 +1,5 @@
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
-import clear551 from "../../internal/clear551.js";
 
 let tsunamiFlashInterval = null;
 let tsunamiFlashTimeout = null;
@@ -107,7 +106,6 @@ export async function renderTS(data) {
     disarmTsComponent();
     return;
   }
-  clear551();
   clearTsunamiLayers();
 
   try {
