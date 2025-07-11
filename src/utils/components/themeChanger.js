@@ -15,6 +15,9 @@ export default function autoTheme() {
     case "night":
       setTheme("dark");
       break;
+    default:
+      setTheme("light");
+      break;
   }
 }
 
@@ -25,5 +28,21 @@ export function setTheme(theme) {
   } else {
     document.getElementById("infoContainer").classList.remove("dark");
     document.getElementById("infoContainer").classList.add("light");
+  }
+}
+
+export function getTheme() {
+  const currentTheme = getMapPreset() || "day";
+  switch (currentTheme) {
+    case "day":
+      return "light";
+    case "dawn":
+      return "light";
+    case "dusk":
+      return "dark";
+    case "night":
+      return "dark";
+    default:
+      return "light";
   }
 }
