@@ -6,12 +6,12 @@ export const config = {
   },
   api: {
     base_url: import.meta.env.DEV
-      ? "https://api-v2-sandbox.p2pquake.net/v2/history?codes=551&limit=1&offset=0"
+      ? "http://localhost:1212/p2p"
       : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
 
     jmaTsunamiURL: import.meta.env.DEV
-      ? "/assets/map/testTsData.json"
+      ? "http://localhost:1212/jma"
       : "https://api.p2pquake.net/v2/jma/tsunami?limit=1", // 10 リクエスト/分 (IP アドレス毎)
     jmaTsunamiInterval: 10000,
   },

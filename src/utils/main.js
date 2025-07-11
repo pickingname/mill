@@ -1,14 +1,15 @@
-import { initMap } from "./map/initMap.js";
+import { classifyData } from "./classification/classifyData.js";
+import { showSidebar } from "./components/sidebarHandler.js";
+import autoTheme from "./components/themeChanger.js";
 import { config } from "./config.js";
 import { fetchData } from "./fetch/fetchData.js";
-import { classifyData } from "./classification/classifyData.js";
-import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
-import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
-import autoTheme from "./components/themeChanger.js";
-import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
+import { initMap } from "./map/initMap.js";
+import renderEEW from "./map/renderConditions/eew/eew.js";
 import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
+import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
+import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
+import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
 import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
-import { showSidebar } from "./components/sidebarHandler.js";
 
 let currentData = [];
 let previousData = [];
@@ -58,25 +59,28 @@ export async function mainLoop() {
   if (currentDataType === "hypocenter_report") {
     switch (currentData[0].issue.type) {
       case "DetailScale":
-        console.debug("ds");
+        console.info("[mainLoop] received DetailScale");
         renderDS(currentData[0]);
         break;
       case "ScalePrompt":
-        console.debug("sp");
+        console.info("[mainLoop] received ScalePrompt");
         renderSP(currentData[0]);
         break;
       case "Destination":
-        console.debug("de");
+        console.info("[mainLoop] received Destination");
         renderDE(currentData[0]);
         break;
       case "Foreign":
-        console.debug("fo");
+        console.info("[mainLoop] received Foreign");
         renderFO(currentData[0]);
         break;
       default:
         console.warn(`[mainLoop] bad issue type: ${currentData[0].issue.type}`);
         break;
     }
+  } else if (currentDataType === "eew") {
+    console.info("[mainLoop] received EEW");
+    renderEEW(currentData[0]);
   }
 }
 

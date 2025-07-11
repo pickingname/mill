@@ -1,7 +1,5 @@
-import classifyIntensity from "../../../classification/classifyIntensity.js";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
-import { map } from "../../initMap.js";
-import { mapboxgl } from "../../initMap.js";
+import { map, mapboxgl } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
@@ -11,9 +9,9 @@ export async function plotRegions(data) {
   try {
     const response = await fetch("/assets/comparision/prefectureRef.csv");
     if (!response.ok) {
-      console.error("[sp] bad prefectureRef data");
+      console.error("[sp/plotRegions] bad prefectureRef data");
       throw new Error(
-        `[sp] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
+        `[sp/plotRegions] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
       );
     }
 
@@ -51,7 +49,7 @@ export async function plotRegions(data) {
             (error, image) => {
               if (error) {
                 console.warn(
-                  `[sp] bad scale image: ${scale}, `,
+                  `[sp/plotRegions] bad scale image: ${scale}, `,
                   error,
                   " using fallback"
                 );
@@ -60,7 +58,7 @@ export async function plotRegions(data) {
                   (fallbackError, fallbackImage) => {
                     if (fallbackError) {
                       console.error(
-                        `[sp] failed to load fallback icon: ${iconName} `,
+                        `[sp/plotRegions] failed to load fallback icon: ${iconName} `,
                         fallbackError
                       );
                       reject(fallbackError);
@@ -102,7 +100,9 @@ export async function plotRegions(data) {
         });
         prefectureCoordinates.push([prefectureInfo.lng, prefectureInfo.lat]);
       } else {
-        console.warn(`[sp] prefecture not found in ref data: ${point.addr}`);
+        console.warn(
+          `[sp/plotRegions] prefecture not found in ref data: ${point.addr}`
+        );
       }
     }
 
@@ -133,14 +133,14 @@ export async function plotRegions(data) {
 
     return prefectureCoordinates;
   } catch (error) {
-    console.error("[sp] error plotting regions: ", error);
+    console.error("[sp/plotRegions] error plotting regions: ", error);
     return [];
   }
 }
 
 export async function boundRegions(prefectureCoordinates) {
   if (!prefectureCoordinates || prefectureCoordinates.length === 0) {
-    console.warn("[sp] no coordinates to bound");
+    console.warn("[sp/boundRegions] no coordinates to bound");
     return;
   }
 
@@ -152,10 +152,8 @@ export async function boundRegions(prefectureCoordinates) {
     });
 
     internalBound(bounds);
-
-    console.log("[sp] map bounds updated to show all regions");
   } catch (error) {
-    console.error("[sp] error setting map bounds: ", error);
+    console.error("[sp/boundRegions] error setting map bounds: ", error);
   }
 }
 

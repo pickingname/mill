@@ -1,7 +1,7 @@
 import mapboxgl from "mapbox-gl";
+import Minimap from "../../lib/minimap.js";
 import getMapPreset from "../date/getMapPreset.js";
 import { startMainLoop } from "../main.js";
-import Minimap from "../../lib/minimap.js";
 
 let map;
 
@@ -20,6 +20,7 @@ export function initMap() {
     zoom: "4",
     projection: "mercator",
     interactive: true,
+    fadeDuration: 0,
     config: {
       basemap: {
         lightPreset: getMapPreset() || "day",

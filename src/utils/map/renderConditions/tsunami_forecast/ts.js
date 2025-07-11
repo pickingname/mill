@@ -1,6 +1,5 @@
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
-import clear551 from "../../internal/clear551.js";
 
 let tsunamiFlashInterval = null;
 let tsunamiFlashTimeout = null;
@@ -63,6 +62,13 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
     const { containerId, color } = gradeMap[grade];
     const container = document.getElementById(containerId);
     if (!container) return;
+    if (areaList.length === 0) {
+      const p = document.createElement("p");
+      p.className = "text-xs text-slate-400";
+      p.textContent = "No area issued.";
+      container.appendChild(p);
+      return;
+    }
     areaList.forEach((area) => {
       const feature = geoMap.get(area.name);
       const nameEn = feature?.properties?.nameEn || area.name;
@@ -71,7 +77,7 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
       const maxHeight =
         area.maxHeight?.value != null
           ? `${parseFloat(area.maxHeight.value).toFixed(1)}m`
-          : "Unknown";
+          : "N/A";
       const row = document.createElement("div");
       row.className = `border-l-2 py-1.5 pl-3`;
       row.style.borderLeftColor = color;
@@ -107,15 +113,14 @@ export async function renderTS(data) {
     disarmTsComponent();
     return;
   }
-  clear551();
   clearTsunamiLayers();
 
   try {
     const response = await fetch("/assets/comparision/tsunami_areas.geojson");
     if (!response.ok) {
-      console.error("[ts] failed to fetch tsunami areas geojson");
+      console.error("[ts/renderTS] failed to fetch tsunami areas geojson");
       throw new Error(
-        `[ts] failed to fetch tsunami areas: ${response.status} ${response.statusText}`
+        `[ts/renderTS] failed to fetch tsunami areas: ${response.status} ${response.statusText}`
       );
     }
 
@@ -162,13 +167,15 @@ export async function renderTS(data) {
             });
           }
         } else {
-          console.warn(`[ts] area given not found in geojson: ${areaName}`);
+          console.warn(
+            `[ts/renderTS] area given not found in geojson: ${areaName}`
+          );
         }
       }
     }
 
     if (matchedFeatures.length === 0) {
-      console.warn("[ts] no matching areas found in geojson");
+      console.warn("[ts/renderTS] no matching areas found in geojson");
       currentTsunamiBounds = null;
       disarmTsComponent();
       return;
@@ -258,7 +265,9 @@ export async function renderTS(data) {
       currentTsunamiBounds = null;
     }
 
-    console.log(`[ts] job rendered ${matchedFeatures.length} tsunami areas`);
+    console.info(
+      `[ts/renderTS] job rendered ${matchedFeatures.length} tsunami areas`
+    );
     [
       "tsunami-major-warning-list",
       "tsunami-warning-list",

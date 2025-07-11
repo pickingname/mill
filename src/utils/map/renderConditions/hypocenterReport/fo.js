@@ -1,8 +1,8 @@
+import mapboxgl from "mapbox-gl";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController";
 import clear551 from "../../internal/clear551";
 import { internalBound } from "../../internal/internalBound";
 import { updateEpicenterIcon } from "./ds";
-import mapboxgl from "mapbox-gl";
 
 export async function boundEpicenter(epicenterLng, epicenterLat) {
   const bounds = new mapboxgl.LngLatBounds();

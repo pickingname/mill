@@ -2,12 +2,8 @@ export function classifyData(code) {
   switch (code) {
     case 551:
       return "hypocenter_report"; // normal case
-    case 554:
-      return "pre_EEW"; // special warning
     case 556:
-      return "EEW"; // special warning
-    case 561:
-      return "earthquake_detection"; // special case UNUSED
+      return "eew"; // special warning
     default:
       console.warn(`[classifyData] bad code: ${code}`);
       return "unsupported";

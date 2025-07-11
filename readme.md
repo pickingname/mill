@@ -23,3 +23,11 @@ vite hosts to localhost:5173 by default
 > example: `VITE_MAPBOX_GL_ACCESS_TOKEN=pk.eyJ...`
 
 ---
+
+### internal testing tool
+
+the tools are located in the /tests/api
+
+1. install the packages using `uv pip install -r requirements.txt` or manually (install `fastapi` and `uvicorn`)
+2. start using `uvicorn cycleData:app --reload --port 1212`
+3. **you may need to change the api route in `config.js`**
