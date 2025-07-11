@@ -77,7 +77,7 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
       const maxHeight =
         area.maxHeight?.value != null
           ? `${parseFloat(area.maxHeight.value).toFixed(1)}m`
-          : "Unknown";
+          : "N/A";
       const row = document.createElement("div");
       row.className = `border-l-2 py-1.5 pl-3`;
       row.style.borderLeftColor = color;
