@@ -5,8 +5,8 @@ const mapContainer = document.getElementById("map-container");
 if (sidebar && dragHandle && mapContainer && map) {
   let isDragging = false;
   let startY = 0;
-  let startHeight = 0;
-  const minHeight = 32;
+  let startHeight = 295;
+  const minHeight = 295;
   const snapThreshold = 25;
 
   const handlePointerDown = (e) => {
@@ -73,7 +73,7 @@ if (sidebar && dragHandle && mapContainer && map) {
 
   const handleResize = () => {
     if (window.innerWidth >= 768) {
-      sidebar.style.height = "";
+      sidebar.style.height = "auto";
       sidebar.style.transition = "";
     } else {
       const currentHeight = sidebar.offsetHeight;
@@ -109,13 +109,13 @@ export function showSidebar() {
     return;
   }
 
-  if (sidebar.offsetHeight >= 225) {
+  if (sidebar.offsetHeight >= 295) {
     sidebarHeightUsage++;
     return;
   }
 
   if (sidebarHeightUsage === 0) {
-    sidebar.style.height = 225 + "px";
+    sidebar.style.height = 295 + "px";
     sidebarHeightUsage++;
   }
 }
