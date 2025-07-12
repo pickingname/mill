@@ -29,7 +29,22 @@ html {
 }
 
 .minimap {
-    @apply hidden sm:block
+    @apply block;
+    width: 100% !important;
+    height: 120px !important;
+}
+
+@media (max-width: 767px) {
+    #sidebar {
+        max-height: 80vh;
+        overflow: hidden;
+    }
+
+    #sidebar>div:last-child {
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 .infoContainer {

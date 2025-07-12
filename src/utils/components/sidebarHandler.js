@@ -38,7 +38,10 @@ if (sidebar && dragHandle && mapContainer && map) {
     const deltaY = startY - currentY;
     let newHeight = startHeight + deltaY;
 
-    const maxHeight = window.innerHeight * 0.8;
+    const maxHeight = Math.min(
+      window.innerHeight * 0.8,
+      window.innerHeight - 100
+    );
     newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
 
     sidebar.style.height = `${newHeight}px`;
@@ -59,8 +62,12 @@ if (sidebar && dragHandle && mapContainer && map) {
 
     if (deltaFromStart > snapThreshold) {
       if (currentHeight > startHeight) {
-        sidebar.style.height = `${Math.min(
+        const maxHeight = Math.min(
           window.innerHeight * 0.8,
+          window.innerHeight - 100
+        );
+        sidebar.style.height = `${Math.min(
+          maxHeight,
           sidebar.scrollHeight + 20
         )}px`;
       } else {
@@ -115,7 +122,12 @@ export function showSidebar() {
   }
 
   if (sidebarHeightUsage === 0) {
-    sidebar.style.height = 295 + "px";
+    const maxHeight = Math.min(
+      window.innerHeight * 0.8,
+      window.innerHeight - 100
+    );
+    const targetHeight = Math.min(295, maxHeight);
+    sidebar.style.height = targetHeight + "px";
     sidebarHeightUsage++;
   }
 }

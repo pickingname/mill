@@ -35,7 +35,7 @@
         </div>
 
         <div id="sidebar"
-            class="fixed bottom-0 left-0 right-0 h-[32px] bg-slate-900 border-slate-700 text-slate-300 overflow-hidden transition-height duration-200 ease-in-out z-20 md:relative md:flex-shrink-0 md:w-80 md:h-full md:border-t-0 md:border-l md:transition-none flex flex-col md:block">
+            class="fixed bottom-0 left-0 right-0 h-[32px] bg-slate-900 border-slate-700 text-slate-300 overflow-hidden transition-height duration-200 ease-in-out z-20 md:relative md:flex-shrink-0 md:w-80 md:h-full md:border-t-0 md:border-l md:transition-none flex flex-col md:flex md:flex-col">
             <div id="drag-handle"
                 class="w-full h-8 cursor-grab md:hidden flex-shrink-0 flex items-center border-slate-700 border-b px-4 bg-slate-900 relative">
                 <p class="pb-[2px]">Earthquake Details</p>
@@ -46,83 +46,87 @@
                     <div class="w-5 h-[1px] bg-slate-600 rounded-full"></div>
                 </div>
             </div>
-            <div class="px-4 h-full overflow-y-auto flex-grow pt-0">
-                <div class="left-0 right-0 bg-none backdrop-blur-sm font-outfit" id="infoContainer">
-                    <div class="pt-2 sm:pt-4 space-y-3">
-                        <div>
-                            <h3 class="text-sm sm:text-base leading-tight text-white" id="location">Unknown</h3>
-                            <p class="text-xs font-medium text-slate-300" id="reportType">
-                                Unknown report type</p>
-                        </div>
+            <div class="px-4 flex-1 overflow-y-auto flex flex-col min-h-0">
+                <div class="flex flex-col space-y-4">
+                    <div class="left-0 right-0 bg-none backdrop-blur-sm font-outfit" id="infoContainer">
+                        <div class="pt-2 sm:pt-4 space-y-3">
+                            <div>
+                                <h3 class="text-sm sm:text-base leading-tight text-white" id="location">Unknown</h3>
+                                <p class="text-xs font-medium text-slate-300" id="reportType">
+                                    Unknown report type</p>
+                            </div>
 
-                        <div class="flex items-end gap-6 justify-center text-center">
-                            <div class="flex flex-col items-center text-center">
-                                <span class="text-xs font-medium mb-0.5 text-slate-300 select-none">Magnitude</span>
-                                <div class="flex items-baseline gap-1 justify-center">
-                                    <span class="text-sm sm:text-2xl text-white" id="magnitude">--</span>
-                                    <span class="text-xs font-medium text-slate-300">Mw</span>
+                            <div class="flex items-end gap-6 justify-center text-center">
+                                <div class="flex flex-col items-center text-center">
+                                    <span class="text-xs font-medium mb-0.5 text-slate-300 select-none">Magnitude</span>
+                                    <div class="flex items-baseline gap-1 justify-center">
+                                        <span class="text-sm sm:text-2xl text-white" id="magnitude">--</span>
+                                        <span class="text-xs font-medium text-slate-300">Mw</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center text-center">
+                                    <span class="text-xs font-medium mb-0.5 text-slate-300 select-none">Intensity</span>
+                                    <span class="text-sm sm:text-2xl font-medium text-white" id="maxInt">--</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col items-center text-center">
-                                <span class="text-xs font-medium mb-0.5 text-slate-300 select-none">Intensity</span>
-                                <span class="text-sm sm:text-2xl font-medium text-white" id="maxInt">--</span>
-                            </div>
-                        </div>
 
-                        <div class="space-y-1.5 text-xs mt-2">
-                            <div class="flex justify-between">
-                                <span class="text-slate-300 select-none">Depth</span>
-                                <span class="font-medium text-white"><span id="depth">Unknown</span></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-300 select-none">Time</span>
-                                <span class="font-medium text-white" id="time">Unknown</span>
+                            <div class="space-y-1.5 text-xs mt-2">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-300 select-none">Depth</span>
+                                    <span class="font-medium text-white"><span id="depth">Unknown</span></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-300 select-none">Time</span>
+                                    <span class="font-medium text-white" id="time">Unknown</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <hr class="h-px my-4 bg-slate-700 border-0" />
-                <div class="font-outfit bg-none">
-                    <div class="border-slate-200 bg-none shadow-sm">
-                        <div class="flex flex-col space-y-1.5 pb-1.5">
-                            <h3 class="text-lg leading-none font-medium tracking-tight text-white">
-                                Tsunami Information</h3>
-                        </div>
-                        <p class="text-center text-sm text-slate-400 my-2" id="noInfoIssuedText">No information issued.
-                        </p>
-
-                        <div class="space-y-4 mt-1.5 hidden" id="tsInfoContainer">
-                            <!-- majorWarning sect -->
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2">
-                                    <h3 class="text-base text-white font-medium">Major Warning
-                                    </h3>
-                                </div>
-                                <div id="tsunami-major-warning-list" class="space-y-1"></div>
+                    <hr class="h-px bg-slate-700 border-0" />
+                    <div class="font-outfit bg-none">
+                        <div class="border-slate-200 bg-none shadow-sm">
+                            <div class="flex flex-col space-y-1.5 pb-1.5">
+                                <h3 class="text-lg leading-none font-medium tracking-tight text-white">
+                                    Tsunami Information</h3>
                             </div>
+                            <p class="text-center text-sm text-slate-400 my-2" id="noInfoIssuedText">No information
+                                issued.
+                            </p>
 
-                            <!-- warning sect -->
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2">
-                                    <h3 class="text-base text-white font-medium">Warning
-                                    </h3>
+                            <div class="space-y-4 mt-1.5 hidden" id="tsInfoContainer">
+                                <!-- majorWarning sect -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base text-white font-medium">Major Warning
+                                        </h3>
+                                    </div>
+                                    <div id="tsunami-major-warning-list" class="space-y-1"></div>
                                 </div>
-                                <div id="tsunami-warning-list" class="space-y-1"></div>
-                            </div>
 
-                            <!-- watch sect -->
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2">
-                                    <h3 class="text-base text-white font-medium">Watch
-                                    </h3>
+                                <!-- warning sect -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base text-white font-medium">Warning
+                                        </h3>
+                                    </div>
+                                    <div id="tsunami-warning-list" class="space-y-1"></div>
                                 </div>
-                                <div id="tsunami-watch-list" class="space-y-1"></div>
+
+                                <!-- watch sect -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base text-white font-medium">Watch
+                                        </h3>
+                                    </div>
+                                    <div id="tsunami-watch-list" class="space-y-1"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <hr class="h-px bg-slate-700 border-0" />
                 </div>
-                <hr class="h-px my-4 bg-slate-700 border-0" />
             </div>
+            <!-- minimap will probably be inserted here -->
         </div>
     </div>
 

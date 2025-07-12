@@ -32,20 +32,32 @@ export function initMap() {
   });
 
   map.on("load", function () {
-    map.addControl(
-      new Minimap({
-        lineColor: "#FF0000",
-        lineWidth: 2,
-        lineOpacity: getMapPreset() === "day" ? 0.5 : 1 || 1,
-        fillOpacity: 0,
-        center: {
-          lng: 136.073149,
-          lat: 34.7666345,
-        },
-        zoom: 2,
-      }),
-      "bottom-right"
-    );
+    const minimap = new Minimap({
+      lineColor: "#FF0000",
+      lineWidth: 2,
+      lineOpacity: getMapPreset() === "day" ? 0.5 : 1 || 1,
+      fillOpacity: 0,
+      center: {
+        lng: 136.073149,
+        lat: 34.7666345,
+      },
+      zoom: 2,
+      width: "100%",
+      height: "120px",
+    });
+
+    const sidebar = document.getElementById("sidebar");
+    const minimapContainer = document.createElement("div");
+    minimapContainer.id = "minimap-container";
+    minimapContainer.className = "p-4 hidden md:block";
+    sidebar.appendChild(minimapContainer);
+
+    minimap.onAdd(map);
+    minimapContainer.appendChild(minimap._container);
+
+    if (minimap._miniMap) {
+      minimap._miniMap.resize();
+    }
   });
 
   map.dragRotate.disable();
