@@ -6,7 +6,7 @@ export const config = {
   },
   api: {
     base_url: import.meta.env.DEV
-      ? "/assets/map/testData.json"
+      ? "http://127.0.0.1:1212/p2p"
       : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
 

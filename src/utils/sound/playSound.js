@@ -1,4 +1,4 @@
-function playSound(filename, volume = 1) {
+export default function playSound(filename, volume = 1) {
   const audio = new Audio(`/assets/audio/${filename}.mp3`);
   audio.volume = Math.max(0, Math.min(1, volume));
   audio

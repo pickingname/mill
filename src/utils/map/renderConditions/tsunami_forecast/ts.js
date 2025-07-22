@@ -1,3 +1,4 @@
+import playSound from "../../../sound/playSound.js";
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
@@ -113,6 +114,7 @@ export async function renderTS(data) {
     disarmTsComponent();
     return;
   }
+  playSound("tsReport", 0.5);
   clearTsunamiLayers();
 
   try {

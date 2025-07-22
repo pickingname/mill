@@ -3,8 +3,10 @@ import clear551 from "../../internal/clear551";
 import { updateEpicenterIcon } from "../hypocenterReport/ds";
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
+import playSound from "../../../sound/playSound.js";
 
 export default async function renderEEW(data) {
+  playSound("eew", 0.5);
   clear551();
 
   const hyp = data.earthquake.hypocenter;

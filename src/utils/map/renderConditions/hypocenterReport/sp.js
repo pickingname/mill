@@ -1,9 +1,11 @@
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import playSound from "../../../sound/playSound.js";
 import { map, mapboxgl } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 export async function plotRegions(data) {
+  playSound("scalePrompt", 0.5);
   clear551();
 
   try {
