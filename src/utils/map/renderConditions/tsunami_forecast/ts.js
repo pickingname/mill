@@ -219,7 +219,6 @@ export async function renderTS(data) {
       clearTimeout(tsunamiFlashTimeout);
       tsunamiFlashTimeout = null;
     }
-    let visible = true;
     function setTsunamiLayerVisibility(vis) {
       if (map.getLayer("tsunamiAreas")) {
         map.setLayoutProperty(
