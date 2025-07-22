@@ -235,8 +235,6 @@ export async function renderTS(data) {
         setTsunamiLayerVisibility(true);
       }, 500);
     }, 1500);
-
-    const areaCount = matchedFeatures.length;
     const highestGrade = Math.max(
       ...matchedFeatures.map((f) => {
         const grade = f.properties.grade;
