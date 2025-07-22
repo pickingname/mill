@@ -12,7 +12,7 @@ export default async function renderEEW(data) {
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
 
-  await updateEpicenterIcon(epicenterLng, epicenterLat);
+  await updateEpicenterIcon(epicenterLng, epicenterLat, "potentialEpicenter");
 
   let areaCoordinates = [];
   try {

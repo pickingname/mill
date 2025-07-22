@@ -4,17 +4,24 @@ import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
-export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
+export async function updateEpicenterIcon(
+  epicenterLng,
+  epicenterLat,
+  epicenterType
+) {
   if (!map.hasImage("epicenter")) {
     await new Promise((resolve, reject) => {
-      map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
-        if (error) {
-          reject(error);
-          return;
+      map.loadImage(
+        `/assets/basemap/icons/${epicenterType}.png`,
+        (error, image) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          map.addImage("epicenter", image);
+          resolve();
         }
-        map.addImage("epicenter", image);
-        resolve();
-      });
+      );
     });
   }
 
@@ -40,7 +47,7 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
     source: "epicenterIcon",
     layout: {
       "icon-image": "epicenter",
-      "icon-size": 30 / 61, // USAGE: mapIconSizePX / imageSizePX
+      "icon-size": epicenterType === "epicenter" ? 30 / 61 : 30 / 100, // USAGE: mapIconSizePX / imageSizePX
     },
   });
 }
@@ -217,7 +224,7 @@ export async function renderDS(data) {
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
 
-  await updateEpicenterIcon(epicenterLng, epicenterLat);
+  await updateEpicenterIcon(epicenterLng, epicenterLat, "epicenter");
 
   const stationCoordinates = await plotStations(data);
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);

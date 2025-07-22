@@ -11,7 +11,7 @@ export async function renderDE(data) {
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
 
-  await updateEpicenterIcon(epicenterLng, epicenterLat);
+  await updateEpicenterIcon(epicenterLng, epicenterLat, "epicenter");
   await boundEpicenter(epicenterLng, epicenterLat);
 
   updateInfoBox(
