@@ -1,6 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
 @import 'tailwindcss';
 
+@theme {
+    --color-int1: #6B7878;
+    --color-int2: #119A4C;
+    --color-int3: #136CA5;
+    --color-int4: #C99C00;
+    --color-int5L: #F18A2D;
+    --color-int5U: #D16A0C;
+    --color-int6L: #EB1900;
+    --color-int6U: #A50006;
+    --color-int7: #960096;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 .font-outfit {
