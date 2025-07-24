@@ -120,7 +120,7 @@ export default async function renderEEW(data) {
         source: "eewAreasSource",
         layout: {
           "icon-image": ["concat", "scale-", ["to-string", ["get", "scale"]]],
-          "icon-size": 20 / 300,
+          "icon-size": 20 / 30,
           "icon-allow-overlap": true,
           "icon-ignore-placement": true,
         },

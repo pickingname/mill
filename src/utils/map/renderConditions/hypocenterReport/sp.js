@@ -122,14 +122,8 @@ export async function plotRegions(data) {
       source: "prefsSource",
       layout: {
         "icon-image": ["concat", "scale-", ["to-string", ["get", "scale"]]],
-        "icon-size": 20 / 300, // USAGE: mapIconSizePX / imageSizePX
+        "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
         "icon-allow-overlap": true,
-      },
-      paint: {
-        "text-color": "#000000",
-        "text-halo-color": "#ffffff",
-        "text-halo-width": 1,
-        "symbol-sort": ["get", "scale"],
       },
     });
 
