@@ -4,7 +4,10 @@ import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
-import { updateIntList } from "../../../components/infoBox/updateIntList.js";
+import {
+  armIntList,
+  updateIntList,
+} from "../../../components/infoBox/updateIntList.js";
 
 export async function updateEpicenterIcon(
   epicenterLng,
@@ -214,6 +217,8 @@ export async function boundMarkers(epicenter, stationCoordinates) {
 export async function renderDS(data) {
   playSound("detailScale", 0.5);
   clear551();
+  armIntList();
+
   const hyp = data.earthquake.hypocenter;
   updateInfoBox(
     "Detailed Epicenter Information",

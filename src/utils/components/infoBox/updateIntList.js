@@ -1,5 +1,15 @@
 import classifyIntensity from "../../classification/classifyIntensity.js";
 
+const intListParent = document.getElementById("intListParent");
+
+export function armIntList() {
+  intListParent.classList.remove("hidden");
+}
+
+export function disarmIntList() {
+  intListParent.classList.add("hidden");
+}
+
 function haversineDistance(coords1, coords2) {
   function toRad(x) {
     return (x * Math.PI) / 180;

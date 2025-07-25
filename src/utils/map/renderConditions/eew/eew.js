@@ -4,10 +4,12 @@ import { updateEpicenterIcon } from "../hypocenterReport/ds";
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
+import { armIntList } from "../../../components/infoBox/updateIntList.js";
 
 export default async function renderEEW(data) {
   playSound("eew", 0.5);
   clear551();
+  armIntList();
 
   const hyp = data.earthquake.hypocenter;
 

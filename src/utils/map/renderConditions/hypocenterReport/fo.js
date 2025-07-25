@@ -4,6 +4,7 @@ import clear551 from "../../internal/clear551";
 import { internalBound } from "../../internal/internalBound";
 import { updateEpicenterIcon } from "./ds";
 import playSound from "../../../sound/playSound";
+import { disarmIntList } from "../../../components/infoBox/updateIntList";
 
 export async function boundEpicenter(epicenterLng, epicenterLat) {
   const bounds = new mapboxgl.LngLatBounds();
@@ -14,6 +15,7 @@ export async function boundEpicenter(epicenterLng, epicenterLat) {
 export default async function renderFO(data) {
   playSound("detailScale", 0.5);
   clear551();
+  disarmIntList();
 
   const hyp = data.earthquake.hypocenter;
 
