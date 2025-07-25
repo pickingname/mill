@@ -58,7 +58,6 @@ if (sidebar && dragHandle && mapContainer && map) {
 
     const currentHeight = sidebar.offsetHeight;
     const deltaFromStart = Math.abs(currentHeight - startHeight);
-    // const viewportHeight = window.innerHeight;
 
     if (deltaFromStart > snapThreshold) {
       if (currentHeight > startHeight) {
