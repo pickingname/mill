@@ -86,17 +86,17 @@ export async function updateIntList(data, stationMap) {
     "1",
     "Invalid Intensity",
   ];
-  const intensityClassMap = {
-    7: "int7",
-    "6+": "int6U",
-    "6-": "int6L",
-    "5+": "int5U",
-    "5-": "int5L",
-    4: "int4",
-    3: "int3",
-    2: "int2",
-    1: "int1",
-    "Invalid Intensity": "slate-300",
+  const intensityColorMap = {
+    7: "#960096",
+    "6+": "#A50006",
+    "6-": "#EB1900",
+    "5+": "#D16A0C",
+    "5-": "#F18A2D",
+    4: "#C99C00",
+    3: "#136CA5",
+    2: "#119A4C",
+    1: "#6B7878",
+    "Invalid Intensity": "#CBD5E1",
   };
 
   for (const intensity of intensityOrder) {
@@ -117,7 +117,10 @@ export async function updateIntList(data, stationMap) {
 
       const createPointElement = (point) => {
         const item = document.createElement("div");
-        item.className = `border-l-2 py-1.5 pl-3 border-l-${intensityClassMap[intensity]}`;
+        const borderColor = intensityColorMap[intensity] || "#CBD5E1";
+        item.className = `py-1.5 pl-3 border-l-2`;
+        item.style.borderLeft = `2px solid ${borderColor}`;
+        item.style.setProperty("border-left-color", borderColor, "important");
         item.innerHTML = `
           <div class="flex items-start justify-between">
             <div class="min-w-0 flex-1">
