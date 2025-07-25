@@ -8,7 +8,7 @@ import { map, mapboxgl } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
-async function getPrefectureMap() {
+export async function getPrefectureMap() {
   const response = await fetch("/assets/comparision/prefectureRef.csv");
   if (!response.ok) {
     console.error("[sp/getPrefectureMap] bad prefectureRef data");

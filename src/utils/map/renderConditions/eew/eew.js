@@ -4,7 +4,11 @@ import { updateEpicenterIcon } from "../hypocenterReport/ds";
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
-import { armIntList } from "../../../components/infoBox/updateIntList.js";
+import {
+  armIntList,
+  updateIntList,
+} from "../../../components/infoBox/updateIntList.js";
+import { getPrefectureMap } from "../hypocenterReport/sp.js";
 
 export default async function renderEEW(data) {
   playSound("eew", 0.5);
@@ -12,35 +16,13 @@ export default async function renderEEW(data) {
   armIntList();
 
   const hyp = data.earthquake.hypocenter;
-
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
-
   await updateEpicenterIcon(epicenterLng, epicenterLat, "potentialEpicenter");
 
   let areaCoordinates = [];
   try {
-    const response = await fetch("/assets/comparision/prefectureRef.csv");
-    if (!response.ok) {
-      console.error("[renderEEW] bad prefectureRef data");
-      throw new Error(
-        `[renderEEW] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
-      );
-    }
-    const csvText = await response.text();
-    const prefectureMap = new Map();
-    const lines = csvText.trim().split("\n");
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (line) {
-        const [code, name, fullname, code2, lat, long] = line.split(",");
-        prefectureMap.set(name, {
-          lat: parseFloat(lat),
-          lng: parseFloat(long),
-          code: code,
-        });
-      }
-    }
+    const prefectureMap = await getPrefectureMap();
     const features = [];
     const iconPromises = [];
     const loadedIcons = new Set();
@@ -135,6 +117,14 @@ export default async function renderEEW(data) {
       },
       "epicenterIcon"
     );
+
+    const points = (data.areas || []).map((area) => ({
+      addr: area.name,
+      scale: parseInt(area.scaleTo, 10),
+      pref: area.pref,
+      isArea: true,
+    }));
+    await updateIntList({ points }, prefectureMap);
   } catch (error) {
     console.error("[renderEEW] error plotting areas: ", error);
   }

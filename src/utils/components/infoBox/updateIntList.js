@@ -30,10 +30,13 @@ function haversineDistance(coords1, coords2) {
 }
 
 export async function updateIntList(data, stationMap) {
-  const epicenterCoords = {
-    lat: data.earthquake.hypocenter.latitude,
-    lon: data.earthquake.hypocenter.longitude,
-  };
+  let epicenterCoords = null;
+  if (data.earthquake && data.earthquake.hypocenter) {
+    epicenterCoords = {
+      lat: data.earthquake.hypocenter.latitude,
+      lon: data.earthquake.hypocenter.longitude,
+    };
+  }
 
   const intensityGroups = {
     7: [],
@@ -52,17 +55,17 @@ export async function updateIntList(data, stationMap) {
     const intensity = classifyIntensity(point.scale);
     const stationInfo = stationMap.get(point.addr);
     if (stationInfo) {
-      const distance = haversineDistance(epicenterCoords, {
-        lat: stationInfo.lat,
-        lon: stationInfo.long,
-      });
-      if (intensityGroups[intensity]) {
-        let dist = distance;
-        if (dist === undefined || dist === null || isNaN(dist)) {
-          dist = "";
-        } else {
+      let dist = "";
+      if (epicenterCoords) {
+        const distance = haversineDistance(epicenterCoords, {
+          lat: stationInfo.lat,
+          lon: stationInfo.long,
+        });
+        if (distance !== undefined && distance !== null && !isNaN(distance)) {
           dist = distance.toFixed(0);
         }
+      }
+      if (intensityGroups[intensity]) {
         intensityGroups[intensity].push({
           name: stationInfo.fullname || point.addr,
           distance: dist,
