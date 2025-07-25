@@ -57,16 +57,22 @@ export async function updateIntList(data, stationMap) {
         lon: stationInfo.long,
       });
       if (intensityGroups[intensity]) {
+        let dist = distance;
+        if (dist === undefined || dist === null || isNaN(dist)) {
+          dist = "";
+        } else {
+          dist = distance.toFixed(0);
+        }
         intensityGroups[intensity].push({
-          name: point.addr,
-          distance: distance.toFixed(0),
+          name: stationInfo.fullname || point.addr,
+          distance: dist,
         });
       }
     }
   }
 
   const intListContainer = document.getElementById("intListContainer");
-  intListContainer.innerHTML = ""; // Clear existing list
+  intListContainer.innerHTML = "";
 
   const intensityOrder = [
     "7",
@@ -115,11 +121,13 @@ export async function updateIntList(data, stationMap) {
         item.innerHTML = `
           <div class="flex items-start justify-between">
             <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-medium text-neutral-100">${point.name}</p>
+              <p class="truncate text-sm font-medium text-neutral-100">${
+                point.name
+              }</p>
             </div>
             <div class="ml-2 text-right">
               <p class="text-sm text-neutral-100">
-                <span>${point.distance}</span> km
+                ${point.distance ? `<span>${point.distance}</span> km` : ""}
               </p>
             </div>
           </div>
