@@ -3,6 +3,13 @@ export const config = {
     bound_padding: 100,
     bound_duration: 500,
     theme: "auto", // dawn, day, dusk, night OR 'auto'
+    main_bounds: [
+      [122.778834, 23.927012],
+      [149.367464, 23.927012],
+      [149.367464, 45.606257],
+      [122.778834, 45.606257],
+      [122.778834, 23.927012],
+    ],
   },
   api: {
     base_url: import.meta.env.DEV
