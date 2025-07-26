@@ -5,8 +5,8 @@ const mapContainer = document.getElementById("map-container");
 if (sidebar && dragHandle && mapContainer && map) {
   let isDragging = false;
   let startY = 0;
-  let startHeight = 295;
-  const minHeight = 295;
+  let startHeight = 190;
+  const minHeight = 190;
   const snapThreshold = 25;
 
   const handlePointerDown = (e) => {
@@ -58,7 +58,6 @@ if (sidebar && dragHandle && mapContainer && map) {
 
     const currentHeight = sidebar.offsetHeight;
     const deltaFromStart = Math.abs(currentHeight - startHeight);
-    // const viewportHeight = window.innerHeight;
 
     if (deltaFromStart > snapThreshold) {
       if (currentHeight > startHeight) {
@@ -116,7 +115,7 @@ export function showSidebar() {
     return;
   }
 
-  if (sidebar.offsetHeight >= 295) {
+  if (sidebar.offsetHeight >= 190) {
     sidebarHeightUsage++;
     return;
   }
@@ -126,7 +125,7 @@ export function showSidebar() {
       window.innerHeight * 0.8,
       window.innerHeight - 100
     );
-    const targetHeight = Math.min(295, maxHeight);
+    const targetHeight = Math.min(190, maxHeight);
     sidebar.style.height = targetHeight + "px";
     sidebarHeightUsage++;
   }

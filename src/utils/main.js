@@ -9,7 +9,10 @@ import { renderDE } from "./map/renderConditions/hypocenterReport/de.js";
 import { renderDS } from "./map/renderConditions/hypocenterReport/ds.js";
 import renderFO from "./map/renderConditions/hypocenterReport/fo.js";
 import { renderSP } from "./map/renderConditions/hypocenterReport/sp.js";
-import { renderTS } from "./map/renderConditions/tsunami_forecast/ts.js";
+import {
+  clearAllTsAssets,
+  renderTS,
+} from "./map/renderConditions/tsunami_forecast/ts.js";
 
 let currentData = [];
 let previousData = [];
@@ -35,6 +38,8 @@ export async function secondaryLoop() {
 
   if (currentTsunamiData.length > 0) {
     renderTS(currentTsunamiData[0]);
+  } else {
+    clearAllTsAssets();
   }
 }
 

@@ -4,6 +4,10 @@ import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
+import {
+  armIntList,
+  updateIntList,
+} from "../../../components/infoBox/updateIntList.js";
 
 export async function updateEpicenterIcon(
   epicenterLng,
@@ -48,7 +52,7 @@ export async function updateEpicenterIcon(
     source: "epicenterIcon",
     layout: {
       "icon-image": "epicenter",
-      "icon-size": epicenterType === "epicenter" ? 30 / 61 : 30 / 100, // USAGE: mapIconSizePX / imageSizePX
+      "icon-size": epicenterType === "epicenter" ? 31 / 31 : 30 / 100, // USAGE: mapIconSizePX / imageSizePX
     },
   });
 }
@@ -172,7 +176,7 @@ export async function plotStations(data) {
             "intensity-",
             ["to-string", ["get", "scale"]],
           ],
-          "icon-size": 20 / 300, // USAGE: mapIconSizePX / imageSizePX
+          "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
           "icon-allow-overlap": true,
         },
         paint: {
@@ -213,6 +217,8 @@ export async function boundMarkers(epicenter, stationCoordinates) {
 export async function renderDS(data) {
   playSound("detailScale", 0.5);
   clear551();
+  armIntList();
+
   const hyp = data.earthquake.hypocenter;
   updateInfoBox(
     "Detailed Epicenter Information",
@@ -230,5 +236,22 @@ export async function renderDS(data) {
 
   const stationCoordinates = await plotStations(data);
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
+  const stationMap = await getStationMap();
+  await updateIntList(data, stationMap);
   console.info("[ds] renderDS completed");
+}
+
+async function getStationMap() {
+  const response = await fetch("/assets/comparision/stationRef.csv");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch stationRef.csv: ${response.status}`);
+  }
+  const csvText = await response.text();
+  const stationMap = new Map();
+  const lines = csvText.trim().split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const [name, , , lat, long] = lines[i].split(",");
+    stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
+  }
+  return stationMap;
 }

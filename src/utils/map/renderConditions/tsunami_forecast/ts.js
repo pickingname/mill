@@ -108,10 +108,15 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
   });
 }
 
+export function clearAllTsAssets() {
+  clearTsunamiLayers();
+  disarmTsComponent();
+  return;
+}
+
 export async function renderTS(data) {
-  if (data.cancelled) {
-    clearTsunamiLayers();
-    disarmTsComponent();
+  if (data.cancelled || data === "[]") {
+    clearAllTsAssets();
     return;
   }
   playSound("tsReport", 0.5);
@@ -310,10 +315,12 @@ export async function renderTS(data) {
 
 function armTsComponent() {
   document.getElementById("tsInfoContainer").classList.remove("hidden");
+  document.getElementById("tsunamiContainer").classList.remove("hidden");
   document.getElementById("noInfoIssuedText").classList.add("hidden");
 }
 
 function disarmTsComponent() {
   document.getElementById("tsInfoContainer").classList.add("hidden");
+  document.getElementById("tsunamiContainer").classList.add("hidden");
   document.getElementById("noInfoIssuedText").classList.remove("hidden");
 }

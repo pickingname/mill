@@ -83,7 +83,7 @@
                         </div>
                     </div>
                     <hr class="h-px bg-slate-700 border-0" />
-                    <div class="font-outfit bg-none">
+                    <div class="font-outfit bg-none hidden" id="tsunamiContainer">
                         <div class="border-slate-200 bg-none shadow-sm">
                             <div class="flex flex-col space-y-1.5 pb-1.5">
                                 <h3 class="text-lg leading-none font-medium tracking-tight text-white">
@@ -122,8 +122,23 @@
                                 </div>
                             </div>
                         </div>
+                        <hr class="h-px bg-slate-700 border-0 mt-4" />
                     </div>
-                    <hr class="h-px bg-slate-700 border-0" />
+
+                    <div id="intListParent" class="hidden">
+
+                        <div class="dark">
+                            <div class="flex flex-col">
+                                <h3 class="text-lg leading-none tracking-tight tabular-nums text-neutral-100">
+                                    Intensity Details</h3>
+                                <p class="text-xs pt-1">Shows intensity levels for each location and distance to the
+                                    epicenter if available.</p>
+                            </div>
+
+                            <div class="pt-2 tabular-nums" id="intListContainer">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- minimap will probably be inserted here -->
