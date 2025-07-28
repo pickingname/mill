@@ -24,7 +24,7 @@ export async function getPrefectureMap() {
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (line) {
-      const [code, name, fullname, code2, lat, long] = line.split(",");
+      const [code, name, fullname, , lat, long] = line.split(",");
       prefectureMap.set(name, {
         lat: parseFloat(lat),
         lng: parseFloat(long),

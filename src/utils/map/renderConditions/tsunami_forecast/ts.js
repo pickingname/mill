@@ -10,6 +10,16 @@ export function getTsunamiBounds() {
   return currentTsunamiBounds;
 }
 
+function setTsunamiLayerVisibility(vis) {
+  if (map.getLayer("tsunamiAreas")) {
+    map.setLayoutProperty(
+      "tsunamiAreas",
+      "visibility",
+      vis ? "visible" : "none"
+    );
+  }
+}
+
 function clearTsunamiLayers() {
   if (tsunamiFlashInterval) {
     clearInterval(tsunamiFlashInterval);
@@ -80,7 +90,7 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
           ? `${parseFloat(area.maxHeight.value).toFixed(1)}m`
           : "N/A";
       const row = document.createElement("div");
-      row.className = `border-l-2 py-1.5 pl-3`;
+      row.className = "border-l-2 py-1.5 pl-3";
       row.style.borderLeftColor = color;
       row.innerHTML = `
         <div class="flex items-start justify-between">
@@ -226,15 +236,6 @@ export async function renderTS(data) {
       clearTimeout(tsunamiFlashTimeout);
       tsunamiFlashTimeout = null;
     }
-    function setTsunamiLayerVisibility(vis) {
-      if (map.getLayer("tsunamiAreas")) {
-        map.setLayoutProperty(
-          "tsunamiAreas",
-          "visibility",
-          vis ? "visible" : "none"
-        );
-      }
-    }
     setTsunamiLayerVisibility(true);
     tsunamiFlashInterval = setInterval(() => {
       setTsunamiLayerVisibility(false);
@@ -242,25 +243,6 @@ export async function renderTS(data) {
         setTsunamiLayerVisibility(true);
       }, 500);
     }, 1500);
-    const highestGrade = Math.max(
-      ...matchedFeatures.map((f) => {
-        const grade = f.properties.grade;
-        switch (grade) {
-          case "MajorWarning":
-            return 3;
-          case "Warning":
-            return 2;
-          case "Watch":
-            return 1;
-          default:
-            return 0;
-        }
-      })
-    );
-
-    let gradeText = "Watch";
-    if (highestGrade === 3) gradeText = "Major Warning";
-    else if (highestGrade === 2) gradeText = "Warning";
 
     if (!bounds.isEmpty()) {
       currentTsunamiBounds = bounds;
@@ -280,8 +262,7 @@ export async function renderTS(data) {
       if (!document.getElementById(id)) {
         const h3 = Array.from(document.querySelectorAll("#sidebar h3")).find(
           (h) =>
-            h.textContent &&
-            h.textContent.includes(
+            h.textContent?.includes(
               id.includes("major")
                 ? "Major Warning"
                 : id.includes("warning")
@@ -290,8 +271,7 @@ export async function renderTS(data) {
             )
         );
         if (
-          h3 &&
-          h3.parentElement &&
+          h3?.parentElement &&
           !h3.parentElement.nextElementSibling?.querySelector(`#${id}`)
         ) {
           const sect = h3.parentElement.parentElement;
