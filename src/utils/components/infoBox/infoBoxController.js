@@ -23,9 +23,9 @@ export function updateInfoBox(
     unTranslatedEpicenter
   );
   document.getElementById("magnitude").textContent =
-    magnitude == -1 || !magnitude ? "--" : magnitude;
+    magnitude === -1 || !magnitude ? "--" : magnitude;
   document.getElementById("depth").textContent =
-    depth == "Unknown" || !depth || depth == "" || depth == -1
+    depth === "Unknown" || !depth || depth === "" || depth === -1
       ? "Unavailable"
       : depth + " km";
   document.getElementById("time").textContent = !time
