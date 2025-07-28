@@ -10,6 +10,16 @@ export function getTsunamiBounds() {
   return currentTsunamiBounds;
 }
 
+function setTsunamiLayerVisibility(vis) {
+  if (map.getLayer("tsunamiAreas")) {
+    map.setLayoutProperty(
+      "tsunamiAreas",
+      "visibility",
+      vis ? "visible" : "none"
+    );
+  }
+}
+
 function clearTsunamiLayers() {
   if (tsunamiFlashInterval) {
     clearInterval(tsunamiFlashInterval);
@@ -225,15 +235,6 @@ export async function renderTS(data) {
     if (tsunamiFlashTimeout) {
       clearTimeout(tsunamiFlashTimeout);
       tsunamiFlashTimeout = null;
-    }
-    function setTsunamiLayerVisibility(vis) {
-      if (map.getLayer("tsunamiAreas")) {
-        map.setLayoutProperty(
-          "tsunamiAreas",
-          "visibility",
-          vis ? "visible" : "none"
-        );
-      }
     }
     setTsunamiLayerVisibility(true);
     tsunamiFlashInterval = setInterval(() => {
