@@ -45,9 +45,9 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   onAdd: function (parentMap) {
     this._parentMap = parentMap;
 
-    var opts = this.options;
-    var container = (this._container = this._createContainer(parentMap));
-    var miniMap = (this._miniMap = new mapboxgl.Map({
+    const opts = this.options;
+    const container = (this._container = this._createContainer(parentMap));
+    const miniMap = (this._miniMap = new mapboxgl.Map({
       attributionControl: false,
       container: container,
       style: opts.style,
@@ -69,10 +69,10 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _load: function () {
-    var opts = this.options;
-    var parentMap = this._parentMap;
-    var miniMap = this._miniMap;
-    var interactions = [
+    const opts = this.options;
+    const parentMap = this._parentMap;
+    const miniMap = this._miniMap;
+    const interactions = [
       "dragPan",
       "scrollZoom",
       "boxZoom",
@@ -94,7 +94,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
       this.options.zoomAdjust = this._zoomAdjust.bind(this);
     }
 
-    var bounds = miniMap.getBounds();
+    const bounds = miniMap.getBounds();
 
     this._convertBoundsToPoints(bounds);
 
@@ -149,8 +149,8 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _setTrackingRectBounds: function (bounds) {
-    var source = this._trackingRect;
-    var data = source._data;
+    const source = this._trackingRect;
+    const data = source._data;
 
     data.properties.bounds = bounds;
     this._convertBoundsToPoints(bounds);
@@ -158,9 +158,9 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _convertBoundsToPoints: function (bounds) {
-    var ne = bounds._ne;
-    var sw = bounds._sw;
-    var trc = this._trackingRectCoordinates;
+    const ne = bounds._ne;
+    const sw = bounds._sw;
+    const trc = this._trackingRectCoordinates;
 
     trc[0][0][0] = ne.lng;
     trc[0][0][1] = ne.lat;
@@ -175,7 +175,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _update: function () {
-    var parentBounds = this._parentMap.getBounds();
+    const parentBounds = this._parentMap.getBounds();
 
     this._setTrackingRectBounds(parentBounds);
 
@@ -185,12 +185,12 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _zoomAdjust: function () {
-    var miniMap = this._miniMap;
-    var parentMap = this._parentMap;
-    var miniZoom = parseInt(miniMap.getZoom(), 10);
-    var parentZoom = parseInt(parentMap.getZoom(), 10);
-    var levels = this.options.zoomLevels;
-    var found = false;
+    const miniMap = this._miniMap;
+    const parentMap = this._parentMap;
+    const miniZoom = parseInt(miniMap.getZoom(), 10);
+    const parentZoom = parseInt(parentMap.getZoom(), 10);
+    const levels = this.options.zoomLevels;
+    let found = false;
 
     levels.forEach(function (zoom) {
       if (!found && parentZoom >= zoom[0]) {
@@ -213,14 +213,14 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   },
 
   _createContainer: function (parentMap) {
-    var opts = this.options;
-    var container = document.createElement("div");
+    const opts = this.options;
+    const container = document.createElement("div");
 
     container.className =
       "mapboxgl-ctrl-minimap mapboxgl-ctrl rounded-md minimap";
     container.setAttribute(
       "style",
-      "width: " + opts.width + "; height: " + opts.height + ";"
+      `width: ${opts.width}; height: ${opts.height};`
     );
     container.addEventListener("contextmenu", this._preventDefault);
 
