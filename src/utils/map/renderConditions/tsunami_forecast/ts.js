@@ -80,7 +80,7 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
           ? `${parseFloat(area.maxHeight.value).toFixed(1)}m`
           : "N/A";
       const row = document.createElement("div");
-      row.className = `border-l-2 py-1.5 pl-3`;
+      row.className = "border-l-2 py-1.5 pl-3";
       row.style.borderLeftColor = color;
       row.innerHTML = `
         <div class="flex items-start justify-between">

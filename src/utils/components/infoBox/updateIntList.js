@@ -121,7 +121,7 @@ export async function updateIntList(data, stationMap) {
       const createPointElement = (point) => {
         const item = document.createElement("div");
         const borderColor = intensityColorMap[intensity] || "#CBD5E1";
-        item.className = `py-1.5 pl-3 border-l-2`;
+        item.className = "py-1.5 pl-3 border-l-2";
         item.style.borderLeft = `2px solid ${borderColor}`;
         item.style.setProperty("border-left-color", borderColor, "important");
         item.innerHTML = `
