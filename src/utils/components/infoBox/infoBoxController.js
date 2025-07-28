@@ -27,9 +27,9 @@ export function updateInfoBox(
   document.getElementById("depth").textContent =
     depth === "Unknown" || !depth || depth === "" || depth === -1
       ? "Unavailable"
-      : depth + " km";
+      : `${depth} km`;
   document.getElementById("time").textContent = !time
     ? "Unavailable"
-    : time + " JST";
+    : `${time} JST`;
   document.getElementById("maxInt").textContent = classifyIntensity(maxInt);
 }
