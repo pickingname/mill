@@ -124,7 +124,7 @@ export function showSidebar() {
       window.innerHeight - 100
     );
     const targetHeight = Math.min(190, maxHeight);
-    sidebar.style.height = targetHeight + "px";
+    sidebar.style.height = `${targetHeight}px`;
     sidebarHeightUsage++;
   }
 }
