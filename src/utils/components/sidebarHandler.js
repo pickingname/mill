@@ -2,7 +2,7 @@ const sidebar = document.getElementById("sidebar");
 const dragHandle = document.getElementById("drag-handle");
 const mapContainer = document.getElementById("map-container");
 
-if (sidebar && dragHandle && mapContainer && map) {
+if (sidebar && dragHandle && mapContainer) {
   let isDragging = false;
   let startY = 0;
   let startHeight = 190;
@@ -98,9 +98,7 @@ if (sidebar && dragHandle && mapContainer && map) {
 
   setTimeout(() => {}, 100);
 } else {
-  console.error(
-    "[sidebarH] sidebar, drag handle, map container, or map instance not found."
-  );
+  console.error("[sidebarH] sidebar, drag handle or map container not found.");
 }
 
 let sidebarHeightUsage = 0;
