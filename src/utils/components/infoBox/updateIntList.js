@@ -29,7 +29,7 @@ function haversineDistance(coords1, coords2) {
   return R * c;
 }
 
-export async function updateIntList(data, stationMap) {
+export function updateIntList(data, stationMap) {
   let epicenterCoords = null;
   if (data.earthquake && data.earthquake.hypocenter) {
     epicenterCoords = {

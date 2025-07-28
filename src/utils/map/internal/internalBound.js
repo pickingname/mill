@@ -3,11 +3,11 @@ import { map, mapboxgl } from "../initMap.js";
 import { getTsunamiBounds } from "../renderConditions/tsunami_forecast/ts.js";
 
 export function internalBound(bound) {
-  const tsunamiBounds = getTsunamiBounds && getTsunamiBounds();
+  const tsunamiBounds = getTsunamiBounds?.();
   let mergedBounds = bound;
 
   if (!bound || typeof bound.clone !== "function") {
-    if (bound && bound.getNorthEast && bound.getSouthWest) {
+    if (bound?.getNorthEast && bound?.getSouthWest) {
       mergedBounds = new mapboxgl.LngLatBounds(
         bound.getSouthWest(),
         bound.getNorthEast()

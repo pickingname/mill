@@ -280,8 +280,7 @@ export async function renderTS(data) {
       if (!document.getElementById(id)) {
         const h3 = Array.from(document.querySelectorAll("#sidebar h3")).find(
           (h) =>
-            h.textContent &&
-            h.textContent.includes(
+            h.textContent?.includes(
               id.includes("major")
                 ? "Major Warning"
                 : id.includes("warning")
@@ -290,8 +289,7 @@ export async function renderTS(data) {
             )
         );
         if (
-          h3 &&
-          h3.parentElement &&
+          h3?.parentElement &&
           !h3.parentElement.nextElementSibling?.querySelector(`#${id}`)
         ) {
           const sect = h3.parentElement.parentElement;
