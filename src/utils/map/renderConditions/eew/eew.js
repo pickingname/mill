@@ -27,7 +27,6 @@ export default async function renderEEW(data) {
     const iconPromises = [];
     const loadedIcons = new Set();
     for (const area of data.areas || []) {
-      const areaName = area.name;
       const scaleTo = parseInt(area.scaleTo, 10);
       const iconName = `scale-${scaleTo}`;
       if (!map.hasImage(iconName) && !loadedIcons.has(iconName)) {

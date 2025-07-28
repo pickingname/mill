@@ -174,7 +174,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
     trc[0][4][1] = ne.lat;
   },
 
-  _update: function (e) {
+  _update: function () {
     var parentBounds = this._parentMap.getBounds();
 
     this._setTrackingRectBounds(parentBounds);

@@ -242,25 +242,6 @@ export async function renderTS(data) {
         setTsunamiLayerVisibility(true);
       }, 500);
     }, 1500);
-    const highestGrade = Math.max(
-      ...matchedFeatures.map((f) => {
-        const grade = f.properties.grade;
-        switch (grade) {
-          case "MajorWarning":
-            return 3;
-          case "Warning":
-            return 2;
-          case "Watch":
-            return 1;
-          default:
-            return 0;
-        }
-      })
-    );
-
-    let gradeText = "Watch";
-    if (highestGrade === 3) gradeText = "Major Warning";
-    else if (highestGrade === 2) gradeText = "Warning";
 
     if (!bounds.isEmpty()) {
       currentTsunamiBounds = bounds;
