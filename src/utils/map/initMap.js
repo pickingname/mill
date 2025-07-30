@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import L from "leaflet";
 import Minimap from "../../lib/minimap.js";
 import getMapPreset from "../date/getMapPreset.js";
 import { startMainLoop } from "../main.js";
@@ -6,41 +6,27 @@ import { startMainLoop } from "../main.js";
 let map;
 
 export function initMap() {
-  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_ACCESS_TOKEN;
-  map = new mapboxgl.Map({
-    container: "map",
-    attributionControl: false,
-    style: "mapbox://styles/mapbox/standard?optimize=true",
-    worldview: "jp",
-    language: "en",
-    center: {
-      lng: 136.073149,
-      lat: 34.7666345,
-    },
-    zoom: "4",
-    projection: "mercator",
-    interactive: true,
-    fadeDuration: 0,
-    config: {
-      basemap: {
-        lightPreset: getMapPreset() || "day",
-        showPointOfInterestLabels: false,
-        showPedestrianRoads: false,
-        showLandmarkIcons: true,
-      },
-    },
+  // Initialize Leaflet map with OpenStreetMap tiles
+  map = L.map("map", {
+    center: [34.7666345, 136.073149],
+    zoom: 4,
+    zoomControl: true,
+    attributionControl: false
   });
 
-  map.on("load", function () {
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+
+  map.whenReady(function () {
     const minimap = new Minimap({
       lineColor: "#FF0000",
       lineWidth: 2,
       lineOpacity: getMapPreset() === "day" ? 0.5 : 1 || 1,
       fillOpacity: 0,
-      center: {
-        lng: 136.073149,
-        lat: 34.7666345,
-      },
+      center: [34.7666345, 136.073149],
       zoom: 2,
       width: "100%",
       height: "120px",
@@ -56,27 +42,18 @@ export function initMap() {
     minimapContainer.appendChild(minimap._container);
 
     if (minimap._miniMap) {
-      minimap._miniMap.resize();
+      minimap._miniMap.invalidateSize();
     }
   });
 
-  map.dragRotate.disable();
-  map.touchZoomRotate.disableRotation();
-
-  map.on("style.load", () => {
-    map.addSource("mapbox-dem", {
-      type: "raster-dem",
-      url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-      tileSize: 512,
-      maxzoom: 14,
-    });
-    map.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
-  });
-
-  map.on("load", async () => {
-    map.resize();
-    startMainLoop();
+  // Disable rotation (Leaflet doesn't have rotation by default)
+  // Start the main application loop
+  map.whenReady(async () => {
+    setTimeout(() => {
+      map.invalidateSize();
+      startMainLoop();
+    }, 100);
   });
 }
 
-export { map, mapboxgl };
+export { map, L, L as mapboxgl };

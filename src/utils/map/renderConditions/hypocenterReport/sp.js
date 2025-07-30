@@ -4,9 +4,12 @@ import {
   updateIntList,
 } from "../../../components/infoBox/updateIntList.js";
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, L } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
+
+// Store layer group for easy removal
+let prefsLayerGroup = null;
 
 export async function getPrefectureMap() {
   const response = await fetch("/assets/comparision/prefectureRef.csv");
@@ -38,74 +41,46 @@ export async function getPrefectureMap() {
 
 export async function plotRegions(data, prefectureMap) {
   try {
-    const features = [];
-    const iconPromises = [];
-    const loadedIcons = new Set();
-    const prefectureCoordinates = [];
-
-    const scaleValues = new Set(data.points.map((point) => point.scale));
-
-    for (const scale of scaleValues) {
-      const iconName = `scale-${scale}`;
-
-      if (!map.hasImage(iconName) && !loadedIcons.has(iconName)) {
-        loadedIcons.add(iconName);
-        const iconPromise = new Promise((resolve, reject) => {
-          map.loadImage(
-            `/assets/basemap/icons/scales/${scale}.png`,
-            (error, image) => {
-              if (error) {
-                console.warn(
-                  `[sp/plotRegions] bad scale image: ${scale}, `,
-                  error,
-                  " using fallback"
-                );
-                map.loadImage(
-                  "/assets/basemap/icons/scales/invalid.png",
-                  (fallbackError, fallbackImage) => {
-                    if (fallbackError) {
-                      console.error(
-                        `[sp/plotRegions] failed to load fallback icon: ${iconName} `,
-                        fallbackError
-                      );
-                      reject(fallbackError);
-                    } else {
-                      map.addImage(iconName, fallbackImage);
-                      resolve();
-                    }
-                  }
-                );
-              } else {
-                map.addImage(iconName, image);
-                resolve();
-              }
-            }
-          );
-        });
-        iconPromises.push(iconPromise);
-      }
+    // Remove existing prefectures layer
+    if (prefsLayerGroup) {
+      map.removeLayer(prefsLayerGroup);
     }
-
-    await Promise.all(iconPromises);
+    
+    prefsLayerGroup = L.layerGroup();
+    const prefectureCoordinates = [];
 
     for (const point of data.points) {
       const prefectureInfo = prefectureMap.get(point.addr);
 
       if (prefectureInfo) {
-        features.push({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [prefectureInfo.lng, prefectureInfo.lat],
-          },
-          properties: {
+        try {
+          const iconUrl = `/assets/basemap/icons/scales/${point.scale}.png`;
+          const prefIcon = L.icon({
+            iconUrl: iconUrl,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          });
+
+          const marker = L.marker([prefectureInfo.lat, prefectureInfo.lng], { 
+            icon: prefIcon 
+          });
+          
+          // Add properties for later use
+          marker.properties = {
             scale: point.scale,
             addr: point.addr,
             pref: point.pref,
             isArea: point.isArea,
-          },
-        });
-        prefectureCoordinates.push([prefectureInfo.lng, prefectureInfo.lat]);
+          };
+          
+          prefsLayerGroup.addLayer(marker);
+          prefectureCoordinates.push([prefectureInfo.lng, prefectureInfo.lat]);
+        } catch (error) {
+          console.warn(
+            `[sp/plotRegions] failed to create marker for ${point.addr}:`,
+            error
+          );
+        }
       } else {
         console.warn(
           `[sp/plotRegions] prefecture not found in ref data: ${point.addr}`
@@ -113,25 +88,7 @@ export async function plotRegions(data, prefectureMap) {
       }
     }
 
-    map.addSource("prefsSource", {
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: features,
-      },
-    });
-
-    map.addLayer({
-      id: "prefsLayer",
-      type: "symbol",
-      source: "prefsSource",
-      layout: {
-        "icon-image": ["concat", "scale-", ["to-string", ["get", "scale"]]],
-        "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
-        "icon-allow-overlap": true,
-      },
-    });
-
+    map.addLayer(prefsLayerGroup);
     return prefectureCoordinates;
   } catch (error) {
     console.error("[sp/plotRegions] error plotting regions: ", error);
@@ -146,10 +103,10 @@ export async function boundRegions(prefectureCoordinates) {
   }
 
   try {
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = L.latLngBounds();
 
     prefectureCoordinates.forEach((coord) => {
-      bounds.extend(coord);
+      bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
     });
 
     internalBound(bounds);

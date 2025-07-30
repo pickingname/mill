@@ -1,9 +1,10 @@
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, L } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 let tsunamiFlashInterval = null;
 let tsunamiFlashTimeout = null;
+let tsunamiLayerGroup = null;
 
 let currentTsunamiBounds = null;
 export function getTsunamiBounds() {
@@ -19,11 +20,9 @@ function clearTsunamiLayers() {
     clearTimeout(tsunamiFlashTimeout);
     tsunamiFlashTimeout = null;
   }
-  if (map.getLayer("tsunamiAreas")) {
-    map.removeLayer("tsunamiAreas");
-  }
-  if (map.getSource("tsunamiAreas")) {
-    map.removeSource("tsunamiAreas");
+  if (tsunamiLayerGroup) {
+    map.removeLayer(tsunamiLayerGroup);
+    tsunamiLayerGroup = null;
   }
   currentTsunamiBounds = null;
 }
@@ -140,7 +139,8 @@ export async function renderTS(data) {
     });
 
     const matchedFeatures = [];
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = L.latLngBounds();
+    tsunamiLayerGroup = L.layerGroup();
 
     if (data.areas && Array.isArray(data.areas)) {
       for (const area of data.areas) {
@@ -162,17 +162,43 @@ export async function renderTS(data) {
 
           matchedFeatures.push(feature);
 
+          // Convert coordinates and extend bounds
           if (geoJSONFeature.geometry.type === "LineString") {
             geoJSONFeature.geometry.coordinates.forEach((coord) => {
-              bounds.extend(coord);
+              bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
             });
           } else if (geoJSONFeature.geometry.type === "MultiLineString") {
             geoJSONFeature.geometry.coordinates.forEach((line) => {
               line.forEach((coord) => {
-                bounds.extend(coord);
+                bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
               });
             });
           }
+
+          // Determine line color based on grade
+          let color = "#707070"; // default
+          switch (grade) {
+            case "Watch":
+              color = "#ffff00";
+              break;
+            case "Warning":
+              color = "#ff0000";
+              break;
+            case "MajorWarning":
+              color = "#ff00ff";
+              break;
+          }
+
+          // Add GeoJSON layer to Leaflet
+          const geoJsonLayer = L.geoJSON(geoJSONFeature, {
+            style: {
+              color: color,
+              weight: 2,
+              opacity: 1
+            }
+          });
+          
+          tsunamiLayerGroup.addLayer(geoJsonLayer);
         } else {
           console.warn(
             `[ts/renderTS] area given not found in geojson: ${areaName}`
@@ -188,36 +214,9 @@ export async function renderTS(data) {
       return;
     }
 
-    map.addSource("tsunamiAreas", {
-      type: "geojson",
-      tolerance: 0,
-      data: {
-        type: "FeatureCollection",
-        features: matchedFeatures,
-      },
-    });
+    map.addLayer(tsunamiLayerGroup);
 
-    map.addLayer({
-      id: "tsunamiAreas",
-      type: "line",
-      source: "tsunamiAreas",
-      paint: {
-        "line-color": [
-          "case",
-          ["==", ["get", "grade"], "Watch"],
-          "#ffff00",
-          ["==", ["get", "grade"], "Warning"],
-          "#ff0000",
-          ["==", ["get", "grade"], "MajorWarning"],
-          "#ff00ff",
-          "#707070",
-        ],
-        "line-width": 2,
-        "line-opacity": 1,
-        "line-emissive-strength": 1,
-      },
-    });
-
+    // Implement flashing effect
     if (tsunamiFlashInterval) {
       clearInterval(tsunamiFlashInterval);
       tsunamiFlashInterval = null;
@@ -226,15 +225,19 @@ export async function renderTS(data) {
       clearTimeout(tsunamiFlashTimeout);
       tsunamiFlashTimeout = null;
     }
+    
     function setTsunamiLayerVisibility(vis) {
-      if (map.getLayer("tsunamiAreas")) {
-        map.setLayoutProperty(
-          "tsunamiAreas",
-          "visibility",
-          vis ? "visible" : "none"
-        );
+      if (tsunamiLayerGroup) {
+        tsunamiLayerGroup.eachLayer((layer) => {
+          if (vis) {
+            layer.setStyle({ opacity: 1 });
+          } else {
+            layer.setStyle({ opacity: 0 });
+          }
+        });
       }
     }
+    
     setTsunamiLayerVisibility(true);
     tsunamiFlashInterval = setInterval(() => {
       setTsunamiLayerVisibility(false);
@@ -262,7 +265,7 @@ export async function renderTS(data) {
     if (highestGrade === 3) gradeText = "Major Warning";
     else if (highestGrade === 2) gradeText = "Warning";
 
-    if (!bounds.isEmpty()) {
+    if (bounds.isValid()) {
       currentTsunamiBounds = bounds;
       internalBound(bounds);
     } else {
