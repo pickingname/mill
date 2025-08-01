@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { L } from "../../initMap.js";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
 import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
@@ -8,6 +8,10 @@ import {
   armIntList,
   updateIntList,
 } from "../../../components/infoBox/updateIntList.js";
+
+// Leaflet layer groups for managing map features
+let epicenterLayer = null;
+let stationsLayer = null;
 
 /**
  * Helper function to update the epicenter icon on the map.
@@ -21,47 +25,27 @@ export async function updateEpicenterIcon(
   epicenterLat,
   epicenterType
 ) {
-  if (!map.hasImage("epicenter")) {
-    await new Promise((resolve, reject) => {
-      map.loadImage(
-        `/assets/basemap/icons/${epicenterType}.png`,
-        (error, image) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          map.addImage("epicenter", image);
-          resolve();
-        }
-      );
-    });
+  // Remove existing epicenter layer
+  if (epicenterLayer) {
+    map.removeLayer(epicenterLayer);
+    epicenterLayer = null;
   }
 
-  map.addSource("epicenterIcon", {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [epicenterLng, epicenterLat],
-          },
-        },
-      ],
-    },
+  // Create custom icon
+  const iconUrl = `/assets/basemap/icons/${epicenterType}.png`;
+  const iconSize = epicenterType === "epicenter" ? 31 : 30;
+  
+  const epicenterIcon = L.icon({
+    iconUrl: iconUrl,
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize / 2, iconSize / 2],
+    popupAnchor: [0, -iconSize / 2]
   });
 
-  map.addLayer({
-    id: "epicenterIcon",
-    type: "symbol",
-    source: "epicenterIcon",
-    layout: {
-      "icon-image": "epicenter",
-      "icon-size": epicenterType === "epicenter" ? 31 / 31 : 30 / 100, // USAGE: mapIconSizePX / imageSizePX
-    },
-  });
+  // Create marker and add to map
+  epicenterLayer = L.marker([epicenterLat, epicenterLng], {
+    icon: epicenterIcon
+  }).addTo(map);
 }
 
 /**
@@ -71,11 +55,10 @@ export async function updateEpicenterIcon(
  * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
  */
 export async function plotStations(data) {
-  if (map.getLayer("stationsLayer")) {
-    map.removeLayer("stationsLayer");
-  }
-  if (map.getSource("stationsLayer")) {
-    map.removeSource("stationsLayer");
+  // Remove existing stations layer
+  if (stationsLayer) {
+    map.removeLayer(stationsLayer);
+    stationsLayer = null;
   }
 
   try {
@@ -96,72 +79,49 @@ export async function plotStations(data) {
       stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
     }
 
-    const features = [];
-    const iconPromises = [];
-    const loadedIcons = new Set();
     const stationCoordinates = [];
-
-    const scaleValues = new Set(data.points.map((point) => point.scale));
-
-    for (const scale of scaleValues) {
-      const iconName = `intensity-${scale}`;
-
-      if (!map.hasImage(iconName) && !loadedIcons.has(iconName)) {
-        loadedIcons.add(iconName);
-        const iconPromise = new Promise((resolve, reject) => {
-          map.loadImage(
-            `/assets/basemap/icons/intensities/${scale}.png`,
-            (error, image) => {
-              if (error) {
-                console.warn(
-                  `[ds/plotStations] bad scale image: ${scale}, `,
-                  error,
-                  " using fallback"
-                );
-                map.loadImage(
-                  "/assets/basemap/icons/intensities/invalid.png",
-                  (fallbackError, fallbackImage) => {
-                    if (fallbackError) {
-                      console.error(
-                        `[ds/plotStations] failed to load fallback icon: ${iconName} `,
-                        fallbackError
-                      );
-                      reject(fallbackError);
-                    } else {
-                      map.addImage(iconName, fallbackImage);
-                      resolve();
-                    }
-                  }
-                );
-              } else {
-                map.addImage(iconName, image);
-                resolve();
-              }
-            }
-          );
-        });
-        iconPromises.push(iconPromise);
-      }
-    }
-
-    await Promise.all(iconPromises);
+    const markers = [];
 
     for (const point of data.points) {
       const stationInfo = stationMap.get(point.addr);
 
       if (stationInfo) {
-        features.push({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [stationInfo.long, stationInfo.lat],
-          },
-          properties: {
-            scale: point.scale,
-            name: point.addr,
-            pref: point.pref,
-          },
+        // Create icon for this intensity level
+        const iconUrl = `/assets/basemap/icons/intensities/${point.scale}.png`;
+        let stationIcon;
+        
+        try {
+          stationIcon = L.icon({
+            iconUrl: iconUrl,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+            popupAnchor: [0, -10]
+          });
+        } catch (error) {
+          console.warn(
+            `[ds/plotStations] bad scale image: ${point.scale}, using fallback`
+          );
+          stationIcon = L.icon({
+            iconUrl: "/assets/basemap/icons/intensities/invalid.png",
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+            popupAnchor: [0, -10]
+          });
+        }
+
+        // Create marker
+        const marker = L.marker([stationInfo.lat, stationInfo.long], {
+          icon: stationIcon
         });
+
+        // Add popup with station information
+        marker.bindPopup(`
+          <strong>${point.addr}</strong><br>
+          Prefecture: ${point.pref}<br>
+          Intensity: ${point.scale}
+        `);
+
+        markers.push(marker);
         stationCoordinates.push([stationInfo.long, stationInfo.lat]);
       } else {
         console.warn(
@@ -170,37 +130,8 @@ export async function plotStations(data) {
       }
     }
 
-    map.addSource("stationsLayer", {
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: features,
-      },
-    });
-
-    map.addLayer(
-      {
-        id: "stationsLayer",
-        type: "symbol",
-        source: "stationsLayer",
-        layout: {
-          "icon-image": [
-            "concat",
-            "intensity-",
-            ["to-string", ["get", "scale"]],
-          ],
-          "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
-          "icon-allow-overlap": true,
-        },
-        paint: {
-          "text-color": "#000000",
-          "text-halo-color": "#ffffff",
-          "text-halo-width": 1,
-          "symbol-sort": ["get", "scale"],
-        },
-      },
-      "epicenterIcon"
-    );
+    // Create layer group and add all markers
+    stationsLayer = L.layerGroup(markers).addTo(map);
 
     return stationCoordinates;
   } catch (error) {
@@ -216,13 +147,13 @@ export async function plotStations(data) {
  * @param {*} stationCoordinates The coordinates of the stations.
  */
 export async function boundMarkers(epicenter, stationCoordinates) {
-  const bounds = new mapboxgl.LngLatBounds();
+  const bounds = L.latLngBounds();
 
-  bounds.extend([epicenter.longitude, epicenter.latitude]);
+  bounds.extend([epicenter.latitude, epicenter.longitude]);
 
   if (stationCoordinates && stationCoordinates.length > 0) {
     for (const [long, lat] of stationCoordinates) {
-      bounds.extend([long, lat]);
+      bounds.extend([lat, long]);
     }
   } else {
     console.warn(

@@ -1,9 +1,10 @@
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, L } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 let tsunamiFlashInterval = null;
 let tsunamiFlashTimeout = null;
+let tsunamiGeoJSONLayer = null;
 
 let currentTsunamiBounds = null;
 export function getTsunamiBounds() {
@@ -22,11 +23,9 @@ function clearTsunamiLayers() {
     clearTimeout(tsunamiFlashTimeout);
     tsunamiFlashTimeout = null;
   }
-  if (map.getLayer("tsunamiAreas")) {
-    map.removeLayer("tsunamiAreas");
-  }
-  if (map.getSource("tsunamiAreas")) {
-    map.removeSource("tsunamiAreas");
+  if (tsunamiGeoJSONLayer) {
+    map.removeLayer(tsunamiGeoJSONLayer);
+    tsunamiGeoJSONLayer = null;
   }
   currentTsunamiBounds = null;
 }
@@ -170,7 +169,7 @@ export async function renderTS(data) {
     });
 
     const matchedFeatures = [];
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = L.latLngBounds();
 
     if (data.areas && Array.isArray(data.areas)) {
       for (const area of data.areas) {
@@ -194,12 +193,14 @@ export async function renderTS(data) {
 
           if (geoJSONFeature.geometry.type === "LineString") {
             geoJSONFeature.geometry.coordinates.forEach((coord) => {
-              bounds.extend(coord);
+              // Convert [lng, lat] to [lat, lng] for Leaflet
+              bounds.extend([coord[1], coord[0]]);
             });
           } else if (geoJSONFeature.geometry.type === "MultiLineString") {
             geoJSONFeature.geometry.coordinates.forEach((line) => {
               line.forEach((coord) => {
-                bounds.extend(coord);
+                // Convert [lng, lat] to [lat, lng] for Leaflet
+                bounds.extend([coord[1], coord[0]]);
               });
             });
           }
@@ -218,35 +219,43 @@ export async function renderTS(data) {
       return;
     }
 
-    map.addSource("tsunamiAreas", {
-      type: "geojson",
-      tolerance: 0,
-      data: {
-        type: "FeatureCollection",
-        features: matchedFeatures,
+    // Create Leaflet GeoJSON layer for tsunami areas
+    tsunamiGeoJSONLayer = L.geoJSON({
+      type: "FeatureCollection",
+      features: matchedFeatures,
+    }, {
+      style: function(feature) {
+        const grade = feature.properties.grade;
+        let color = "#707070"; // default color
+        
+        switch(grade) {
+          case "Watch":
+            color = "#ffff00";
+            break;
+          case "Warning":
+            color = "#ff0000";
+            break;
+          case "MajorWarning":
+            color = "#ff00ff";
+            break;
+        }
+        
+        return {
+          color: color,
+          weight: 2,
+          opacity: 1
+        };
       },
-    });
-
-    map.addLayer({
-      id: "tsunamiAreas",
-      type: "line",
-      source: "tsunamiAreas",
-      paint: {
-        "line-color": [
-          "case",
-          ["==", ["get", "grade"], "Watch"],
-          "#ffff00",
-          ["==", ["get", "grade"], "Warning"],
-          "#ff0000",
-          ["==", ["get", "grade"], "MajorWarning"],
-          "#ff00ff",
-          "#707070",
-        ],
-        "line-width": 2,
-        "line-opacity": 1,
-        "line-emissive-strength": 1,
-      },
-    });
+      onEachFeature: function(feature, layer) {
+        // Add popup with tsunami information
+        if (feature.properties.name && feature.properties.grade) {
+          layer.bindPopup(`
+            <strong>${feature.properties.name}</strong><br>
+            Grade: ${feature.properties.grade}
+          `);
+        }
+      }
+    }).addTo(map);
 
     if (tsunamiFlashInterval) {
       clearInterval(tsunamiFlashInterval);
@@ -257,12 +266,16 @@ export async function renderTS(data) {
       tsunamiFlashTimeout = null;
     }
     function setTsunamiLayerVisibility(vis) {
-      if (map.getLayer("tsunamiAreas")) {
-        map.setLayoutProperty(
-          "tsunamiAreas",
-          "visibility",
-          vis ? "visible" : "none"
-        );
+      if (tsunamiGeoJSONLayer) {
+        if (vis) {
+          if (!map.hasLayer(tsunamiGeoJSONLayer)) {
+            map.addLayer(tsunamiGeoJSONLayer);
+          }
+        } else {
+          if (map.hasLayer(tsunamiGeoJSONLayer)) {
+            map.removeLayer(tsunamiGeoJSONLayer);
+          }
+        }
       }
     }
     setTsunamiLayerVisibility(true);

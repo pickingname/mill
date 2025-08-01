@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { L } from "../../initMap.js";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController";
 import clear551 from "../../internal/clear551";
 import { updateEpicenterIcon } from "./ds";
@@ -11,22 +11,28 @@ import { map } from "../../initMap";
  * Custom epicenter / bounding function for Foreign reports.
  * This was different from the internalBound function due to this one not having maxZoom.
  *
- * @param {mapboxgl.LngLatLike} epicenterLng
- * @param {mapboxgl.LngLatLike} epicenterLat
+ * @param {number} epicenterLng
+ * @param {number} epicenterLat
  */
 export async function boundEpicenter(epicenterLng, epicenterLat) {
-  const bounds = new mapboxgl.LngLatBounds();
-  bounds.extend([epicenterLng, epicenterLat]);
+  const bounds = L.latLngBounds();
+  bounds.extend([epicenterLat, epicenterLng]);
+  
+  // Convert the main bounds coordinates (lng, lat) to (lat, lng) for Leaflet
   for (const coord of config.map.main_bounds) {
-    bounds.extend(coord);
+    bounds.extend([coord[1], coord[0]]); // swap lng,lat to lat,lng
   }
 
-  map.fitBounds(bounds, {
-    padding: config.map.bound_padding,
-    duration: config.map.bound_duration,
-    easing: (t) => 1 - Math.pow(1 - t, 5),
-    linear: true,
-  });
+  const paddingOptions = {
+    padding: [config.map.bound_padding, config.map.bound_padding]
+  };
+
+  if (config.map.bound_duration > 0) {
+    paddingOptions.animate = true;
+    paddingOptions.duration = config.map.bound_duration / 1000; // Convert to seconds
+  }
+
+  map.fitBounds(bounds, paddingOptions);
 }
 /**
  * A part of the main rendering logic for Foreign report (FO) on response code 551.

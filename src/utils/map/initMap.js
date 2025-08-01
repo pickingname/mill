@@ -1,89 +1,94 @@
-import mapboxgl from "mapbox-gl";
-import Minimap from "../../lib/minimap.js";
+import L from "leaflet";
+import { createMinimap } from "../../lib/minimap.js";
 import getMapPreset from "../date/getMapPreset.js";
 import { startMainLoop } from "../main.js";
 
 let map;
+let minimap = null;
 
 /**
- * Initializes the Mapbox map with the specified configuration.
+ * Initializes the Leaflet map with OpenStreetMap tiles and specified configuration.
  *
- * Sets up the map container, style, center, zoom level, and other properties.
- * And also initializes the minimap and sets up the map's terrain and drag/zoom behavior.
+ * Sets up the map container, tiles, center, zoom level, and other properties.
+ * And also initializes the minimap and sets up the map's drag/zoom behavior.
  * Then starts the main loop for data fetching and rendering.
  */
 export function initMap() {
-  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_ACCESS_TOKEN;
-  map = new mapboxgl.Map({
-    container: "map",
+  // Initialize Leaflet map
+  map = L.map("map", {
+    center: [34.7666345, 136.073149],
+    zoom: 4,
+    zoomControl: false,
     attributionControl: false,
-    style: "mapbox://styles/mapbox/standard?optimize=true",
-    worldview: "jp",
-    language: "en",
-    center: {
-      lng: 136.073149,
-      lat: 34.7666345,
-    },
-    zoom: "4",
-    projection: "mercator",
-    interactive: true,
-    fadeDuration: 0,
-    config: {
-      basemap: {
-        lightPreset: getMapPreset() || "day",
-        showPointOfInterestLabels: false,
-        showPedestrianRoads: false,
-        showLandmarkIcons: true,
-      },
-    },
+    maxBounds: [
+      [20, 120], // Southwest corner
+      [50, 155]  // Northeast corner (roughly Japan bounds)
+    ]
   });
 
-  map.on("load", function () {
-    const minimap = new Minimap({
-      lineColor: "#FF0000",
-      lineWidth: 2,
-      lineOpacity: getMapPreset() === "day" ? 0.5 : 1 || 1,
-      fillOpacity: 0,
-      center: {
-        lng: 136.073149,
-        lat: 34.7666345,
-      },
-      zoom: 2,
-      width: "100%",
-      height: "120px",
-    });
+  // Add OpenStreetMap tiles based on theme
+  const mapPreset = getMapPreset() || "day";
+  let tileLayerUrl;
+  let tileLayerOptions = {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18
+  };
+  
+  if (mapPreset === "night" || mapPreset === "dusk") {
+    // Use CartoDB dark tiles for night/dusk themes
+    tileLayerUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png";
+    tileLayerOptions.subdomains = ['a', 'b', 'c', 'd'];
+  } else {
+    // Use CartoDB light tiles for day/dawn themes (alternative to OSM)
+    tileLayerUrl = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png";
+    tileLayerOptions.subdomains = ['a', 'b', 'c', 'd'];
+  }
 
-    const sidebar = document.getElementById("sidebar");
-    const minimapContainer = document.createElement("div");
-    minimapContainer.id = "minimap-container";
-    minimapContainer.className = "p-4 hidden md:block";
-    sidebar.appendChild(minimapContainer);
+  const tileLayer = L.tileLayer(tileLayerUrl, tileLayerOptions);
+  
+  tileLayer.addTo(map);
 
-    minimap.onAdd(map);
-    minimapContainer.appendChild(minimap._container);
+  // Set up minimap after map is initialized
+  map.whenReady(function() {
+    try {
+      minimap = createMinimap({
+        lineColor: "#FF0000",
+        lineWidth: 2,
+        lineOpacity: mapPreset === "day" ? 0.5 : 1,
+        fillOpacity: 0,
+        center: [34.7666345, 136.073149],
+        zoom: 2,
+        width: "100%",
+        height: "120px",
+        toggleDisplay: true
+      });
 
-    if (minimap._miniMap) {
-      minimap._miniMap.resize();
+      const sidebar = document.getElementById("sidebar");
+      if (sidebar && minimap) {
+        const minimapContainer = document.createElement("div");
+        minimapContainer.id = "minimap-container";
+        minimapContainer.className = "p-4 hidden md:block";
+        sidebar.appendChild(minimapContainer);
+
+        const minimapElement = minimap.getContainer();
+        if (minimapElement) {
+          minimapContainer.appendChild(minimapElement);
+          minimap.addTo(map);
+        }
+      }
+    } catch (error) {
+      console.warn("[initMap] Error creating minimap:", error);
     }
-  });
 
-  map.dragRotate.disable();
-  map.touchZoomRotate.disableRotation();
-
-  map.on("style.load", () => {
-    map.addSource("mapbox-dem", {
-      type: "raster-dem",
-      url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-      tileSize: 512,
-      maxzoom: 14,
-    });
-    map.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
-  });
-
-  map.on("load", async () => {
-    map.resize();
+    // Start the main data loop
     startMainLoop();
+  });
+
+  // Handle any tile loading errors
+  tileLayer.on('tileerror', function(e) {
+    console.warn('[initMap] Tile loading error:', e);
   });
 }
 
-export { map, mapboxgl };
+export { map, L };
+export { L as mapboxgl }; // Export L as mapboxgl for backward compatibility
