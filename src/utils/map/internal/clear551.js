@@ -1,30 +1,28 @@
-import { map } from "../initMap";
+import { map, leaflet } from "../initMap.js";
+
+// Global layer groups for managing map layers
+let currentLayers = {
+  prefsLayer: null,
+  epicenterIcon: null, 
+  stationsLayer: null,
+  eewAreasLayer: null
+};
 
 export default function clear551() {
-  const layersToRemove = [
-    "prefsLayer",
-    "epicenterIcon",
-    "stationsLayer",
-    "eewAreasLayer",
-  ];
-
-  const sourcesToRemove = [
-    "prefsSource",
-    "epicenterIcon",
-    "eewAreasSource",
-    "stationsLayer",
-    "prefsSource",
-  ];
-
-  layersToRemove.forEach((layerId) => {
-    if (map.getLayer(layerId)) {
-      map.removeLayer(layerId);
+  // Remove all current layers
+  Object.values(currentLayers).forEach(layer => {
+    if (layer && map.hasLayer(layer)) {
+      map.removeLayer(layer);
     }
   });
-
-  sourcesToRemove.forEach((sourceId) => {
-    if (map.getSource(sourceId)) {
-      map.removeSource(sourceId);
-    }
-  });
+  
+  // Reset layer references
+  currentLayers = {
+    prefsLayer: null,
+    epicenterIcon: null,
+    stationsLayer: null, 
+    eewAreasLayer: null
+  };
 }
+
+export { currentLayers };

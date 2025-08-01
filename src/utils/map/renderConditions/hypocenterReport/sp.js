@@ -4,7 +4,7 @@ import {
   updateIntList,
 } from "../../../components/infoBox/updateIntList.js";
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, leaflet } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
@@ -146,10 +146,10 @@ export async function boundRegions(prefectureCoordinates) {
   }
 
   try {
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = leaflet.latLngBounds([]);
 
     prefectureCoordinates.forEach((coord) => {
-      bounds.extend(coord);
+      bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
     });
 
     internalBound(bounds);

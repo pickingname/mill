@@ -21,6 +21,6 @@
     ]
   },
   "dependencies": {
-    "mapbox-gl": "^3.13.0"
+    "leaflet": "^1.9.4"
   }
 }

@@ -1,5 +1,5 @@
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, leaflet } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 let tsunamiFlashInterval = null;
@@ -140,7 +140,7 @@ export async function renderTS(data) {
     });
 
     const matchedFeatures = [];
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = leaflet.latLngBounds([]);
 
     if (data.areas && Array.isArray(data.areas)) {
       for (const area of data.areas) {
@@ -164,12 +164,12 @@ export async function renderTS(data) {
 
           if (geoJSONFeature.geometry.type === "LineString") {
             geoJSONFeature.geometry.coordinates.forEach((coord) => {
-              bounds.extend(coord);
+              bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
             });
           } else if (geoJSONFeature.geometry.type === "MultiLineString") {
             geoJSONFeature.geometry.coordinates.forEach((line) => {
               line.forEach((coord) => {
-                bounds.extend(coord);
+                bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
               });
             });
           }

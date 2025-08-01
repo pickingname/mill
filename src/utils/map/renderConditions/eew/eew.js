@@ -1,7 +1,7 @@
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController";
 import clear551 from "../../internal/clear551";
 import { updateEpicenterIcon } from "../hypocenterReport/ds";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, leaflet } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
 import {
@@ -129,11 +129,11 @@ export default async function renderEEW(data) {
     console.error("[renderEEW] error plotting areas: ", error);
   }
 
-  const bounds = new mapboxgl.LngLatBounds();
-  bounds.extend([epicenterLng, epicenterLat]);
+  const bounds = leaflet.latLngBounds([]);
+  bounds.extend([epicenterLat, epicenterLng]);
   if (areaCoordinates && areaCoordinates.length > 0) {
     areaCoordinates.forEach((coord) => {
-      bounds.extend(coord);
+      bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
     });
   }
   internalBound(bounds);

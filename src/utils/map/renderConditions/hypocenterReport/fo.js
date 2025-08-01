@@ -1,24 +1,24 @@
-import mapboxgl from "mapbox-gl";
-import { updateInfoBox } from "../../../components/infoBox/infoBoxController";
-import clear551 from "../../internal/clear551";
-import { updateEpicenterIcon } from "./ds";
-import playSound from "../../../sound/playSound";
-import { disarmIntList } from "../../../components/infoBox/updateIntList";
-import { config } from "../../../config";
-import { map } from "../../initMap";
+import { leaflet } from "../../initMap.js";
+import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import clear551 from "../../internal/clear551.js";
+import { updateEpicenterIcon } from "./ds.js";
+import playSound from "../../../sound/playSound.js";
+import { disarmIntList } from "../../../components/infoBox/updateIntList.js";
+import { config } from "../../../config.js";
+import { map } from "../../initMap.js";
 
 export async function boundEpicenter(epicenterLng, epicenterLat) {
-  const bounds = new mapboxgl.LngLatBounds();
-  bounds.extend([epicenterLng, epicenterLat]);
+  const bounds = leaflet.latLngBounds([]);
+  bounds.extend([epicenterLat, epicenterLng]);
+  
   for (const coord of config.map.main_bounds) {
-    bounds.extend(coord); // Extend for each [lng, lat] pair
+    bounds.extend([coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
   }
 
   map.fitBounds(bounds, {
-    padding: config.map.bound_padding,
-    duration: config.map.bound_duration,
-    easing: (t) => 1 - Math.pow(1 - t, 5),
-    linear: true,
+    padding: [config.map.bound_padding, config.map.bound_padding],
+    animate: true,
+    duration: config.map.bound_duration / 1000
   });
 }
 
