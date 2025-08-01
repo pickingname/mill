@@ -5,7 +5,8 @@ let currentLayers = {
   prefsLayer: null,
   epicenterIcon: null, 
   stationsLayer: null,
-  eewAreasLayer: null
+  eewAreasLayer: null,
+  tsunamiAreas: null
 };
 
 export default function clear551() {
@@ -21,7 +22,8 @@ export default function clear551() {
     prefsLayer: null,
     epicenterIcon: null,
     stationsLayer: null, 
-    eewAreasLayer: null
+    eewAreasLayer: null,
+    tsunamiAreas: null
   };
 }
 

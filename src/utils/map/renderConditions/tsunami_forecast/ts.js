@@ -1,6 +1,7 @@
 import playSound from "../../../sound/playSound.js";
 import { map, leaflet } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
+import { currentLayers } from "../../internal/clear551.js";
 
 let tsunamiFlashInterval = null;
 let tsunamiFlashTimeout = null;
@@ -19,11 +20,9 @@ function clearTsunamiLayers() {
     clearTimeout(tsunamiFlashTimeout);
     tsunamiFlashTimeout = null;
   }
-  if (map.getLayer("tsunamiAreas")) {
-    map.removeLayer("tsunamiAreas");
-  }
-  if (map.getSource("tsunamiAreas")) {
-    map.removeSource("tsunamiAreas");
+  if (currentLayers.tsunamiAreas) {
+    map.removeLayer(currentLayers.tsunamiAreas);
+    currentLayers.tsunamiAreas = null;
   }
   currentTsunamiBounds = null;
 }
@@ -188,36 +187,74 @@ export async function renderTS(data) {
       return;
     }
 
-    map.addSource("tsunamiAreas", {
-      type: "geojson",
-      tolerance: 0,
-      data: {
-        type: "FeatureCollection",
-        features: matchedFeatures,
-      },
-    });
+    // Create Leaflet polylines for tsunami areas
+    const tsunamiPolylines = [];
+    
+    for (const feature of matchedFeatures) {
+      const grade = feature.properties.grade;
+      let color = "#707070";
+      
+      switch (grade) {
+        case "Watch":
+          color = "#ffff00";
+          break;
+        case "Warning":
+          color = "#ff0000";
+          break;
+        case "MajorWarning":
+          color = "#ff00ff";
+          break;
+      }
+      
+      let coords = [];
+      if (feature.geometry.type === "LineString") {
+        coords = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+      } else if (feature.geometry.type === "MultiLineString") {
+        // For MultiLineString, create multiple polylines
+        for (const line of feature.geometry.coordinates) {
+          const lineCoords = line.map(coord => [coord[1], coord[0]]);
+          const polyline = leaflet.polyline(lineCoords, {
+            color: color,
+            weight: 2,
+            opacity: 1
+          });
+          
+          polyline.bindPopup(`
+            <strong>Tsunami ${grade}</strong><br>
+            Area: ${feature.properties.name || 'Unknown'}<br>
+            Max Height: ${feature.properties.maxHeight || 'Unknown'}<br>
+            First Height: ${feature.properties.firstHeight || 'Unknown'}
+          `);
+          
+          tsunamiPolylines.push(polyline);
+        }
+        continue;
+      }
+      
+      if (coords.length > 0) {
+        const polyline = leaflet.polyline(coords, {
+          color: color,
+          weight: 2,
+          opacity: 1
+        });
+        
+        polyline.bindPopup(`
+          <strong>Tsunami ${grade}</strong><br>
+          Area: ${feature.properties.name || 'Unknown'}<br>
+          Max Height: ${feature.properties.maxHeight || 'Unknown'}<br>
+          First Height: ${feature.properties.firstHeight || 'Unknown'}
+        `);
+        
+        tsunamiPolylines.push(polyline);
+      }
+    }
 
-    map.addLayer({
-      id: "tsunamiAreas",
-      type: "line",
-      source: "tsunamiAreas",
-      paint: {
-        "line-color": [
-          "case",
-          ["==", ["get", "grade"], "Watch"],
-          "#ffff00",
-          ["==", ["get", "grade"], "Warning"],
-          "#ff0000",
-          ["==", ["get", "grade"], "MajorWarning"],
-          "#ff00ff",
-          "#707070",
-        ],
-        "line-width": 2,
-        "line-opacity": 1,
-        "line-emissive-strength": 1,
-      },
-    });
+    // Create layer group and add to map
+    if (tsunamiPolylines.length > 0) {
+      currentLayers.tsunamiAreas = leaflet.layerGroup(tsunamiPolylines).addTo(map);
+    }
 
+    // Set up flashing effect
     if (tsunamiFlashInterval) {
       clearInterval(tsunamiFlashInterval);
       tsunamiFlashInterval = null;
@@ -226,15 +263,15 @@ export async function renderTS(data) {
       clearTimeout(tsunamiFlashTimeout);
       tsunamiFlashTimeout = null;
     }
-    function setTsunamiLayerVisibility(vis) {
-      if (map.getLayer("tsunamiAreas")) {
-        map.setLayoutProperty(
-          "tsunamiAreas",
-          "visibility",
-          vis ? "visible" : "none"
-        );
+    
+    function setTsunamiLayerVisibility(visible) {
+      if (currentLayers.tsunamiAreas) {
+        currentLayers.tsunamiAreas.eachLayer(layer => {
+          layer.setStyle({ opacity: visible ? 1 : 0 });
+        });
       }
     }
+    
     setTsunamiLayerVisibility(true);
     tsunamiFlashInterval = setInterval(() => {
       setTsunamiLayerVisibility(false);

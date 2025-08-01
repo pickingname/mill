@@ -1,6 +1,6 @@
-import { updateInfoBox } from "../../../components/infoBox/infoBoxController";
-import clear551 from "../../internal/clear551";
-import { updateEpicenterIcon } from "../hypocenterReport/ds";
+import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import clear551, { currentLayers } from "../../internal/clear551.js";
+import { updateEpicenterIcon } from "../hypocenterReport/ds.js";
 import { map, leaflet } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
@@ -23,100 +23,45 @@ export default async function renderEEW(data) {
   let areaCoordinates = [];
   try {
     const prefectureMap = await getPrefectureMap();
-    const features = [];
-    const iconPromises = [];
-    const loadedIcons = new Set();
-    for (const area of data.areas || []) {
-      const areaName = area.name;
-      const scaleTo = parseInt(area.scaleTo, 10);
-      const iconName = `scale-${scaleTo}`;
-      if (!map.hasImage(iconName) && !loadedIcons.has(iconName)) {
-        loadedIcons.add(iconName);
-        const iconPromise = new Promise((resolve, reject) => {
-          map.loadImage(
-            `/assets/basemap/icons/scales/${scaleTo}.png`,
-            (error, image) => {
-              if (error) {
-                console.warn(
-                  `[renderEEW] bad scale image: ${scaleTo}, `,
-                  error,
-                  " using fallback"
-                );
-                map.loadImage(
-                  "/assets/basemap/icons/scales/invalid.png",
-                  (fallbackError, fallbackImage) => {
-                    if (fallbackError) {
-                      console.error(
-                        `[renderEEW] failed to load fallback icon: ${iconName} `,
-                        fallbackError
-                      );
-                      reject(fallbackError);
-                    } else {
-                      map.addImage(iconName, fallbackImage);
-                      resolve();
-                    }
-                  }
-                );
-              } else {
-                map.addImage(iconName, image);
-                resolve();
-              }
-            }
-          );
-        });
-        iconPromises.push(iconPromise);
-      }
-    }
-    await Promise.all(iconPromises);
+    const areaMarkers = [];
+
     for (const area of data.areas || []) {
       const areaName = area.name;
       const scaleTo = parseInt(area.scaleTo, 10);
       const prefectureInfo = prefectureMap.get(areaName);
+      
       if (prefectureInfo) {
-        features.push({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [prefectureInfo.lng, prefectureInfo.lat],
-          },
-          properties: {
-            scale: scaleTo,
-            name: areaName,
-            pref: area.pref,
-          },
+        // Create icon for this scale
+        const scaleIcon = leaflet.icon({
+          iconUrl: `/assets/basemap/icons/scales/${scaleTo}.png`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+          popupAnchor: [0, -10]
         });
+
+        // Create marker
+        const marker = leaflet.marker([prefectureInfo.lat, prefectureInfo.lng], {
+          icon: scaleIcon
+        });
+
+        // Add popup with area info
+        marker.bindPopup(`
+          <strong>${areaName}</strong><br>
+          Expected Intensity: ${scaleTo}<br>
+          Prefecture: ${area.pref || 'Unknown'}
+        `);
+
+        areaMarkers.push(marker);
         areaCoordinates.push([prefectureInfo.lng, prefectureInfo.lat]);
       } else {
         console.warn(`[renderEEW] area not found in ref data: ${areaName}`);
       }
     }
-    map.addSource("eewAreasSource", {
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: features,
-      },
-    });
-    map.addLayer(
-      {
-        id: "eewAreasLayer",
-        type: "symbol",
-        source: "eewAreasSource",
-        layout: {
-          "icon-image": ["concat", "scale-", ["to-string", ["get", "scale"]]],
-          "icon-size": 20 / 30,
-          "icon-allow-overlap": true,
-          "icon-ignore-placement": true,
-        },
-        paint: {
-          "text-color": "#000000",
-          "text-halo-color": "#ffffff",
-          "text-halo-width": 1,
-          "symbol-sort": ["get", "scale"],
-        },
-      },
-      "epicenterIcon"
-    );
+
+    // Create layer group for EEW areas
+    if (areaMarkers.length > 0) {
+      currentLayers.eewAreasLayer = leaflet.layerGroup(areaMarkers).addTo(map);
+    }
 
     const points = (data.areas || []).map((area) => ({
       addr: area.name,
