@@ -10,6 +10,19 @@ import {
 } from "../../../components/infoBox/updateIntList.js";
 import { getPrefectureMap } from "../hypocenterReport/sp.js";
 
+/**
+ * A part of the main rendering logic for Earthquake Early Warning (EEW) on response code 556.
+ *
+ * Renders the EEW data on the map
+ *
+ * Includes:
+ * - Clearing plotted 551 datas.
+ * - Epicenter icon update
+ * - Area plotting with scale icons
+ * - Information box update
+ *
+ * @param {Object} data - The EEW data to render.
+ */
 export default async function renderEEW(data) {
   playSound("eew", 0.5);
   clear551();

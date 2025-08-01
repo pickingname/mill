@@ -10,6 +10,9 @@ export function getTsunamiBounds() {
   return currentTsunamiBounds;
 }
 
+/**
+ * Function to clear all tsunami-related layers and intervals.
+ */
 function clearTsunamiLayers() {
   if (tsunamiFlashInterval) {
     clearInterval(tsunamiFlashInterval);
@@ -28,6 +31,13 @@ function clearTsunamiLayers() {
   currentTsunamiBounds = null;
 }
 
+/**
+ * Updates the sidebar with tsunami area information.
+ *
+ * @param {*} areas Tsunami areas to be displayed in the sidebar.
+ * @param {*} geojsonFeatures GeoJSON features containing area information.
+ * @returns {void}
+ */
 function updateTsunamiSidebar(areas, geojsonFeatures) {
   const gradeMap = {
     MajorWarning: {
@@ -108,12 +118,32 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
   });
 }
 
+/**
+ * Clears all tsunami-related assets and events, including layers and intervals.
+ *
+ * @returns {void}
+ */
 export function clearAllTsAssets() {
   clearTsunamiLayers();
   disarmTsComponent();
   return;
 }
 
+/**
+ * A part of the main rendering logic for Tsunami (TS) on special logic event recieved by the /jma endpoint of the API.
+ *
+ * Renders the Tsunami data on the map and updates the sidebar with tsunami area information.
+ *
+ * Includes:
+ * - Clearing previous plotted data
+ * - Fetching tsunami areas from a geojson file
+ * - Plotting tsunami areas on the map
+ * - Bounding the map to the plotted areas
+ * - Updating the sidebar with tsunami area information
+ *
+ * @param {*} data
+ * @returns {Promise<void>} Returns a promise that resolves when the tsunami data is rendered.
+ */
 export async function renderTS(data) {
   if (data.cancelled || data === "[]") {
     clearAllTsAssets();
@@ -313,12 +343,20 @@ export async function renderTS(data) {
   }
 }
 
+/**
+ * Arms the tsunami component by making the tsunami information container visible.
+ * This function is called when tsunami data is available and needs to be displayed.
+ */
 function armTsComponent() {
   document.getElementById("tsInfoContainer").classList.remove("hidden");
   document.getElementById("tsunamiContainer").classList.remove("hidden");
   document.getElementById("noInfoIssuedText").classList.add("hidden");
 }
 
+/**
+ * Disarms the tsunami component by hiding the tsunami information container.
+ * This function is called when there is no tsunami data to display.
+ */
 function disarmTsComponent() {
   document.getElementById("tsInfoContainer").classList.add("hidden");
   document.getElementById("tsunamiContainer").classList.add("hidden");

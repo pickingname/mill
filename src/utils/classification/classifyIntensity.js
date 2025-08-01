@@ -1,3 +1,9 @@
+/**
+ * Converts API intensity values to human readable format.
+ *
+ * @param {Number} intensity the API form of intensity
+ * @returns {String} Human readable intensity level
+ */
 export default function classifyIntensity(intensity) {
   switch (intensity) {
     case 10:

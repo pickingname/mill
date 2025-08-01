@@ -1,5 +1,9 @@
 import getMapPreset from "../date/getMapPreset.js";
 
+/**
+ * Mapbox default theme includes four themes: day, dawn, dusk, and night.
+ * This util function sets the COMPONENT theme (which can either be "light" or "dark") based on the current time of day by calling getMapPreset() and switching the return value.
+ */
 export default function autoTheme() {
   const currentTheme = getMapPreset() || "day";
   switch (currentTheme) {
@@ -28,21 +32,5 @@ export function setTheme(theme) {
   } else {
     document.getElementById("infoContainer").classList.remove("dark");
     document.getElementById("infoContainer").classList.add("light");
-  }
-}
-
-export function getTheme() {
-  const currentTheme = getMapPreset() || "day";
-  switch (currentTheme) {
-    case "day":
-      return "light";
-    case "dawn":
-      return "light";
-    case "dusk":
-      return "dark";
-    case "night":
-      return "dark";
-    default:
-      return "light";
   }
 }

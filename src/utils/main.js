@@ -25,6 +25,11 @@ initMap();
 autoTheme();
 showSidebar();
 
+/**
+ * This secondary loop fetches tsunami data (from /jma endpoints) and update in the map if available.
+ *
+ * @returns {Promise<void>} Returns a promise that resolves when the epicenter icon is updated.
+ */
 export async function secondaryLoop() {
   currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
   if (
@@ -43,6 +48,11 @@ export async function secondaryLoop() {
   }
 }
 
+/**
+ * This main loop fetches data from the API and renders it based on the data type.
+ *
+ * @returns {Promise<void>} Returns a promise that resolves when the main loop completes.
+ */
 export async function mainLoop() {
   currentData = await fetchData(config.api.base_url);
 
@@ -89,6 +99,9 @@ export async function mainLoop() {
   }
 }
 
+/**
+ * This function starts the main loop and sets up intervals for data fetching.
+ */
 export function startMainLoop() {
   mainLoop().then();
   setInterval(mainLoop, config.api.interval);

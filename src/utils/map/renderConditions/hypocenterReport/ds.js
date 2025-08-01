@@ -9,6 +9,13 @@ import {
   updateIntList,
 } from "../../../components/infoBox/updateIntList.js";
 
+/**
+ * Helper function to update the epicenter icon on the map.
+ *
+ * @param {*} epicenterLng Longitude of the epicenter
+ * @param {*} epicenterLat Latitude of the epicenter
+ * @param {*} epicenterType Type of the epicenter (e.g., "epicenter", "potentialEpicenter") and displays it's respective icon on the map.
+ */
 export async function updateEpicenterIcon(
   epicenterLng,
   epicenterLat,
@@ -57,6 +64,12 @@ export async function updateEpicenterIcon(
   });
 }
 
+/**
+ * Iterate and plots the stations with it's intensity on the map.
+ *
+ * @param {*} data Data containing station information.
+ * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
+ */
 export async function plotStations(data) {
   if (map.getLayer("stationsLayer")) {
     map.removeLayer("stationsLayer");
@@ -196,6 +209,12 @@ export async function plotStations(data) {
   }
 }
 
+/**
+ * Bounds the map view to the epicenter and stations.
+ *
+ * @param {*} epicenter The epicenter coordinates.
+ * @param {*} stationCoordinates The coordinates of the stations.
+ */
 export async function boundMarkers(epicenter, stationCoordinates) {
   const bounds = new mapboxgl.LngLatBounds();
 
@@ -214,6 +233,20 @@ export async function boundMarkers(epicenter, stationCoordinates) {
   internalBound(bounds);
 }
 
+/**
+ * A part of the main rendering logic for DetailScale (DS) on response code 551.
+ *
+ * Renders the DetailScale data on the map and updates the information box and sidebar.
+ *
+ * Includes:
+ * - Clearing previous plotted data
+ * - Epicenter icon update
+ * - Station plotting with intensity
+ * - Map bounding to epicenter and stations
+ * - Info box update with detailed epicenter information
+ *
+ * @param {*} data The DetailScale data to render.
+ */
 export async function renderDS(data) {
   playSound("detailScale", 0.5);
   clear551();

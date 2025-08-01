@@ -2,6 +2,13 @@ import { config } from "../../config";
 import { map, mapboxgl } from "../initMap.js";
 import { getTsunamiBounds } from "../renderConditions/tsunami_forecast/ts.js";
 
+/**
+ * Internal function to fit the map camera to a given bounds.
+ * This was made so we don't need to pass the arguments every time we want to do bound actions.
+ * Configured to make the bound to do quick smooth linear zooming into the bounds with max zoom level of 7.
+ *
+ * @param {mapboxgl.LngLatBounds} bound The bounds to fit the camera to.
+ */
 export function internalBound(bound) {
   const tsunamiBounds = getTsunamiBounds && getTsunamiBounds();
   let mergedBounds = bound;
