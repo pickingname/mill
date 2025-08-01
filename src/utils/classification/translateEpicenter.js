@@ -1,7 +1,7 @@
-import epicenterRef from "../../special/epicenterRef.json";
+import epicenterRef from "../../../public/assets/comparision/epicenterRef.json";
 
 /**
- * Translates an untransalted epicenter name to its English equivalent.
+ * Translates an untranslated epicenter name to its English equivalent.
  *
  * @param {String} unTranslatedEpicenter
  * @returns {String} The English equivalent of the epicenter name, or the original name if unavailable.
