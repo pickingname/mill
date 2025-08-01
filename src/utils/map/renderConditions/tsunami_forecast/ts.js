@@ -1,5 +1,5 @@
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, L } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 let tsunamiFlashInterval = null;
@@ -170,7 +170,7 @@ export async function renderTS(data) {
     });
 
     const matchedFeatures = [];
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = L.latLngBounds();
 
     if (data.areas && Array.isArray(data.areas)) {
       for (const area of data.areas) {
