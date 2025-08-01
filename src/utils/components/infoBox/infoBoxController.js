@@ -9,6 +9,17 @@ export function hideInfoBox() {
   document.getElementById("infoContainer").classList.add("hidden");
 }
 
+/**
+ * Update the text in the infoBox component in the UI.
+ *
+ * @param {String} reportType The report type (e.g "Hypocenter Report", "Flash Report" etc.)
+ * @param {String} unTranslatedEpicenter Untranslated epicenter name, this will be translated
+ * @param {Number} magnitude Magnitude of the earthquake
+ * @param {Number} depth Depth of the earthquake
+ * @param {String} time The time given by the API, default api TZ: JST (GMT+9)
+ * @param {String} additionalInfo Additional information about the earthquake (UNUSED)
+ * @param {String} maxInt Maximum intensity of the earthquake (e.g. "5+", "6-", etc.)
+ */
 export function updateInfoBox(
   reportType,
   unTranslatedEpicenter,

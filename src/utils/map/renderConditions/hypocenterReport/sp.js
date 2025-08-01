@@ -8,6 +8,11 @@ import { map, mapboxgl } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
+/**
+ * Get mappings for the prefecture data (like lat,lon) from a CSV file.
+ *
+ * @returns {Promise<Map>} Returns a promise that resolves to a Mappings of prefecture data.
+ */
 export async function getPrefectureMap() {
   const response = await fetch("/assets/comparision/prefectureRef.csv");
   if (!response.ok) {
@@ -36,6 +41,13 @@ export async function getPrefectureMap() {
   return prefectureMap;
 }
 
+/**
+ * Function to plot regions as icons on the map based on the provided data, intensity (or called scale) and prefecture map.
+ *
+ * @param {*} data
+ * @param {*} prefectureMap
+ * @returns {Promise<Array>} Returns a promise that resolves to an array of prefecture coordinates.
+ */
 export async function plotRegions(data, prefectureMap) {
   try {
     const features = [];
@@ -158,6 +170,19 @@ export async function boundRegions(prefectureCoordinates) {
   }
 }
 
+/**
+ * A part of the main rendering logic for ScalePrompt (SP) on response code 551.
+ *
+ * Renders the ScalePrompt data on the map and updates the information box and sidebar.
+ *
+ * Includes:
+ * - Clearing previous plotted data
+ * - Prefecture icon update
+ * - Prefecture bounding
+ * - Information box update
+ *
+ * @param {*} data
+ */
 export async function renderSP(data) {
   playSound("scalePrompt", 0.5);
   clear551();

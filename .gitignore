@@ -9,3 +9,4 @@
 /tests/api/.venv
 /tests/api/__pycache__
 /tests/api/samples/p2p/extra_samples
+/out

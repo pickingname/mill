@@ -5,6 +5,13 @@ import { startMainLoop } from "../main.js";
 
 let map;
 
+/**
+ * Initializes the Mapbox map with the specified configuration.
+ *
+ * Sets up the map container, style, center, zoom level, and other properties.
+ * And also initializes the minimap and sets up the map's terrain and drag/zoom behavior.
+ * Then starts the main loop for data fetching and rendering.
+ */
 export function initMap() {
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_ACCESS_TOKEN;
   map = new mapboxgl.Map({

@@ -7,11 +7,18 @@ import { disarmIntList } from "../../../components/infoBox/updateIntList";
 import { config } from "../../../config";
 import { map } from "../../initMap";
 
+/**
+ * Custom epicenter / bounding function for Foreign reports.
+ * This was different from the internalBound function due to this one not having maxZoom.
+ *
+ * @param {mapboxgl.LngLatLike} epicenterLng
+ * @param {mapboxgl.LngLatLike} epicenterLat
+ */
 export async function boundEpicenter(epicenterLng, epicenterLat) {
   const bounds = new mapboxgl.LngLatBounds();
   bounds.extend([epicenterLng, epicenterLat]);
   for (const coord of config.map.main_bounds) {
-    bounds.extend(coord); // Extend for each [lng, lat] pair
+    bounds.extend(coord);
   }
 
   map.fitBounds(bounds, {
@@ -21,7 +28,19 @@ export async function boundEpicenter(epicenterLng, epicenterLat) {
     linear: true,
   });
 }
-
+/**
+ * A part of the main rendering logic for Foreign report (FO) on response code 551.
+ *
+ * Renders the Foreign report data on the map and updates the information box and sidebar.
+ *
+ * Includes:
+ * - Clearing previous plotted data
+ * - Epicenter icon update
+ * - Epicenter bounding
+ * - Information box update
+ *
+ * @param {*} data
+ */
 export default async function renderFO(data) {
   playSound("detailScale", 0.5);
   clear551();
