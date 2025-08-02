@@ -14,26 +14,18 @@ import {
  *
  * @param {*} epicenterLng Longitude of the epicenter
  * @param {*} epicenterLat Latitude of the epicenter
- * @param {*} epicenterType Type of the epicenter (e.g., "epicenter", "potentialEpicenter") and displays it's respective icon on the map.
  */
-export async function updateEpicenterIcon(
-  epicenterLng,
-  epicenterLat,
-  epicenterType
-) {
+export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
   if (!map.hasImage("epicenter")) {
     await new Promise((resolve, reject) => {
-      map.loadImage(
-        `/assets/basemap/icons/${epicenterType}.png`,
-        (error, image) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          map.addImage("epicenter", image);
-          resolve();
+      map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
+        if (error) {
+          reject(error);
+          return;
         }
-      );
+        map.addImage("epicenter", image);
+        resolve();
+      });
     });
   }
 
@@ -59,7 +51,7 @@ export async function updateEpicenterIcon(
     source: "epicenterIcon",
     layout: {
       "icon-image": "epicenter",
-      "icon-size": epicenterType === "epicenter" ? 31 / 31 : 30 / 100, // USAGE: mapIconSizePX / imageSizePX
+      "icon-size": 30 / 31, // USAGE: mapIconSizePX / imageSizePX
     },
   });
 }
@@ -265,7 +257,7 @@ export async function renderDS(data) {
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
 
-  await updateEpicenterIcon(epicenterLng, epicenterLat, "epicenter");
+  await updateEpicenterIcon(epicenterLng, epicenterLat);
 
   const stationCoordinates = await plotStations(data);
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);

@@ -4,8 +4,17 @@ import json
 import time
 from fastapi import FastAPI, Response
 from threading import Lock
+from fastapi.middleware.cors import CORSMiddleware 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 P2P_FOLDER = os.path.join(os.path.dirname(__file__), 'samples', 'p2p')
 JMA_FOLDER = os.path.join(os.path.dirname(__file__), 'samples', 'jma')

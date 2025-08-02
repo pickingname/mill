@@ -26,11 +26,15 @@ export default function autoTheme() {
 }
 
 export function setTheme(theme) {
+  const root = document.documentElement;
+
   if (theme === "dark") {
     document.getElementById("infoContainer").classList.remove("light");
     document.getElementById("infoContainer").classList.add("dark");
+    root.style.setProperty("color-scheme", "dark");
   } else {
     document.getElementById("infoContainer").classList.remove("dark");
     document.getElementById("infoContainer").classList.add("light");
+    root.style.setProperty("color-scheme", "light");
   }
 }
