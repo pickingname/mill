@@ -1,4 +1,4 @@
-import epicenterRef from "../../../public/assets/comparision/epicenterRef.json";
+import epicenterRef from "../../special/epicenterRef.json";
 
 /**
  * Translates an untranslated epicenter name to its English equivalent.
