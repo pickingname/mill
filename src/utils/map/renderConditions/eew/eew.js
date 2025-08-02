@@ -31,7 +31,7 @@ export default async function renderEEW(data) {
   const hyp = data.earthquake.hypocenter;
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
-  await updateEpicenterIcon(epicenterLng, epicenterLat, "potentialEpicenter");
+  await updateEpicenterIcon(epicenterLng, epicenterLat);
 
   let areaCoordinates = [];
   try {
