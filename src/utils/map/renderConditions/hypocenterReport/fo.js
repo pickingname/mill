@@ -39,7 +39,9 @@ export async function boundEpicenter(epicenterLng, epicenterLat) {
  * - Epicenter bounding
  * - Information box update
  *
- * @param {*} data
+ * @param {Object} data The Foreign data to render.
+ * @return {Promise<void>} Returns a promise that resolves when the Foreign report is rendered.
+ * @throws {Error} Throws an error if the epicenter coordinates are not available.
  */
 export default async function renderFO(data) {
   playSound("detailScale", 0.5);

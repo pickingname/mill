@@ -2,10 +2,22 @@ import classifyIntensity from "../../classification/classifyIntensity.js";
 
 const intListParent = document.getElementById("intListParent");
 
+/**
+ * Arms the intensity list, making it visible.
+ * Used when the report type includes intensity/points data.
+ *
+ * @returns {void}
+ */
 export function armIntList() {
   intListParent.classList.remove("hidden");
 }
 
+/**
+ * Disarms the intensity list, making it invisible.
+ * Used when the report type doesn't include intensity/points data.
+ *
+ * @returns {void}
+ */
 export function disarmIntList() {
   intListParent.classList.add("hidden");
 }
@@ -29,6 +41,14 @@ function haversineDistance(coords1, coords2) {
   return R * c;
 }
 
+/**
+ * Iterate and updates the intensity list with the provided data and station map.
+ *
+ * @param {Object} data Data containing intensity points and earthquake information.
+ * @param {Map} stationMap Map containing station information with latitude and longitude.
+ *
+ * @returns {Promise<void>} Returns a promise that resolves when the intensity list is updated.
+ */
 export async function updateIntList(data, stationMap) {
   let epicenterCoords = null;
   if (data.earthquake && data.earthquake.hypocenter) {

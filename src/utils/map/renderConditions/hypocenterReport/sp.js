@@ -44,8 +44,8 @@ export async function getPrefectureMap() {
 /**
  * Function to plot regions as icons on the map based on the provided data, intensity (or called scale) and prefecture map.
  *
- * @param {*} data
- * @param {*} prefectureMap
+ * @param {Object} data Data containing region information with points and their scales.
+ * @param {Map} prefectureMap Map containing prefecture information with lat, lng, and other details.
  * @returns {Promise<Array>} Returns a promise that resolves to an array of prefecture coordinates.
  */
 export async function plotRegions(data, prefectureMap) {
@@ -181,7 +181,8 @@ export async function boundRegions(prefectureCoordinates) {
  * - Prefecture bounding
  * - Information box update
  *
- * @param {*} data
+ * @param {Object} data The ScalePrompt data to render.
+ * @returns {Promise<void>} Returns a promise that resolves when the ScalePrompt is rendered.
  */
 export async function renderSP(data) {
   playSound("scalePrompt", 0.5);
@@ -189,7 +190,7 @@ export async function renderSP(data) {
   armIntList();
   updateInfoBox(
     "Flash Report",
-    "Evalulating Epicenter",
+    "Evaluating Epicenter",
     "--",
     "Unknown",
     data.earthquake.time,

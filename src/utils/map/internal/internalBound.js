@@ -8,6 +8,8 @@ import { getTsunamiBounds } from "../renderConditions/tsunami_forecast/ts.js";
  * Configured to make the bound to do quick smooth linear zooming into the bounds with max zoom level of 7.
  *
  * @param {mapboxgl.LngLatBounds} bound The bounds to fit the camera to.
+ * @throws {Error} Throws an error if the provided bound is not a valid LngLatBounds.
+ * @returns {void}
  */
 export function internalBound(bound) {
   const tsunamiBounds = getTsunamiBounds && getTsunamiBounds();

@@ -12,6 +12,9 @@ export function getTsunamiBounds() {
 
 /**
  * Function to clear all tsunami-related layers and intervals.
+ *
+ * @returns {void}
+ * @private
  */
 function clearTsunamiLayers() {
   if (tsunamiFlashInterval) {
@@ -37,6 +40,7 @@ function clearTsunamiLayers() {
  * @param {*} areas Tsunami areas to be displayed in the sidebar.
  * @param {*} geojsonFeatures GeoJSON features containing area information.
  * @returns {void}
+ * @private
  */
 function updateTsunamiSidebar(areas, geojsonFeatures) {
   const gradeMap = {
@@ -141,8 +145,9 @@ export function clearAllTsAssets() {
  * - Bounding the map to the plotted areas
  * - Updating the sidebar with tsunami area information
  *
- * @param {*} data
- * @returns {Promise<void>} Returns a promise that resolves when the tsunami data is rendered.
+ * @param {object} data The tsunami data to render.
+ * @throws {error} Throws if the tsunami areas geojson cannot be fetched or parsed.
+ * @returns {promise<void>} Returns a promise that resolves when the tsunami data is rendered.
  */
 export async function renderTS(data) {
   if (data.cancelled || data === "[]") {
@@ -346,6 +351,9 @@ export async function renderTS(data) {
 /**
  * Arms the tsunami component by making the tsunami information container visible.
  * This function is called when tsunami data is available and needs to be displayed.
+ *
+ * @returns {void}
+ * @private
  */
 function armTsComponent() {
   document.getElementById("tsInfoContainer").classList.remove("hidden");
@@ -356,6 +364,9 @@ function armTsComponent() {
 /**
  * Disarms the tsunami component by hiding the tsunami information container.
  * This function is called when there is no tsunami data to display.
+ *
+ * @returns {void}
+ * @private
  */
 function disarmTsComponent() {
   document.getElementById("tsInfoContainer").classList.add("hidden");

@@ -25,6 +25,12 @@ export default function autoTheme() {
   }
 }
 
+/**
+ * Sets the theme for the application as CSS vars and classes, not the map theme.
+ *
+ * @param {String} theme Theme to set ('light' or 'dark').
+ * @returns {void}
+ */
 export function setTheme(theme) {
   const root = document.documentElement;
 

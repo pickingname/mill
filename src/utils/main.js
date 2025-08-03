@@ -101,6 +101,8 @@ export async function mainLoop() {
 
 /**
  * This function starts the main loop and sets up intervals for data fetching.
+ *
+ * @returns {void}
  */
 export function startMainLoop() {
   mainLoop().then();

@@ -1,10 +1,20 @@
 import classifyIntensity from "../../classification/classifyIntensity.js";
 import translateEpicenter from "../../classification/translateEpicenter.js";
 
+/**
+ * Shows the infoBox component in the UI.
+ *
+ * @returns {void}
+ */
 export function showInfoBox() {
   document.getElementById("infoContainer").classList.remove("hidden");
 }
 
+/**
+ * Hides the infoBox component in the UI.
+ *
+ * @returns {void}
+ */
 export function hideInfoBox() {
   document.getElementById("infoContainer").classList.add("hidden");
 }
@@ -19,6 +29,9 @@ export function hideInfoBox() {
  * @param {String} time The time given by the API, default api TZ: JST (GMT+9)
  * @param {String} additionalInfo Additional information about the earthquake (UNUSED)
  * @param {String} maxInt Maximum intensity of the earthquake (e.g. "5+", "6-", etc.)
+ *
+ *
+ * @returns {void}
  */
 export function updateInfoBox(
   reportType,

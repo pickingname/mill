@@ -237,7 +237,9 @@ export async function boundMarkers(epicenter, stationCoordinates) {
  * - Map bounding to epicenter and stations
  * - Info box update with detailed epicenter information
  *
- * @param {*} data The DetailScale data to render.
+ * @param {Object} data The DetailScale data to render.
+ * @returns {Promise<void>} Returns a promise that resolves when the DetailScale is rendered.
+ * @throws {Error} Throws an error if the stationRef.csv cannot be fetched or parsed.
  */
 export async function renderDS(data) {
   playSound("detailScale", 0.5);
