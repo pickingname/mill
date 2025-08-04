@@ -11,6 +11,8 @@ let map;
  * Sets up the map container, style, center, zoom level, and other properties.
  * And also initializes the minimap and sets up the map's terrain and drag/zoom behavior.
  * Then starts the main loop for data fetching and rendering.
+ *
+ * @returns {void}
  */
 export function initMap() {
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_GL_ACCESS_TOKEN;
