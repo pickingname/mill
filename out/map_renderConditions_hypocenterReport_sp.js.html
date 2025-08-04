@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: map/renderConditions/hypocenterReport/sp.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: map/renderConditions/hypocenterReport/sp.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import {
+  armIntList,
+  updateIntList,
+} from "../../../components/infoBox/updateIntList.js";
+import playSound from "../../../sound/playSound.js";
+import { map, mapboxgl } from "../../initMap.js";
+import clear551 from "../../internal/clear551.js";
+import { internalBound } from "../../internal/internalBound.js";
+
+/**
+ * Get mappings for the prefecture data (like lat,lon) from a CSV file.
+ *
+ * @returns {Promise&lt;Map>} Returns a promise that resolves to a Mappings of prefecture data.
+ */
+export async function getPrefectureMap() {
+  const response = await fetch("/assets/comparision/prefectureRef.csv");
+  if (!response.ok) {
+    console.error("[sp/getPrefectureMap] bad prefectureRef data");
+    throw new Error(
+      `[sp/getPrefectureMap] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const csvText = await response.text();
+  const prefectureMap = new Map();
+
+  const lines = csvText.trim().split("\n");
+  for (let i = 1; i &lt; lines.length; i++) {
+    const line = lines[i].trim();
+    if (line) {
+      const [code, name, fullname, code2, lat, long] = line.split(",");
+      prefectureMap.set(name, {
+        lat: parseFloat(lat),
+        lng: parseFloat(long),
+        code: code,
+        fullname: fullname,
+      });
+    }
+  }
+  return prefectureMap;
+}
+
+/**
+ * Function to plot regions as icons on the map based on the provided data, intensity (or called scale) and prefecture map.
+ *
+ * @param {Object} data Data containing region information with points and their scales.
+ * @param {Map} prefectureMap Map containing prefecture information with lat, lng, and other details.
+ * @returns {Promise&lt;Array>} Returns a promise that resolves to an array of prefecture coordinates.
+ */
+export async function plotRegions(data, prefectureMap) {
+  try {
+    const features = [];
+    const iconPromises = [];
+    const loadedIcons = new Set();
+    const prefectureCoordinates = [];
+
+    const scaleValues = new Set(data.points.map((point) => point.scale));
+
+    for (const scale of scaleValues) {
+      const iconName = `scale-${scale}`;
+
+      if (!map.hasImage(iconName) &amp;&amp; !loadedIcons.has(iconName)) {
+        loadedIcons.add(iconName);
+        const iconPromise = new Promise((resolve, reject) => {
+          map.loadImage(
+            `/assets/basemap/icons/scales/${scale}.png`,
+            (error, image) => {
+              if (error) {
+                console.warn(
+                  `[sp/plotRegions] bad scale image: ${scale}, `,
+                  error,
+                  " using fallback"
+                );
+                map.loadImage(
+                  "/assets/basemap/icons/scales/invalid.png",
+                  (fallbackError, fallbackImage) => {
+                    if (fallbackError) {
+                      console.error(
+                        `[sp/plotRegions] failed to load fallback icon: ${iconName} `,
+                        fallbackError
+                      );
+                      reject(fallbackError);
+                    } else {
+                      map.addImage(iconName, fallbackImage);
+                      resolve();
+                    }
+                  }
+                );
+              } else {
+                map.addImage(iconName, image);
+                resolve();
+              }
+            }
+          );
+        });
+        iconPromises.push(iconPromise);
+      }
+    }
+
+    await Promise.all(iconPromises);
+
+    for (const point of data.points) {
+      const prefectureInfo = prefectureMap.get(point.addr);
+
+      if (prefectureInfo) {
+        features.push({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [prefectureInfo.lng, prefectureInfo.lat],
+          },
+          properties: {
+            scale: point.scale,
+            addr: point.addr,
+            pref: point.pref,
+            isArea: point.isArea,
+          },
+        });
+        prefectureCoordinates.push([prefectureInfo.lng, prefectureInfo.lat]);
+      } else {
+        console.warn(
+          `[sp/plotRegions] prefecture not found in ref data: ${point.addr}`
+        );
+      }
+    }
+
+    map.addSource("prefsSource", {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: features,
+      },
+    });
+
+    map.addLayer({
+      id: "prefsLayer",
+      type: "symbol",
+      source: "prefsSource",
+      layout: {
+        "icon-image": ["concat", "scale-", ["to-string", ["get", "scale"]]],
+        "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
+        "icon-allow-overlap": true,
+      },
+    });
+
+    return prefectureCoordinates;
+  } catch (error) {
+    console.error("[sp/plotRegions] error plotting regions: ", error);
+    return [];
+  }
+}
+
+export async function boundRegions(prefectureCoordinates) {
+  if (!prefectureCoordinates || prefectureCoordinates.length === 0) {
+    console.warn("[sp/boundRegions] no coordinates to bound");
+    return;
+  }
+
+  try {
+    const bounds = new mapboxgl.LngLatBounds();
+
+    prefectureCoordinates.forEach((coord) => {
+      bounds.extend(coord);
+    });
+
+    internalBound(bounds);
+  } catch (error) {
+    console.error("[sp/boundRegions] error setting map bounds: ", error);
+  }
+}
+
+/**
+ * A part of the main rendering logic for ScalePrompt (SP) on response code 551.
+ *
+ * Renders the ScalePrompt data on the map and updates the information box and sidebar.
+ *
+ * Includes:
+ * - Clearing previous plotted data
+ * - Prefecture icon update
+ * - Prefecture bounding
+ * - Information box update
+ *
+ * @param {Object} data The ScalePrompt data to render.
+ * @returns {Promise&lt;void>} Returns a promise that resolves when the ScalePrompt is rendered.
+ */
+export async function renderSP(data) {
+  playSound("scalePrompt", 0.5);
+  clear551();
+  armIntList();
+  updateInfoBox(
+    "Flash Report",
+    "Evaluating Epicenter",
+    "--",
+    "Unknown",
+    data.earthquake.time,
+    "",
+    data.earthquake.maxScale
+  );
+
+  const prefectureMap = await getPrefectureMap();
+  const prefectureCoordinates = await plotRegions(data, prefectureMap);
+  await boundRegions(prefectureCoordinates);
+  await updateIntList(data, prefectureMap);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#secondaryLoop">secondaryLoop</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Aug 04 2025 12:16:03 GMT+0700 (Indochina Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: map/renderConditions/hypocenterReport/ds.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: map/renderConditions/hypocenterReport/ds.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import mapboxgl from "mapbox-gl";
+import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import { map } from "../../initMap.js";
+import clear551 from "../../internal/clear551.js";
+import { internalBound } from "../../internal/internalBound.js";
+import playSound from "../../../sound/playSound.js";
+import {
+  armIntList,
+  updateIntList,
+} from "../../../components/infoBox/updateIntList.js";
+
+/**
+ * Helper function to update the epicenter icon on the map.
+ *
+ * @param {*} epicenterLng Longitude of the epicenter
+ * @param {*} epicenterLat Latitude of the epicenter
+ */
+export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
+  if (!map.hasImage("epicenter")) {
+    await new Promise((resolve, reject) => {
+      map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        map.addImage("epicenter", image);
+        resolve();
+      });
+    });
+  }
+
+  map.addSource("epicenterIcon", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [epicenterLng, epicenterLat],
+          },
+        },
+      ],
+    },
+  });
+
+  map.addLayer({
+    id: "epicenterIcon",
+    type: "symbol",
+    source: "epicenterIcon",
+    layout: {
+      "icon-image": "epicenter",
+      "icon-size": 30 / 31, // USAGE: mapIconSizePX / imageSizePX
+    },
+  });
+}
+
+/**
+ * Iterate and plots the stations with it's intensity on the map.
+ *
+ * @param {*} data Data containing station information.
+ * @returns {Promise&lt;Array>} Returns a promise that resolves to an array of station coordinates.
+ */
+export async function plotStations(data) {
+  if (map.getLayer("stationsLayer")) {
+    map.removeLayer("stationsLayer");
+  }
+  if (map.getSource("stationsLayer")) {
+    map.removeSource("stationsLayer");
+  }
+
+  try {
+    const response = await fetch("/assets/comparision/stationRef.csv");
+    if (!response.ok) {
+      console.error("[ds/plotStations] bad stationRef data");
+      throw new Error(
+        `[ds/plotStations] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const csvText = await response.text();
+    const stationMap = new Map();
+
+    const lines = csvText.trim().split("\n");
+    for (let i = 0; i &lt; lines.length; i++) {
+      const [name, , , lat, long] = lines[i].split(",");
+      stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
+    }
+
+    const features = [];
+    const iconPromises = [];
+    const loadedIcons = new Set();
+    const stationCoordinates = [];
+
+    const scaleValues = new Set(data.points.map((point) => point.scale));
+
+    for (const scale of scaleValues) {
+      const iconName = `intensity-${scale}`;
+
+      if (!map.hasImage(iconName) &amp;&amp; !loadedIcons.has(iconName)) {
+        loadedIcons.add(iconName);
+        const iconPromise = new Promise((resolve, reject) => {
+          map.loadImage(
+            `/assets/basemap/icons/intensities/${scale}.png`,
+            (error, image) => {
+              if (error) {
+                console.warn(
+                  `[ds/plotStations] bad scale image: ${scale}, `,
+                  error,
+                  " using fallback"
+                );
+                map.loadImage(
+                  "/assets/basemap/icons/intensities/invalid.png",
+                  (fallbackError, fallbackImage) => {
+                    if (fallbackError) {
+                      console.error(
+                        `[ds/plotStations] failed to load fallback icon: ${iconName} `,
+                        fallbackError
+                      );
+                      reject(fallbackError);
+                    } else {
+                      map.addImage(iconName, fallbackImage);
+                      resolve();
+                    }
+                  }
+                );
+              } else {
+                map.addImage(iconName, image);
+                resolve();
+              }
+            }
+          );
+        });
+        iconPromises.push(iconPromise);
+      }
+    }
+
+    await Promise.all(iconPromises);
+
+    for (const point of data.points) {
+      const stationInfo = stationMap.get(point.addr);
+
+      if (stationInfo) {
+        features.push({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [stationInfo.long, stationInfo.lat],
+          },
+          properties: {
+            scale: point.scale,
+            name: point.addr,
+            pref: point.pref,
+          },
+        });
+        stationCoordinates.push([stationInfo.long, stationInfo.lat]);
+      } else {
+        console.warn(
+          `[ds/plotStations] station not found in ref data: ${point.addr}`
+        );
+      }
+    }
+
+    map.addSource("stationsLayer", {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: features,
+      },
+    });
+
+    map.addLayer(
+      {
+        id: "stationsLayer",
+        type: "symbol",
+        source: "stationsLayer",
+        layout: {
+          "icon-image": [
+            "concat",
+            "intensity-",
+            ["to-string", ["get", "scale"]],
+          ],
+          "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
+          "icon-allow-overlap": true,
+        },
+        paint: {
+          "text-color": "#000000",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1,
+          "symbol-sort": ["get", "scale"],
+        },
+      },
+      "epicenterIcon"
+    );
+
+    return stationCoordinates;
+  } catch (error) {
+    console.error("[ds/plotStations] error plotting stations: ", error);
+    return [];
+  }
+}
+
+/**
+ * Bounds the map view to the epicenter and stations.
+ *
+ * @param {*} epicenter The epicenter coordinates.
+ * @param {*} stationCoordinates The coordinates of the stations.
+ */
+export async function boundMarkers(epicenter, stationCoordinates) {
+  const bounds = new mapboxgl.LngLatBounds();
+
+  bounds.extend([epicenter.longitude, epicenter.latitude]);
+
+  if (stationCoordinates &amp;&amp; stationCoordinates.length > 0) {
+    for (const [long, lat] of stationCoordinates) {
+      bounds.extend([long, lat]);
+    }
+  } else {
+    console.warn(
+      "[ds] no station coordinates available for bounding, using epicenter only"
+    );
+  }
+
+  internalBound(bounds);
+}
+
+/**
+ * A part of the main rendering logic for DetailScale (DS) on response code 551.
+ *
+ * Renders the DetailScale data on the map and updates the information box and sidebar.
+ *
+ * Includes:
+ * - Clearing previous plotted data
+ * - Epicenter icon update
+ * - Station plotting with intensity
+ * - Map bounding to epicenter and stations
+ * - Info box update with detailed epicenter information
+ *
+ * @param {Object} data The DetailScale data to render.
+ * @returns {Promise&lt;void>} Returns a promise that resolves when the DetailScale is rendered.
+ * @throws {Error} Throws an error if the stationRef.csv cannot be fetched or parsed.
+ */
+export async function renderDS(data) {
+  playSound("detailScale", 0.5);
+  clear551();
+  armIntList();
+
+  const hyp = data.earthquake.hypocenter;
+  updateInfoBox(
+    "Detailed Epicenter Information",
+    hyp.name,
+    hyp.magnitude,
+    hyp.depth,
+    data.earthquake.time,
+    "",
+    data.earthquake.maxScale
+  );
+  const epicenterLat = hyp.latitude;
+  const epicenterLng = hyp.longitude;
+
+  await updateEpicenterIcon(epicenterLng, epicenterLat);
+
+  const stationCoordinates = await plotStations(data);
+  await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
+  const stationMap = await getStationMap();
+  await updateIntList(data, stationMap);
+  console.info("[ds] renderDS completed");
+}
+
+async function getStationMap() {
+  const response = await fetch("/assets/comparision/stationRef.csv");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch stationRef.csv: ${response.status}`);
+  }
+  const csvText = await response.text();
+  const stationMap = new Map();
+  const lines = csvText.trim().split("\n");
+  for (let i = 0; i &lt; lines.length; i++) {
+    const [name, , , lat, long] = lines[i].split(",");
+    stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
+  }
+  return stationMap;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#secondaryLoop">secondaryLoop</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Aug 04 2025 12:16:03 GMT+0700 (Indochina Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
