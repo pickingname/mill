@@ -5,6 +5,8 @@ import { map } from "../initMap";
  *
  * Includes everything related to the 551 response code except for the tsunami layers.
  * This is used to reset the map state when a new 551 response code is received.
+ *
+ * @returns {void}
  */
 export default function clear551() {
   const layersToRemove = [

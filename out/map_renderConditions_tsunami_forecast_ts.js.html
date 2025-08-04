@@ -1,4 +1,32 @@
-import playSound from "../../../sound/playSound.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: map/renderConditions/tsunami_forecast/ts.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: map/renderConditions/tsunami_forecast/ts.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import playSound from "../../../sound/playSound.js";
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
@@ -97,10 +125,10 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
       row.className = `border-l-2 py-1.5 pl-3`;
       row.style.borderLeftColor = color;
       row.innerHTML = `
-        <div class="flex items-start justify-between">
-          <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-white">${nameEn}</p>
-            <p class="text-xs text-neutral-300">${
+        &lt;div class="flex items-start justify-between">
+          &lt;div class="min-w-0 flex-1">
+            &lt;p class="truncate text-sm font-medium text-white">${nameEn}&lt;/p>
+            &lt;p class="text-xs text-neutral-300">${
               arrivalTime
                 ? `First wave is expected to arrive at ${arrivalTime} JST`
                 : condition === "第１波の到達を確認"
@@ -110,12 +138,12 @@ function updateTsunamiSidebar(areas, geojsonFeatures) {
                 : condition === "ただちに津波来襲と予測"
                 ? "Immediate tsunami expected"
                 : condition
-            }</p>
-          </div>
-          <div class="ml-2 text-right">
-            <p class="text-sm font-medium text-neutral-100">${maxHeight}</p>
-          </div>
-        </div>
+            }&lt;/p>
+          &lt;/div>
+          &lt;div class="ml-2 text-right">
+            &lt;p class="text-sm font-medium text-neutral-100">${maxHeight}&lt;/p>
+          &lt;/div>
+        &lt;/div>
       `;
       container.appendChild(row);
     });
@@ -147,7 +175,7 @@ export function clearAllTsAssets() {
  *
  * @param {object} data The tsunami data to render.
  * @throws {error} Throws if the tsunami areas geojson cannot be fetched or parsed.
- * @returns {promise<void>} Returns a promise that resolves when the tsunami data is rendered.
+ * @returns {promise&lt;void>} Returns a promise that resolves when the tsunami data is rendered.
  */
 export async function renderTS(data) {
   if (data.cancelled || data === "[]") {
@@ -177,7 +205,7 @@ export async function renderTS(data) {
     const matchedFeatures = [];
     const bounds = new mapboxgl.LngLatBounds();
 
-    if (data.areas && Array.isArray(data.areas)) {
+    if (data.areas &amp;&amp; Array.isArray(data.areas)) {
       for (const area of data.areas) {
         const areaName = area.name;
         const grade = area.grade;
@@ -315,7 +343,7 @@ export async function renderTS(data) {
       if (!document.getElementById(id)) {
         const h3 = Array.from(document.querySelectorAll("#sidebar h3")).find(
           (h) =>
-            h.textContent &&
+            h.textContent &amp;&amp;
             h.textContent.includes(
               id.includes("major")
                 ? "Major Warning"
@@ -325,8 +353,8 @@ export async function renderTS(data) {
             )
         );
         if (
-          h3 &&
-          h3.parentElement &&
+          h3 &amp;&amp;
+          h3.parentElement &amp;&amp;
           !h3.parentElement.nextElementSibling?.querySelector(`#${id}`)
         ) {
           const sect = h3.parentElement.parentElement;
@@ -373,3 +401,26 @@ function disarmTsComponent() {
   document.getElementById("tsunamiContainer").classList.add("hidden");
   document.getElementById("noInfoIssuedText").classList.remove("hidden");
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#secondaryLoop">secondaryLoop</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Aug 04 2025 12:16:03 GMT+0700 (Indochina Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

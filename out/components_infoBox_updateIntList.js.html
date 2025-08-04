@@ -1,4 +1,32 @@
-import classifyIntensity from "../../classification/classifyIntensity.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/infoBox/updateIntList.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/infoBox/updateIntList.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import classifyIntensity from "../../classification/classifyIntensity.js";
 
 const intListParent = document.getElementById("intListParent");
 
@@ -47,11 +75,11 @@ function haversineDistance(coords1, coords2) {
  * @param {Object} data Data containing intensity points and earthquake information.
  * @param {Map} stationMap Map containing station information with latitude and longitude.
  *
- * @returns {Promise<void>} Returns a promise that resolves when the intensity list is updated.
+ * @returns {Promise&lt;void>} Returns a promise that resolves when the intensity list is updated.
  */
 export async function updateIntList(data, stationMap) {
   let epicenterCoords = null;
-  if (data.earthquake && data.earthquake.hypocenter) {
+  if (data.earthquake &amp;&amp; data.earthquake.hypocenter) {
     epicenterCoords = {
       lat: data.earthquake.hypocenter.latitude,
       lon: data.earthquake.hypocenter.longitude,
@@ -81,7 +109,7 @@ export async function updateIntList(data, stationMap) {
           lat: stationInfo.lat,
           lon: stationInfo.long,
         });
-        if (distance !== undefined && distance !== null && !isNaN(distance)) {
+        if (distance !== undefined &amp;&amp; distance !== null &amp;&amp; !isNaN(distance)) {
           dist = distance.toFixed(0);
         }
       }
@@ -132,7 +160,7 @@ export async function updateIntList(data, stationMap) {
 
       const header = document.createElement("div");
       header.className = "flex items-center gap-2";
-      header.innerHTML = `<h3 class="text-lg font-medium text-neutral-300 tabular-nums">${intensity}</h3>`;
+      header.innerHTML = `&lt;h3 class="text-lg font-medium text-neutral-300 tabular-nums">${intensity}&lt;/h3>`;
       intensityContainer.appendChild(header);
 
       const itemsContainer = document.createElement("div");
@@ -145,24 +173,24 @@ export async function updateIntList(data, stationMap) {
         item.style.borderLeft = `2px solid ${borderColor}`;
         item.style.setProperty("border-left-color", borderColor, "important");
         item.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-medium text-neutral-100">${
+          &lt;div class="flex items-start justify-between">
+            &lt;div class="min-w-0 flex-1">
+              &lt;p class="truncate text-sm font-medium text-neutral-100">${
                 point.name
-              }</p>
-            </div>
-            <div class="ml-2 text-right">
-              <p class="text-sm text-neutral-100">
-                ${point.distance ? `<span>${point.distance}</span> km` : ""}
-              </p>
-            </div>
-          </div>
+              }&lt;/p>
+            &lt;/div>
+            &lt;div class="ml-2 text-right">
+              &lt;p class="text-sm text-neutral-100">
+                ${point.distance ? `&lt;span>${point.distance}&lt;/span> km` : ""}
+              &lt;/p>
+            &lt;/div>
+          &lt;/div>
         `;
         return item;
       };
 
       if (points.length > 4) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i &lt; 4; i++) {
           itemsContainer.appendChild(createPointElement(points[i]));
         }
 
@@ -173,7 +201,7 @@ export async function updateIntList(data, stationMap) {
         showMoreButton.textContent = `Show ${points.length - 4} more...`;
 
         showMoreButton.onclick = () => {
-          for (let i = 4; i < points.length; i++) {
+          for (let i = 4; i &lt; points.length; i++) {
             itemsContainer.insertBefore(
               createPointElement(points[i]),
               showMoreContainer
@@ -195,3 +223,26 @@ export async function updateIntList(data, stationMap) {
     }
   }
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#secondaryLoop">secondaryLoop</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Aug 04 2025 12:16:03 GMT+0700 (Indochina Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

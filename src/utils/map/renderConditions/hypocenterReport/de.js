@@ -17,6 +17,7 @@ import { boundEpicenter } from "./fo";
  * - Information box update
  *
  * @param {Object} data - The earthquake data to render.
+ * @returns {Promise<void>} Returns a promise that resolves when the Destination is rendered.
  */
 export async function renderDE(data) {
   playSound("detailScale", 0.5);

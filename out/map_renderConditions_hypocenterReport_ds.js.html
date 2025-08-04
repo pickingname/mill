@@ -1,4 +1,32 @@
-import mapboxgl from "mapbox-gl";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: map/renderConditions/hypocenterReport/ds.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: map/renderConditions/hypocenterReport/ds.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import mapboxgl from "mapbox-gl";
 import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
 import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
@@ -60,7 +88,7 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
  * Iterate and plots the stations with it's intensity on the map.
  *
  * @param {*} data Data containing station information.
- * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
+ * @returns {Promise&lt;Array>} Returns a promise that resolves to an array of station coordinates.
  */
 export async function plotStations(data) {
   if (map.getLayer("stationsLayer")) {
@@ -83,7 +111,7 @@ export async function plotStations(data) {
     const stationMap = new Map();
 
     const lines = csvText.trim().split("\n");
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i &lt; lines.length; i++) {
       const [name, , , lat, long] = lines[i].split(",");
       stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
     }
@@ -98,7 +126,7 @@ export async function plotStations(data) {
     for (const scale of scaleValues) {
       const iconName = `intensity-${scale}`;
 
-      if (!map.hasImage(iconName) && !loadedIcons.has(iconName)) {
+      if (!map.hasImage(iconName) &amp;&amp; !loadedIcons.has(iconName)) {
         loadedIcons.add(iconName);
         const iconPromise = new Promise((resolve, reject) => {
           map.loadImage(
@@ -212,7 +240,7 @@ export async function boundMarkers(epicenter, stationCoordinates) {
 
   bounds.extend([epicenter.longitude, epicenter.latitude]);
 
-  if (stationCoordinates && stationCoordinates.length > 0) {
+  if (stationCoordinates &amp;&amp; stationCoordinates.length > 0) {
     for (const [long, lat] of stationCoordinates) {
       bounds.extend([long, lat]);
     }
@@ -238,7 +266,7 @@ export async function boundMarkers(epicenter, stationCoordinates) {
  * - Info box update with detailed epicenter information
  *
  * @param {Object} data The DetailScale data to render.
- * @returns {Promise<void>} Returns a promise that resolves when the DetailScale is rendered.
+ * @returns {Promise&lt;void>} Returns a promise that resolves when the DetailScale is rendered.
  * @throws {Error} Throws an error if the stationRef.csv cannot be fetched or parsed.
  */
 export async function renderDS(data) {
@@ -276,9 +304,32 @@ async function getStationMap() {
   const csvText = await response.text();
   const stationMap = new Map();
   const lines = csvText.trim().split("\n");
-  for (let i = 0; i < lines.length; i++) {
+  for (let i = 0; i &lt; lines.length; i++) {
     const [name, , , lat, long] = lines[i].split(",");
     stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
   }
   return stationMap;
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#secondaryLoop">secondaryLoop</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Aug 04 2025 12:16:03 GMT+0700 (Indochina Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

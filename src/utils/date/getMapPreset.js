@@ -6,7 +6,7 @@ import { config } from "../config.js";
  *
  * @returns {string} - returns "day", "dawn", "dusk", or "night"
  */
-function getMapPreset() {
+export default function getMapPreset() {
   if (config.map.theme === "auto") {
     const now = new Date();
     const hour = now.getHours();
@@ -24,5 +24,3 @@ function getMapPreset() {
     return config.map.theme;
   }
 }
-
-export default getMapPreset;
