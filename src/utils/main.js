@@ -31,7 +31,7 @@ showSidebar();
  * @returns {Promise<void>} Returns a promise that resolves when the epicenter icon is updated.
  */
 export async function secondaryLoop() {
-  currentTsunamiData = fetchData(config.api.jmaTsunamiURL);
+  currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
   if (
     JSON.stringify(currentTsunamiData) === JSON.stringify(previousTsunamiData)
   ) {
@@ -54,7 +54,7 @@ export async function secondaryLoop() {
  * @returns {Promise<void>} Returns a promise that resolves when the main loop completes.
  */
 export async function mainLoop() {
-  currentData = fetchData(config.api.base_url);
+  currentData = await fetchData(config.api.base_url);
 
   if (JSON.stringify(currentData) === JSON.stringify(previousData)) {
     // it's looking like nothing
