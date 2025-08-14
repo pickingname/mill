@@ -19,7 +19,7 @@ export const config = {
   map: {
     bound_padding: 100,
     bound_duration: 500,
-    theme: "auto",
+    theme: "dawn",
     main_bounds: [
       [122.778834, 23.927012],
       [149.367464, 23.927012],
