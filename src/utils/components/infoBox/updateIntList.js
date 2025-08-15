@@ -20,6 +20,10 @@ export function armIntList() {
  */
 export function disarmIntList() {
   intListParent.classList.add("hidden");
+  const intListContainer = document.getElementById("intListContainer");
+    if (intListContainer) {
+      intListContainer.innerHTML = "";
+  }
 }
 
 function haversineDistance(coords1, coords2) {
