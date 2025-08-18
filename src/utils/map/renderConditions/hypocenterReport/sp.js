@@ -1,4 +1,7 @@
-import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import {
+  intDetailSubtitleSelector,
+  updateInfoBox,
+} from "../../../components/infoBox/infoBoxController.js";
 import {
   armIntList,
   updateIntList,
@@ -197,6 +200,7 @@ export async function renderSP(data) {
     "",
     data.earthquake.maxScale
   );
+  intDetailSubtitleSelector(data.issue.type);
 
   const prefectureMap = await getPrefectureMap();
   const prefectureCoordinates = await plotRegions(data, prefectureMap);

@@ -10,6 +10,25 @@ export function showInfoBox() {
   document.getElementById("infoContainer").classList.remove("hidden");
 }
 
+export function intDetailSubtitleSelector(asdf) {
+  const intDescText = document.getElementById("intDescText");
+
+  switch (asdf.toLowerCase()) {
+    case "detailscale":
+      intDescText.textContent =
+        "Earthquake intensity readings for each station";
+      return;
+    case "scaleprompt":
+      intDescText.textContent =
+        "Earthquake intensity readings for each prefecture";
+      return;
+    case "eew":
+      intDescText.textContent =
+        "Predicted earthquake intensity for each prefecture";
+      return;
+  }
+}
+
 /**
  * Hides the infoBox component in the UI.
  *

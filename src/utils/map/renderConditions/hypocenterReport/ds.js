@@ -1,5 +1,8 @@
 import mapboxgl from "mapbox-gl";
-import { updateInfoBox } from "../../../components/infoBox/infoBoxController.js";
+import {
+  intDetailSubtitleSelector,
+  updateInfoBox,
+} from "../../../components/infoBox/infoBoxController.js";
 import { map } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
@@ -265,6 +268,8 @@ export async function renderDS(data) {
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
   const stationMap = await getStationMap();
   await updateIntList(data, stationMap);
+  intDetailSubtitleSelector(data.issue.type);
+
   console.info("[ds] renderDS completed");
 }
 

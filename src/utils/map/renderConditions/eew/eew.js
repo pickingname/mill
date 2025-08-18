@@ -1,4 +1,7 @@
-import { updateInfoBox } from "../../../components/infoBox/infoBoxController";
+import {
+  intDetailSubtitleSelector,
+  updateInfoBox,
+} from "../../../components/infoBox/infoBoxController";
 import clear551 from "../../internal/clear551";
 import { updateEpicenterIcon } from "../hypocenterReport/ds";
 import { map, mapboxgl } from "../../initMap.js";
@@ -138,6 +141,7 @@ export default async function renderEEW(data) {
       isArea: true,
     }));
     await updateIntList({ points }, prefectureMap);
+    intDetailSubtitleSelector("eew"); // there's no data.issue.type header for this type of report
   } catch (error) {
     console.error("[renderEEW] error plotting areas: ", error);
   }
