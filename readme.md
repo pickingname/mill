@@ -12,9 +12,14 @@ pnpm i && pnpm dev
 
 vite hosts to localhost:5173 by default
 
+> [!IMPORTANT]  
+> function method docs are available [here](https://pickingname.github.io/mill/out/index.html) (jsdoc)
 ---
 
 ### required for development
+
+> [!IMPORTANT]  
+> a mapbox API key is required. and usage will be counted towards your quota even in development. DO NOT go to geojson.io, DO NOT toggle inspect element, DO NOT go into network tab and DO NOT copy the public token from its own `access_token=` parameter in their mapbox tile requests.
 
 1. mapbox API key
 
