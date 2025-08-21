@@ -14,6 +14,8 @@ vite hosts to localhost:5173 by default
 
 > [!IMPORTANT]  
 > function method docs are available [here](https://pickingname.github.io/mill/out/index.html) (jsdoc)
+>
+> p2pquake API docs availble [here](https://www.p2pquake.net/develop/json_api_v2/), [mirror (gitbook)](https://mill.gitbook.io/p2pquake/) or [translated version (gitbook)](https://mill.gitbook.io/p2pq_ts/)
 ---
 
 ### required for development
