@@ -1,0 +1,105 @@
+---
+title: Mockup API
+---
+
+Used to create a fake API mockup endpoint to be used in development
+
+---
+
+## Usage
+
+0. cd into `/tests/api`
+1. install the packages using `uv pip install -r requirements.txt` or manually (install `fastapi` and `uvicorn`)
+   - `uv` is not required, you can use `pip`
+2. start using `uvicorn cycleData:app --reload --port 1212`
+3. **you may need to change the `dev` api route in `config.js`** (example below)
+
+```js title="/src/utils/config.js"
+export const config = {
+  map: {
+    // ...
+  },
+  api: {
+    base_url: import.meta.env.DEV
+      ? "/assets/map/testData.json" // [!code --]
+      ? "http://your_fastAPI_ip/p2p" // [!code ++]
+      : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
+    interval: 5000,
+
+    jmaTsunamiURL: import.meta.env.DEV
+      ? "/assets/map/testData.json" // [!code --]
+      ? "http://your_fastAPI_ip/jma" // [!code ++]
+      : "https://api.p2pquake.net/v2/jma/tsunami?limit=1",
+    jmaTsunamiInterval: 10000,
+  },
+};
+```
+
+### Customising mock API behaviour
+
+you can change the `/tests/api/cycleData.py`
+
+here are some examples
+
+#### 1. changing the mock API data cycle interval
+
+you need to change the number in the `self.last_time >= 10:`, example given below (changing from 10s interval to 1s)
+
+```python title='/tests/api/cycleData.py'
+# ...
+
+class RandomJsonCycler:
+    def __init__(self, folder):
+        self.folder = folder
+        self.files = [f for f in os.listdir(folder) if f.endswith('.json')]
+        self.last_file = None
+        self.last_time = 0
+        self.current_file = None
+        self.lock = Lock()
+
+    def get_json(self):
+        with self.lock:
+            now = time.time()
+            if self.current_file is None or now - self.last_time >= 10: # [!code --]
+            if self.current_file is None or now - self.last_time >= 1: # [!code ++]
+                choices = [f for f in self.files if f != self.last_file]
+                if not choices:
+                    choices = self.files
+                self.current_file = random.choice(choices)
+                self.last_file = self.current_file
+                self.last_time = now
+            file_path = os.path.join(self.folder, self.current_file)
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = f.read()
+            return data
+
+# ...
+```
+
+and don't forget to change the fetch interval in the configuration file
+
+```js title="/src/utils/config.js"
+export const config = {
+  map: {
+    // ...
+  },
+  api: {
+    base_url: import.meta.env.DEV
+      ? "/assets/map/testData.json"
+      : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
+    interval: 5000, // [!code --]
+    interval: 100, // [!code ++]
+
+    jmaTsunamiURL: import.meta.env.DEV
+      ? "/assets/map/testTsData.json"
+      : "https://api.p2pquake.net/v2/jma/tsunami?limit=1",
+    jmaTsunamiInterval: 10000, // [!code --]
+    jmaTsunamiInterval: 100, // [!code ++]
+  },
+};
+```
+
+<Callout type="warning">
+  **Warning** <br />
+  Setting the data fetching interval below 100 might cause performance issues
+</Callout>

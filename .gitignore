@@ -9,3 +9,9 @@
 /tests/api/.venv
 /tests/api/__pycache__
 /tests/api/samples/p2p/extra_samples
+
+# /docs (using next.js)
+/docs/.next
+/docs/node_modules
+/docs/package-lock.json
+/docs/.source
