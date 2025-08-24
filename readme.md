@@ -4,6 +4,16 @@ A visual p2pquake API decoder (json API to a web map)
 
 ---
 
+### links
+
+main docs: [https://millquake-docs.vercel.app/](https://millquake-docs.vercel.app/)
+
+jsdoc: [https://pickingname.github.io/mill/out/index.html](https://pickingname.github.io/mill/out/index.html)
+
+p2pquake API docs availble [here (original)](https://www.p2pquake.net/develop/json_api_v2/), [mirror (gitbook)](https://mill.gitbook.io/p2pquake/) or [translated version (gitbook)](https://mill.gitbook.io/p2pq_ts/)
+
+---
+
 ### development
 
 ```bash
@@ -12,10 +22,6 @@ pnpm i && pnpm dev
 
 vite hosts to localhost:5173 by default
 
-> [!IMPORTANT]  
-> function method docs are available [here](https://pickingname.github.io/mill/out/index.html) (jsdoc)
->
-> p2pquake API docs availble [here](https://www.p2pquake.net/develop/json_api_v2/), [mirror (gitbook)](https://mill.gitbook.io/p2pquake/) or [translated version (gitbook)](https://mill.gitbook.io/p2pq_ts/)
 ---
 
 ### required for development
