@@ -22,8 +22,15 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
     // should be a function; will be bound to Minimap
     zoomAdjust: null,
 
-    // if parent map zoom >= 18 and minimap zoom >= 14, set minimap zoom to 16
-    zoomLevels: [[1, 1, 2]],
+    // (deprecated) legacy zoom level rules
+    zoomLevels: [[18, 14, 16]],
+
+    autoFit: true, // if true, minimap will auto zoom to keep tracking rectangle fully visible
+    autoFitPadding: 10, // padding in px for fitBounds
+    autoFitMaxZoom: 3, // cap zoom when fitting (changed from 22 -> 5)
+    autoFitMinZoom: 0, // minimum zoom when fitting
+    autoFitTolerance: 0.000001, // bounds change tolerance to skip redundant fits
+    maxMiniMapZoom: 3, // hard cap after any adjustment
 
     lineColor: "#08F",
     lineWidth: 1,
@@ -187,29 +194,70 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
   _zoomAdjust: function () {
     var miniMap = this._miniMap;
     var parentMap = this._parentMap;
+    var opts = this.options;
+
+    if (opts.autoFit) {
+      var parentBounds = parentMap.getBounds();
+      if (
+        !this._lastFittedBounds ||
+        !this._boundsAlmostEqual(
+          this._lastFittedBounds,
+          parentBounds,
+          opts.autoFitTolerance
+        )
+      ) {
+        var originalMaxZoom = miniMap.getMaxZoom();
+        var originalMinZoom = miniMap.getMinZoom();
+        if (typeof opts.autoFitMaxZoom === "number")
+          miniMap.setMaxZoom(opts.autoFitMaxZoom);
+        if (typeof opts.autoFitMinZoom === "number")
+          miniMap.setMinZoom(opts.autoFitMinZoom);
+        miniMap.fitBounds(parentBounds, {
+          padding: opts.autoFitPadding || 0,
+          duration: 0,
+          maxZoom: opts.autoFitMaxZoom,
+        });
+        miniMap.setMaxZoom(originalMaxZoom);
+        miniMap.setMinZoom(originalMinZoom);
+        this._lastFittedBounds = parentBounds;
+      }
+      if (miniMap.getZoom() > opts.maxMiniMapZoom) {
+        miniMap.setZoom(opts.maxMiniMapZoom);
+      }
+      return;
+    }
     var miniZoom = parseInt(miniMap.getZoom(), 10);
     var parentZoom = parseInt(parentMap.getZoom(), 10);
-    var levels = this.options.zoomLevels;
+    var levels = opts.zoomLevels;
     var found = false;
-
     levels.forEach(function (zoom) {
       if (!found && parentZoom >= zoom[0]) {
         if (miniZoom >= zoom[1]) {
           miniMap.setZoom(zoom[2]);
         }
-
         miniMap.setCenter(parentMap.getCenter());
         found = true;
       }
     });
-
-    if (!found && miniZoom !== this.options.zoom) {
-      if (typeof this.options.bounds === "object") {
-        miniMap.fitBounds(this.options.bounds, { duration: 50 });
+    if (!found && miniZoom !== opts.zoom) {
+      if (typeof opts.bounds === "object") {
+        miniMap.fitBounds(opts.bounds, { duration: 50 });
       }
-
-      miniMap.setZoom(this.options.zoom);
+      miniMap.setZoom(opts.zoom);
     }
+    if (miniMap.getZoom() > opts.maxMiniMapZoom) {
+      miniMap.setZoom(opts.maxMiniMapZoom);
+    }
+  },
+
+  _boundsAlmostEqual: function (a, b, tol) {
+    tol = tol || 0;
+    return (
+      Math.abs(a.getNorth() - b.getNorth()) <= tol &&
+      Math.abs(a.getSouth() - b.getSouth()) <= tol &&
+      Math.abs(a.getEast() - b.getEast()) <= tol &&
+      Math.abs(a.getWest() - b.getWest()) <= tol
+    );
   },
 
   _createContainer: function (parentMap) {
