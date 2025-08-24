@@ -1,0 +1,57 @@
+---
+title: Project Introduction
+---
+
+This is a visual p2pquake API decoder (json API to a web map)
+
+---
+
+## Development
+
+```bash title="bash"
+pnpm i && pnpm dev
+```
+
+vite hosts to localhost:5173 by default
+
+<Callout type="info">
+function method docs are available [here](https://pickingname.github.io/mill/out/index.html) (jsdoc)
+
+p2pquake API docs availble [here](https://www.p2pquake.net/develop/json_api_v2/), [mirror (gitbook)](https://mill.gitbook.io/p2pquake/) or [translated version (gitbook)](https://mill.gitbook.io/p2pq_ts/)
+
+</Callout>
+
+### Resources required for development
+
+<Callout type="warning">
+  **MAJOR WARNING:** You **NEED** a Mapbox API key, and yes, every single
+  request counts against your quota even in development. **DO NOT** go to
+  geojson.io, **DO NOT** open inspect element, **DO NOT** dive into the network
+  tab and **DO NOT** copy their public token from the `access_token=` parameter
+  in their mapbox tile requests.
+</Callout>
+
+1. mapbox API key
+
+put your API key into `.env` with the key `VITE_MAPBOX_GL_ACCESS_TOKEN`
+
+```txt title=".env"
+VITE_MAPBOX_GL_ACCESS_TOKEN=pk.eyJ...
+```
+
+---
+
+## Internal testing tool
+
+the tools are located in the `/tests/api` (currently there's only one)
+
+0. cd into `/tests/api`
+1. install the packages using `uv pip install -r requirements.txt` or manually (install `fastapi` and `uvicorn`)
+2. start using `uvicorn cycleData:app --reload --port 1212`
+3. **you may need to change the api route in `config.js`**, example [here](/docs/internal_tools/mockup#usage)
+
+<Cards>
+  <Card href="/docs/internal_tools/mockup" title="Mockup API">
+    Learn more about this internal testing tool
+  </Card>
+</Cards>

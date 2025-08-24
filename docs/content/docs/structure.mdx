@@ -1,0 +1,76 @@
+---
+title: Project Structure
+---
+
+Know where to find what you need
+
+---
+
+## /src Path
+
+### JS Files
+
+<Callout type="warning" title="Warning">
+  do not move minimap.js out of `/src`
+</Callout>
+
+the project's JS files are structured as follows:
+
+- `/src/lib` contains a custom mapbox gl js minimap library
+- `/src/utils` contains configuration file and the main app's JS file
+- `/src/utils/classification` contains the script to identify the response data's format/type
+- `/src/utils/components` contains the script to manipulate the components
+- `/src/utils/components/infoBox` contains the script to control only the infoBox
+- `/src/utils/date` contains the script related to the current date or time
+- `/src/utils/fetch` contains the script related to the data fetching logic
+- `/src/utils/map` contains the script related to manipulating map
+- `/src/utils/map/internal` contains the script exporting the internal function
+- `/src/utils/map/renderConditions` (NO JS) contains the scripts that will be executed depending on data format/type
+- `/src/utils/map/renderConditions/eew` contains the script responsible for rendering p2pquake's EEW json response
+- `/src/utils/map/renderConditions/hypocenterReport` contains the script responsible for rendering p2pquake's 551 codes (hypocenter report)
+- `/src/utils/map/renderConditions/tsunami_forecast` contains the script responsible for interpreting and rendering p2pquake's tsunami datas
+- `/src/utils/sound` contains the script for sound playing logics
+
+### CSS Files
+
+there's only one CSS file located at `/src/utils/style.css`
+
+---
+
+## /public Path
+
+files that are in the top most directory of /public are mostly related to PWA
+
+- `/public/assets/audio` contains audio contents, audio taken from p2pquake desktop app
+- `/public/assets/basemap/icons` contains icon used in the map. `/intensities` is the circle station icons and `/scales` are the prefecture icons
+- `/public/assets/comparisions` contains the data for the script to cross reference one code to another like station name to lat lon
+- `/public/assets/map` contains the resources related to the map like bounds and test datas
+
+---
+
+## /tests Path
+
+right now it only contains an API mockup written in python using fastAPI to simulate real endpoint
+
+expected to have more tests in the future
+
+<Cards>
+  <Card href="/docs/internal_tools/mockup" title="Mockup API">
+    Learn more about this internal testing tool
+  </Card>
+</Cards>
+
+---
+
+## /out Path
+
+contains JSdoc page contents
+
+<Cards>
+  <Card
+    href="https://pickingname.github.io/mill/out/global.html"
+    title="Visit JSdoc"
+  >
+    Visit the generated JSdoc page
+  </Card>
+</Cards>
