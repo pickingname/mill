@@ -1,0 +1,62 @@
+---
+title: classifyIntensity.js
+---
+
+## Usage
+
+> Converts API intensity values to human readable format.
+
+### Parsing
+
+```js title="javascript"
+import classifyIntensity from "../../classification/classifyIntensity.js";
+
+const intensity = 30;
+const humanReadable = classifyIntensity(intensity);
+console.log(humanReadable); // "3"
+```
+
+### Example
+
+this example takes a raw intensity value and converts it to a human readable format in the DOM.
+
+```js title="src\utils\components\infoBox\infoBoxController.js"
+import classifyIntensity from "../../classification/classifyIntensity.js";
+
+document.getElementById("maxInt").textContent = classifyIntensity(maxInt);
+```
+
+## Source
+
+```js title="src\utils\classification\classifyIntensity.js"
+/**
+ * Converts API intensity values to human readable format.
+ *
+ * @param {Number} intensity the API form of intensity
+ * @returns {String} Human readable intensity level
+ */
+export default function classifyIntensity(intensity) {
+  switch (intensity) {
+    case 10:
+      return "1";
+    case 20:
+      return "2";
+    case 30:
+      return "3";
+    case 40:
+      return "4";
+    case 45:
+      return "5-";
+    case 50:
+      return "5+";
+    case 55:
+      return "6-";
+    case 60:
+      return "6+";
+    case 70:
+      return "7";
+    default:
+      return "--";
+  }
+}
+```
