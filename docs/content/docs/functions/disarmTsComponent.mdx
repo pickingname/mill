@@ -1,0 +1,31 @@
+---
+title: disarmTsComponent
+---
+
+Disarms the tsunami component by hiding the tsunami information container. This function is called when there is no tsunami data to display.
+
+<Callout title="This function is not exported" type="warning">
+  This function can only be used within the module it is defined in.
+</Callout>
+
+`disarmTsComponent()` → `{void}`
+
+#### Opposite Function
+
+<Cards>
+  <Card href="/docs/functions/armTsComponent" title="armTsComponent">
+    Opposite Function of disarmTsComponent
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/tsunami_forecast/ts.js"
+function disarmTsComponent() {
+  document.getElementById("tsInfoContainer").classList.add("hidden");
+  document.getElementById("tsunamiContainer").classList.add("hidden");
+  document.getElementById("noInfoIssuedText").classList.remove("hidden");
+}
+```
+
+adds `hidden` class to the `tsInfoContainer` and `tsunamiContainer` elements, hiding them, and removes `hidden` class from the `noInfoIssuedText` element, making it visible.
