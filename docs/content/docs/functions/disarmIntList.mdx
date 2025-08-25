@@ -1,0 +1,25 @@
+---
+title: disarmIntList
+---
+
+Disarms the intensity list, making it invisible. Used when the report type doesn't include intensity/points data such as `detailScale`, `scalePrompt`.
+
+`disarmIntList()` → `{void}`
+
+#### Opposite Function
+
+<Cards>
+  <Card href="/docs/functions/armIntList" title="armIntList">
+    Opposite Function of disarmIntList
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="components/infoBox/updateIntList.js"
+export function disarmIntList() {
+  intListParent.classList.add("hidden");
+}
+```
+
+adds `hidden` class to the `intListParent` element, making it invisible.

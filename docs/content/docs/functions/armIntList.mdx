@@ -1,0 +1,25 @@
+---
+title: armIntList
+---
+
+Arms the intensity list, making it visible. Used when the report type includes intensity/points data such as `foreign`, `destination`.
+
+`armIntList()` → `{void}`
+
+#### Opposite Function
+
+<Cards>
+  <Card href="/docs/functions/disarmIntList" title="disarmIntList">
+    Opposite Function of armIntList
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="components/infoBox/updateIntList.js"
+export function armIntList() {
+  intListParent.classList.remove("hidden");
+}
+```
+
+removes `hidden` class from the `intList` element, making it visible.
