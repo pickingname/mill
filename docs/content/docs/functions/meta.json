@@ -11,7 +11,9 @@
     "renderDS",
     "renderDE", 
     "renderSP",
+    "renderTS",
     "updateInfoBox",
+    "updateEpicenterIcon",
     "showInfoBox",
     "hideInfoBox",
     "armIntList",
@@ -19,6 +21,10 @@
     "armTsComponent",
     "disarmTsComponent",
     "clearAllTsAssets",
-    "setTheme"
+    "setTheme",
+    "internalBound",
+    "boundEpicenter",
+    "boundMarkers",
+    "getPrefectureMap"
   ]
 }

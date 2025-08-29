@@ -1,0 +1,90 @@
+---
+title: renderTS
+---
+
+Renders tsunami forecast data with geographic area visualization.
+
+`renderTS(data)` → `{Promise<void>}`
+
+Processes and displays tsunami forecast information including affected coastal areas, warning levels, and geographic boundaries. This function handles complex tsunami data visualization with geographic mapping.
+
+#### Parameters
+
+- `data` - The tsunami data object to render
+
+#### Returns
+
+Returns a promise that resolves when the tsunami data is rendered
+
+#### Error Handling
+
+- **Data Validation**: Handles cancelled or empty tsunami data by clearing displays
+- **Resource Loading**: Manages failures when loading tsunami area GeoJSON data
+- **Geographic Processing**: Handles errors in tsunami area coordinate processing
+
+#### Workflow
+
+1. **Data Validation**: Checks if tsunami data is cancelled or empty
+2. **Audio Alert**: Plays tsunami report notification sound
+3. **Layer Cleanup**: Clears existing tsunami-related map layers
+4. **GeoJSON Loading**: Fetches tsunami area geographic boundaries
+5. **Area Mapping**: Creates coordinate mappings for affected areas
+6. **Visualization**: Displays tsunami warnings and affected regions
+7. **UI Updates**: Updates sidebar with tsunami area information
+
+#### Geographic Data
+
+The function utilizes:
+- **GeoJSON Source**: `/assets/comparision/tsunami_areas.geojson`
+- **Area Boundaries**: Coastal region geographic definitions
+- **Coordinate Mapping**: Tsunami area name-to-coordinate relationships
+- **Warning Zones**: Different tsunami warning level visualizations
+
+#### Map Integration
+
+- **Layer Management**: Adds and manages tsunami-specific map layers
+- **Geographic Bounds**: Adjusts map view to show affected coastal areas
+- **Visual Indicators**: Displays tsunami warning levels with appropriate colors/styling
+- **Area Highlighting**: Emphasizes affected coastal regions
+
+#### UI Components
+
+- **Sidebar Updates**: Displays tsunami area information and warnings
+- **Component Activation**: Arms tsunami-related interface components
+- **Information Display**: Shows tsunami forecast details and timing
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/clearAllTsAssets" title="clearAllTsAssets">
+    Called when tsunami data is cancelled or unavailable
+  </Card>
+  <Card href="/docs/functions/secondaryLoop" title="secondaryLoop">
+    Calls this function when tsunami data is available
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/tsunami_forecast/ts.js"
+export async function renderTS(data) {
+  if (data.cancelled || data === "[]") {
+    clearAllTsAssets();
+    return;
+  }
+  playSound("tsReport", 0.5);
+  clearTsunamiLayers();
+
+  try {
+    const response = await fetch("/assets/comparision/tsunami_areas.geojson");
+    if (!response.ok) {
+      throw new Error(`[ts/renderTS] failed to fetch tsunami areas: ${response.status}`);
+    }
+    // Additional implementation for area mapping and visualization...
+  } catch (error) {
+    throw error;
+  }
+}
+```
+
+This function provides comprehensive tsunami warning visualization with geographic precision and user-friendly information displays.

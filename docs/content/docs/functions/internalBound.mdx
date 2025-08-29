@@ -1,0 +1,62 @@
+---
+title: internalBound
+---
+
+Internal function to fit the map camera to a given bounds.
+
+`internalBound(bound)` → `{void}`
+
+This utility function provides a standardized way to adjust the map camera to display specific geographic bounds, eliminating the need to pass arguments repeatedly for bound operations.
+
+#### Parameters
+
+- `bound` - The bounds to fit the camera to (mapboxgl.LngLatBounds)
+
+#### Functionality
+
+- **Camera Fitting**: Adjusts map camera to display the specified geographic bounds
+- **Smooth Animation**: Configures quick smooth linear zooming into the bounds
+- **Zoom Limiting**: Restricts maximum zoom level to 7 for optimal viewing
+- **Standardized Behavior**: Provides consistent bound behavior across all map operations
+
+#### Configuration
+
+The function is pre-configured with optimal settings:
+- **Animation Type**: Quick smooth linear transition
+- **Maximum Zoom**: Level 7 to prevent excessive zoom-in
+- **Padding**: Appropriate margins around the bounded area
+
+#### Error Handling
+
+- **Validation**: Throws an error if the provided bound is not a valid LngLatBounds object
+- **Boundary Checks**: Ensures bounds are valid before attempting camera adjustment
+
+#### Usage Context
+
+This function is used throughout the application for:
+- Displaying earthquake affected areas
+- Centering on epicenter locations  
+- Showing regional intensity distributions
+- Focusing on station coverage areas
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/boundEpicenter" title="boundEpicenter">
+    Uses internalBound for epicenter-specific camera positioning
+  </Card>
+  <Card href="/docs/functions/boundMarkers" title="boundMarkers">
+    Uses internalBound for marker-based camera positioning
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/internal/internalBound.js"
+export function internalBound(bound) {
+  // Validates bound parameter and adjusts camera with smooth animation
+  // Maximum zoom level: 7, optimized for earthquake data visualization
+}
+```
+
+This internal utility ensures consistent and smooth map navigation behavior across all earthquake and tsunami visualization functions.

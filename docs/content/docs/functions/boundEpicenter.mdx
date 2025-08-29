@@ -1,0 +1,80 @@
+---
+title: boundEpicenter
+---
+
+Custom epicenter / bounding function for Foreign reports.
+
+`boundEpicenter(epicenterLng, epicenterLat)` → `{void}`
+
+Adjusts the map view to focus on an earthquake epicenter while ensuring the map shows both the epicenter location and the configured main bounds area. This function differs from internalBound by not having a maximum zoom restriction.
+
+#### Parameters
+
+- `epicenterLng` - Longitude coordinate of the epicenter (mapboxgl.LngLatLike)
+- `epicenterLat` - Latitude coordinate of the epicenter (mapboxgl.LngLatLike)
+
+#### Functionality
+
+- **Bounds Creation**: Creates a new LngLatBounds object encompassing epicenter and main bounds
+- **Epicenter Integration**: Extends bounds to include the earthquake epicenter location
+- **Main Bounds**: Includes configured main bounds from application configuration
+- **Camera Adjustment**: Fits map camera to the calculated bounds with smooth animation
+
+#### Configuration
+
+The function uses application configuration for:
+- **Main Bounds**: `config.map.main_bounds` - Primary geographic area to include
+- **Padding**: `config.map.bound_padding` - Space around the bounded area
+- **Duration**: `config.map.bound_duration` - Animation duration for camera movement
+- **Easing**: Custom easing function for smooth transitions
+
+#### Animation Properties
+
+- **Easing Function**: `(t) => 1 - Math.pow(1 - t, 5)` - Smooth deceleration curve
+- **Linear Transition**: Uses linear interpolation for predictable movement
+- **Smooth Duration**: Configured timing for user-friendly camera transitions
+
+#### Usage Context
+
+This function is specifically designed for:
+- Foreign earthquake reports where epicenter may be distant from main area
+- Ensuring both epicenter and primary region remain visible
+- Providing context for earthquakes occurring outside the primary monitoring zone
+
+#### Differences from internalBound
+
+- **No Maximum Zoom**: Unlike internalBound, this function does not restrict maximum zoom level
+- **Main Bounds Integration**: Always includes configured main bounds in the view
+- **Foreign Report Focus**: Optimized for earthquakes occurring outside primary region
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/internalBound" title="internalBound">
+    Alternative bound function with zoom restrictions
+  </Card>
+  <Card href="/docs/functions/boundMarkers" title="boundMarkers">
+    Bounds view to include multiple markers and epicenter
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/hypocenterReport/fo.js"
+export async function boundEpicenter(epicenterLng, epicenterLat) {
+  const bounds = new mapboxgl.LngLatBounds();
+  bounds.extend([epicenterLng, epicenterLat]);
+  for (const coord of config.map.main_bounds) {
+    bounds.extend(coord);
+  }
+
+  map.fitBounds(bounds, {
+    padding: config.map.bound_padding,
+    duration: config.map.bound_duration,
+    easing: (t) => 1 - Math.pow(1 - t, 5),
+    linear: true,
+  });
+}
+```
+
+This function ensures comprehensive geographic context for foreign earthquake reports by maintaining visibility of both the epicenter and the primary monitoring region.

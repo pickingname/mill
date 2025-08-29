@@ -1,0 +1,79 @@
+---
+title: updateEpicenterIcon
+---
+
+Helper function to update the epicenter icon on the map.
+
+`updateEpicenterIcon(epicenterLng, epicenterLat)` → `{Promise<void>}`
+
+Places or updates the earthquake epicenter marker on the map with the specified coordinates, handling icon loading and positioning automatically.
+
+#### Parameters
+
+- `epicenterLng` - Longitude of the epicenter
+- `epicenterLat` - Latitude of the epicenter
+
+#### Returns
+
+Returns a promise that resolves when the epicenter icon is updated
+
+#### Functionality
+
+- **Icon Management**: Loads epicenter icon image if not already available
+- **Positioning**: Places the epicenter marker at the specified coordinates
+- **Resource Loading**: Handles asynchronous icon image loading from assets
+- **Map Integration**: Integrates with Mapbox GL map instance for marker display
+
+#### Icon Loading
+
+The function manages icon resources efficiently:
+- **Conditional Loading**: Only loads the epicenter icon if not already present
+- **Asset Path**: Loads icon from `/assets/basemap/icons/epicenter.png`
+- **Error Handling**: Manages image loading failures gracefully
+- **Performance**: Reuses loaded icons to avoid redundant requests
+
+#### Map Visualization
+
+- **Marker Placement**: Positions epicenter marker at exact coordinates
+- **Visual Identification**: Provides clear visual indication of earthquake origin
+- **Coordinate Accuracy**: Uses precise latitude/longitude positioning
+
+#### Usage Context
+
+This function is called by various render functions to display earthquake epicenters:
+- DetailScale reports for confirmed epicenter locations
+- Destination reports for verified earthquake origins
+- Other earthquake visualizations requiring epicenter markers
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/renderDS" title="renderDS">
+    Uses this function to display detailed scale epicenters
+  </Card>
+  <Card href="/docs/functions/renderDE" title="renderDE">
+    Uses this function to display destination epicenters
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/hypocenterReport/ds.js"
+export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
+  if (!map.hasImage("epicenter")) {
+    await new Promise((resolve, reject) => {
+      map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
+        if (error) {
+          reject(error);
+        } else {
+          map.addImage("epicenter", image);
+          resolve();
+        }
+      });
+    });
+  }
+  // Additional implementation for marker positioning...
+}
+```
+
+This helper function ensures consistent and reliable epicenter visualization across all earthquake report types.

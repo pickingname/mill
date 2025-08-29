@@ -1,0 +1,98 @@
+---
+title: getPrefectureMap
+---
+
+Get mappings for the prefecture data (like lat,lon) from a CSV file.
+
+`getPrefectureMap()` → `{Promise<Map>}`
+
+Loads and parses prefecture reference data from a CSV file to provide coordinate and identification information for Japanese prefectures used in regional earthquake reporting.
+
+#### Returns
+
+Returns a promise that resolves to a Map containing prefecture data mappings
+
+#### Data Structure
+
+The returned Map contains prefecture entries with:
+- **Key**: Prefecture name (string)
+- **Value**: Object containing:
+  - `lat` - Prefecture latitude coordinate (number)  
+  - `lng` - Prefecture longitude coordinate (number)
+  - `code` - Prefecture identification code (string)
+  - `fullname` - Complete prefecture name (string)
+
+#### CSV Format
+
+The function expects CSV data with columns:
+1. Prefecture code
+2. Prefecture name (short)
+3. Prefecture full name
+4. Secondary code
+5. Latitude coordinate
+6. Longitude coordinate
+
+#### Error Handling
+
+- **Network Errors**: Handles failed CSV file requests with appropriate error messages
+- **Data Validation**: Processes CSV parsing errors gracefully
+- **File Format**: Manages malformed CSV data and missing entries
+
+#### Resource Management
+
+- **File Source**: Loads data from `/assets/comparision/prefectureRef.csv`
+- **Parsing**: Converts CSV text into structured Map data
+- **Memory Efficiency**: Creates lightweight coordinate mapping structure
+
+#### Usage Context
+
+This function supports regional earthquake reporting by:
+- Providing prefecture coordinates for ScalePrompt visualizations
+- Enabling regional intensity mapping and display
+- Supporting prefecture-based data organization
+- Facilitating map bounds calculation for affected regions
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/renderSP" title="renderSP">
+    Uses prefecture data for ScalePrompt regional reporting
+  </Card>
+  <Card href="/docs/functions/plotRegions" title="plotRegions">
+    Uses prefecture coordinates for regional visualization
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/hypocenterReport/sp.js"
+export async function getPrefectureMap() {
+  const response = await fetch("/assets/comparision/prefectureRef.csv");
+  if (!response.ok) {
+    console.error("[sp/getPrefectureMap] bad prefectureRef data");
+    throw new Error(
+      `[sp/getPrefectureMap] failed to fetch prefectureRef.csv: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const csvText = await response.text();
+  const prefectureMap = new Map();
+
+  const lines = csvText.trim().split("\n");
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line) {
+      const [code, name, fullname, code2, lat, long] = line.split(",");
+      prefectureMap.set(name, {
+        lat: parseFloat(lat),
+        lng: parseFloat(long),
+        code: code,
+        fullname: fullname,
+      });
+    }
+  }
+  return prefectureMap;
+}
+```
+
+This function provides essential geographic reference data for regional earthquake intensity reporting and visualization.

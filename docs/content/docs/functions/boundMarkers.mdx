@@ -1,0 +1,93 @@
+---
+title: boundMarkers
+---
+
+Bounds the map view to the epicenter and stations.
+
+`boundMarkers(epicenter, stationCoordinates)` → `{void}`
+
+Adjusts the map camera to display both the earthquake epicenter and all related seismic monitoring stations, providing a comprehensive view of the earthquake detection network and impact area.
+
+#### Parameters
+
+- `epicenter` - The epicenter coordinates object
+- `stationCoordinates` - Array of coordinates for seismic monitoring stations
+
+#### Functionality
+
+- **Comprehensive Bounds**: Creates bounds encompassing epicenter and all station locations
+- **Epicenter Integration**: Always includes the earthquake epicenter in the view
+- **Station Coverage**: Extends bounds to show all relevant seismic monitoring stations
+- **Fallback Handling**: Uses epicenter-only bounds when station data is unavailable
+
+#### Bounds Calculation
+
+The function systematically builds geographic bounds:
+1. **Initialize**: Creates new LngLatBounds object
+2. **Epicenter**: Extends bounds to include epicenter coordinates
+3. **Stations**: Iterates through station coordinates and includes each location
+4. **Validation**: Handles cases where station data may be missing or empty
+
+#### Error Handling
+
+- **Missing Station Data**: Gracefully handles cases where stationCoordinates is null or empty
+- **Warning Logging**: Logs warnings when station data is unavailable
+- **Fallback Behavior**: Uses epicenter-only bounds when station data cannot be processed
+
+#### Data Processing
+
+- **Coordinate Extraction**: Processes station coordinate arrays in [longitude, latitude] format
+- **Bounds Extension**: Uses Mapbox GL bounds.extend() for each coordinate pair
+- **Validation**: Checks for valid station coordinate arrays before processing
+
+#### Usage Context
+
+This function is essential for:
+- DetailScale reports that include both epicenter and station-specific intensity data
+- Providing context for earthquake detection network coverage
+- Ensuring all relevant seismic monitoring locations are visible
+- Comprehensive earthquake impact visualization
+
+#### Integration
+
+- **Internal Bound**: Uses `internalBound()` function for final camera adjustment
+- **Station Plotting**: Works with station plotting functions to show complete picture
+- **Map Coordination**: Ensures map view matches the data being displayed
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/internalBound" title="internalBound">
+    Used for final camera adjustment with zoom limitations
+  </Card>
+  <Card href="/docs/functions/boundEpicenter" title="boundEpicenter">
+    Alternative bound function focused on epicenter location
+  </Card>
+  <Card href="/docs/functions/plotStations" title="plotStations">
+    Provides station coordinate data used by this function
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/hypocenterReport/ds.js"
+export async function boundMarkers(epicenter, stationCoordinates) {
+  const bounds = new mapboxgl.LngLatBounds();
+
+  bounds.extend([epicenter.longitude, epicenter.latitude]);
+
+  if (stationCoordinates && stationCoordinates.length > 0) {
+    for (const [long, lat] of stationCoordinates) {
+      bounds.extend([long, lat]);
+    }
+  } else {
+    console.warn(
+      "[ds] no station coordinates available for bounding, using epicenter only"
+    );
+  }
+
+  internalBound(bounds);
+}
+```
+
+This function ensures optimal map positioning for detailed earthquake reports by showing both the epicenter and the complete network of monitoring stations that detected the seismic event.
