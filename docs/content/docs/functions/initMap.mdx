@@ -1,0 +1,44 @@
+---
+title: initMap
+---
+
+Initializes the Mapbox map with the specified configuration.
+
+`initMap()` → `{void}`
+
+Sets up the main map interface including the map container, styling, positioning, and interactive features. This function also initializes the minimap and sets up terrain display and user interaction behaviors.
+
+#### Functionality
+
+- **Map Container Setup**: Configures the main map display area
+- **Style Configuration**: Applies the appropriate map style and theme
+- **Positioning**: Sets initial center coordinates and zoom level
+- **Minimap Integration**: Initializes the secondary minimap view
+- **Terrain Configuration**: Sets up terrain visualization features  
+- **Interaction Setup**: Configures drag and zoom behaviors
+- **Data Loop Initialization**: Starts the main data fetching and rendering loop
+
+#### Map Configuration
+
+The function configures essential map properties including:
+- Map container targeting
+- Initial geographical center point
+- Default zoom level settings
+- Map style and visual theme
+- User interaction parameters
+
+#### Integration
+
+After setting up the map interface, `initMap()` automatically starts the main data processing loop to begin monitoring and displaying earthquake and tsunami information.
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/startMainLoop" title="startMainLoop">
+    Called by initMap to begin data monitoring
+  </Card>
+</Cards>
+
+#### Source
+
+This function serves as the primary map initialization point and is typically called once during application startup to establish the main visualization interface.

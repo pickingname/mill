@@ -1,0 +1,43 @@
+---
+title: classifyData
+---
+
+Classifies the type of data based on the response (data) code (not HTTP status).
+
+`classifyData(code)` → `{String}`
+
+This function categorizes incoming data based on specific codes to determine how it should be processed and rendered.
+
+#### Parameters
+
+- `code` - The numeric code from the response data
+
+#### Returns
+
+The type of data classified as a string:
+- `"hypocenter_report"` for normal hypocenter reports (code 551)
+- `"eew"` for earthquake early warnings (code 556)  
+- `"unsupported"` for unknown codes
+
+#### Data Type Classifications
+
+- **551**: Normal hypocenter related report like DetailScale or ScalePrompt
+- **556**: Special warning (earthquake early warning) like Destination from 551 but includes more information
+
+#### Source
+
+```js title="classification/classifyData.js"
+export function classifyData(code) {
+  switch (code) {
+    case 551:
+      return "hypocenter_report"; // normal case
+    case 556:
+      return "eew"; // special warning
+    default:
+      console.warn(`[classifyData] bad code: ${code}`);
+      return "unsupported";
+  }
+}
+```
+
+The function uses a simple switch statement to map response codes to data types that determine the appropriate rendering functions to call.

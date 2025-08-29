@@ -1,4 +1,24 @@
 {
   "title": "Functions",
-  "defaultOpen": true
+  "defaultOpen": true,
+  "pages": [
+    "fetchData",
+    "classifyData",
+    "mainLoop", 
+    "secondaryLoop",
+    "startMainLoop",
+    "initMap",
+    "renderDS",
+    "renderDE", 
+    "renderSP",
+    "updateInfoBox",
+    "showInfoBox",
+    "hideInfoBox",
+    "armIntList",
+    "disarmIntList",
+    "armTsComponent",
+    "disarmTsComponent",
+    "clearAllTsAssets",
+    "setTheme"
+  ]
 }

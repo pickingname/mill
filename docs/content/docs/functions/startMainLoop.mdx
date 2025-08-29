@@ -1,0 +1,45 @@
+---
+title: startMainLoop
+---
+
+This function starts the main loop and sets up intervals for data fetching.
+
+`startMainLoop()` → `{void}`
+
+The initialization function that begins the application's continuous data monitoring by starting both the main earthquake data loop and the secondary tsunami data loop.
+
+#### Functionality
+
+- **Main Data Loop**: Starts `mainLoop()` immediately and sets up recurring execution
+- **Tsunami Data Loop**: Starts `secondaryLoop()` immediately and sets up recurring execution  
+- **Interval Configuration**: Uses timing values from the application configuration
+
+#### Timing Configuration
+
+- **Main Loop Interval**: `config.api.interval` - Controls earthquake data fetch frequency
+- **Tsunami Loop Interval**: `config.api.jmaTsunamiInterval` - Controls tsunami data fetch frequency
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/mainLoop" title="mainLoop">
+    The primary data processing loop that this function starts
+  </Card>
+  <Card href="/docs/functions/secondaryLoop" title="secondaryLoop">
+    The tsunami data processing loop that this function also starts
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="main.js"
+export function startMainLoop() {
+  mainLoop().then();
+  setInterval(mainLoop, config.api.interval);
+
+  secondaryLoop().then();
+  setInterval(secondaryLoop, config.api.jmaTsunamiInterval);
+}
+```
+
+This function is typically called once during application initialization to begin the continuous monitoring and updating cycle for both earthquake and tsunami data.

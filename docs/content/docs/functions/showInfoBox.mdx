@@ -1,0 +1,39 @@
+---
+title: showInfoBox
+---
+
+Shows the infoBox component in the UI.
+
+`showInfoBox()` → `{void}`
+
+Makes the information box visible to display earthquake and disaster details to users.
+
+#### Functionality
+
+- **Visibility Control**: Makes the infoBox component visible in the user interface
+- **UI State Management**: Updates the display state for earthquake information
+
+#### Usage Context
+
+This function is typically called when:
+- New earthquake data needs to be displayed
+- Important disaster information requires user attention
+- The application transitions from a no-data state to displaying information
+
+#### Opposite Function
+
+<Cards>
+  <Card href="/docs/functions/hideInfoBox" title="hideInfoBox">
+    Opposite Function of showInfoBox
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="components/infoBox/infoBoxController.js"
+export function showInfoBox() {
+  // Implementation details for making infoBox visible
+}
+```
+
+This function works in conjunction with information update functions to present earthquake and disaster data to users in a clear, accessible format.

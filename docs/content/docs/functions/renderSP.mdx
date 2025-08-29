@@ -1,0 +1,76 @@
+---
+title: renderSP
+---
+
+Renders ScalePrompt earthquake reports with regional intensity information.
+
+`renderSP(data)` → `{Promise<void>}`
+
+Processes and displays preliminary earthquake reports showing intensity information by prefecture/region while the epicenter is still being evaluated. This represents the initial rapid response phase of earthquake reporting.
+
+#### Parameters
+
+- `data` - The ScalePrompt data object to render
+
+#### Returns
+
+Returns a promise that resolves when the ScalePrompt is rendered
+
+#### Workflow
+
+1. **Audio Alert**: Plays ScalePrompt notification sound
+2. **Cleanup**: Clears previous plotted data using `clear551()`
+3. **UI Preparation**: Arms intensity list for regional intensity data
+4. **Preliminary Info**: Updates info box with "Flash Report" and evaluation status
+5. **Regional Mapping**: Loads prefecture coordinate data and plots affected regions
+6. **Map Positioning**: Bounds map view to show all affected regions
+7. **Intensity Display**: Updates intensity list with prefecture-level information
+
+#### Features
+
+- **Clearing Previous Data**: Removes existing 551-type earthquake displays
+- **Prefecture Icon Update**: Displays regional intensity markers
+- **Prefecture Bounding**: Automatically adjusts map to show all affected prefectures
+- **Information Box Update**: Shows preliminary earthquake information
+
+#### Data Processing
+
+ScalePrompt reports include:
+- **Regional Intensity Data**: Prefecture-level seismic intensity readings
+- **Preliminary Timing**: Earthquake occurrence time information
+- **Maximum Intensity**: Overall maximum intensity across all regions
+- **Evaluation Status**: Indicates epicenter is still being determined
+
+#### Map Visualization
+
+- **Regional Focus**: Shows affected prefectures/regions rather than specific epicenter
+- **Intensity Distribution**: Color-coded prefecture markers showing seismic intensity
+- **Preliminary Display**: Emphasizes that this is initial rapid reporting
+
+#### Flash Report Information
+
+The info box displays:
+- **Report Type**: "Flash Report" indicating preliminary nature
+- **Location Status**: "Evaluating Epicenter" showing ongoing analysis
+- **Magnitude**: "--" (not yet determined)
+- **Depth**: "Unknown" (not yet determined)
+- **Time**: Actual earthquake occurrence time
+- **Max Scale**: Maximum intensity observed across regions
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/getPrefectureMap" title="getPrefectureMap">
+    Loads prefecture coordinate data for regional mapping
+  </Card>
+  <Card href="/docs/functions/plotRegions" title="plotRegions">
+    Displays prefecture-level intensity information on the map
+  </Card>
+  <Card href="/docs/functions/armIntList" title="armIntList">
+    Enables intensity list for regional data display
+  </Card>
+</Cards>
+
+#### Source
+
+This function provides rapid initial earthquake information when detailed epicenter analysis is not yet complete, focusing on regional impact assessment.

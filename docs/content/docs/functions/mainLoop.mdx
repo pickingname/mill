@@ -1,0 +1,49 @@
+---
+title: mainLoop
+---
+
+This main loop fetches data from the API and renders it based on the data type.
+
+`mainLoop()` → `{Promise<void>}`
+
+The core function that continuously polls for new earthquake and disaster data, classifies it, and triggers the appropriate rendering functions. This is the heart of the application's data processing system.
+
+#### Returns
+
+Returns a promise that resolves when the main loop completes
+
+#### Workflow
+
+1. **Fetch Data**: Retrieves data from the configured API endpoint
+2. **Change Detection**: Compares new data with previous data to avoid unnecessary updates
+3. **Data Classification**: Uses `classifyData()` to determine data type
+4. **Type-based Rendering**: Calls appropriate render functions based on data type and issue type
+
+#### Data Type Handling
+
+##### Hypocenter Reports (551)
+- **DetailScale**: Calls `renderDS()` for detailed scale information
+- **ScalePrompt**: Calls `renderSP()` for scale prompt displays  
+- **Destination**: Calls `renderDE()` for destination-based reports
+- **Foreign**: Calls `renderFO()` for foreign earthquake reports
+
+##### Earthquake Early Warning (556)
+- **EEW**: Calls `renderEEW()` for emergency early warning displays
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/fetchData" title="fetchData">
+    Used to retrieve data from API endpoints
+  </Card>
+  <Card href="/docs/functions/classifyData" title="classifyData">
+    Used to determine data type for processing
+  </Card>
+  <Card href="/docs/functions/startMainLoop" title="startMainLoop">
+    Initiates and schedules this main loop
+  </Card>
+</Cards>
+
+#### Source
+
+The main loop includes sophisticated change detection and branching logic to handle different types of earthquake and tsunami data appropriately.

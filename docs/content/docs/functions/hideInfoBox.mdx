@@ -1,0 +1,39 @@
+---
+title: hideInfoBox
+---
+
+Hides the infoBox component in the UI.
+
+`hideInfoBox()` → `{void}`
+
+Conceals the information box from the user interface when earthquake information is not needed or available.
+
+#### Functionality
+
+- **Visibility Control**: Hides the infoBox component from the user interface
+- **UI State Management**: Updates the display state to remove earthquake information
+
+#### Usage Context
+
+This function is typically called when:
+- No earthquake data is available to display
+- The application needs to clear previous information displays
+- Transitioning between different data views or states
+
+#### Opposite Function
+
+<Cards>
+  <Card href="/docs/functions/showInfoBox" title="showInfoBox">
+    Opposite Function of hideInfoBox
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="components/infoBox/infoBoxController.js"
+export function hideInfoBox() {
+  // Implementation details for hiding infoBox
+}
+```
+
+This function provides clean state management for the information display system, ensuring users only see relevant and current earthquake information.

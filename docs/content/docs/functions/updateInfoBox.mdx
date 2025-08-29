@@ -1,0 +1,73 @@
+---
+title: updateInfoBox
+---
+
+Update the text in the infoBox component in the UI.
+
+`updateInfoBox(reportType, unTranslatedEpicenter, magnitude, depth, time, additionalInfo, maxInt)` → `{void}`
+
+Updates the earthquake information display with comprehensive details about seismic events, including location, magnitude, depth, and intensity information.
+
+#### Parameters
+
+- `reportType` - The report type (e.g "Hypocenter Report", "Flash Report" etc.)
+- `unTranslatedEpicenter` - Untranslated epicenter name, this will be translated
+- `magnitude` - Magnitude of the earthquake  
+- `depth` - Depth of the earthquake
+- `time` - The time given by the API, default api TZ: JST (GMT+9)
+- `additionalInfo` - Additional information about the earthquake (UNUSED)
+- `maxInt` - Maximum intensity of the earthquake (e.g. "5+", "6-", etc.)
+
+#### Functionality
+
+- **Text Updates**: Updates multiple DOM elements with earthquake information
+- **Translation**: Automatically translates epicenter names using `translateEpicenter()`
+- **Data Validation**: Handles missing or invalid data with appropriate fallback displays
+- **Intensity Classification**: Processes and displays earthquake intensity information
+
+#### Data Processing
+
+The function includes intelligent data handling:
+- Displays "--" for undefined or invalid magnitude values
+- Handles missing depth information appropriately  
+- Processes time information in JST timezone format
+- Translates epicenter location names for user display
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/showInfoBox" title="showInfoBox">
+    Makes the infoBox visible to display updated information
+  </Card>
+  <Card href="/docs/functions/hideInfoBox" title="hideInfoBox">
+    Hides the infoBox when information is not needed
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="components/infoBox/infoBoxController.js"
+export function updateInfoBox(
+  reportType,
+  unTranslatedEpicenter,
+  magnitude,
+  depth,
+  time,
+  additionalInfo,
+  maxInt
+) {
+  document.getElementById("reportType").textContent = reportType;
+  document.getElementById("location").textContent = translateEpicenter(
+    unTranslatedEpicenter
+  );
+  document.getElementById("magnitude").textContent =
+    magnitude == -1 || !magnitude ? "--" : magnitude;
+  document.getElementById("depth").textContent =
+    depth == "Unknown" || !depth || depth == "" || depth == -1
+      ? "--"
+      : depth + "km";
+  // Additional implementation details...
+}
+```
+
+This function serves as the primary interface for updating earthquake information displays with comprehensive data validation and user-friendly formatting.

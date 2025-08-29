@@ -1,0 +1,37 @@
+---
+title: fetchData
+---
+
+Fetches data from a given URL and returns the response as JSON.
+
+`fetchData(url)` → `{String}`
+
+This function handles API requests to retrieve data from the configured endpoints. It includes error handling for failed requests.
+
+#### Parameters
+
+- `url` - The URL to fetch data from
+
+#### Returns
+
+JSON response from the fetch request if successful
+
+#### Source
+
+```js title="fetch/fetchData.js"
+export function fetchData(url) {
+  return fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`[fetchData] response !ok, ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("[fetchData] special fetch error: ", error);
+      throw error;
+    });
+}
+```
+
+This function uses the native `fetch` API to make HTTP requests and converts successful responses to JSON format while providing comprehensive error handling.

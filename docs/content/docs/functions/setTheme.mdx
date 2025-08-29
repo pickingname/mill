@@ -1,0 +1,55 @@
+---
+title: setTheme
+---
+
+Sets the theme for the application as CSS vars and classes, not the map theme.
+
+`setTheme(theme)` → `{void}`
+
+Updates the application's visual theme by modifying CSS variables and classes, controlling the appearance of UI elements without affecting the map's visual style.
+
+#### Parameters
+
+- `theme` - Theme to set ('light' or 'dark')
+
+#### Functionality
+
+- **CSS Variable Updates**: Modifies CSS custom properties for theme-based styling
+- **Class Management**: Adds or removes theme-related CSS classes from DOM elements
+- **UI Styling**: Controls appearance of interface elements, panels, and text
+- **Theme Persistence**: May include logic for remembering user theme preferences
+
+#### Theme Options
+
+- **Light Theme**: Provides bright, high-contrast interface suitable for daytime use
+- **Dark Theme**: Offers reduced brightness interface for low-light environments
+
+#### Scope Limitation
+
+This function specifically handles application UI theming and does **not** affect:
+- Map tile styling or appearance
+- Mapbox map theme or color schemes
+- Earthquake visualization colors
+- Map overlay styling
+
+#### Usage Context
+
+Typically called when:
+- User manually switches themes via interface controls
+- Application detects system theme preferences  
+- Automatic theme switching based on time of day
+- Loading saved user preferences on application startup
+
+#### Related Functions
+
+Theme management may work with other UI control functions for comprehensive interface management.
+
+#### Source
+
+```js title="components/themeChanger.js"
+export function setTheme(theme) {
+  // Implementation details for updating CSS variables and classes
+}
+```
+
+This function provides user interface theme control while maintaining clear separation between UI styling and map visualization themes.

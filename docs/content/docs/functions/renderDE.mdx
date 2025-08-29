@@ -1,0 +1,65 @@
+---
+title: renderDE
+---
+
+A part of the main rendering logic for Destination (DE) on response code 551.
+
+`renderDE(data)` → `{Promise<void>}`
+
+Renders the Epicenter Destination data on the map and updates the information box and sidebar. This function handles earthquake reports where the epicenter location has been confirmed.
+
+#### Parameters
+
+- `data` - The earthquake data object to render
+
+#### Returns
+
+Returns a promise that resolves when the Destination is rendered
+
+#### Workflow
+
+1. **Audio Alert**: Plays DetailScale notification sound  
+2. **Cleanup**: Clears previous plotted data using `clear551()`
+3. **UI Setup**: Disarms intensity list (not needed for destination reports)
+4. **Epicenter Processing**: Extracts hypocenter coordinates and details
+5. **Map Updates**: Updates epicenter icon and bounds map view to epicenter
+6. **Information Display**: Updates info box with confirmed epicenter information
+
+#### Features
+
+- **Clearing Previous Data**: Removes any existing 551-type earthquake displays
+- **Epicenter Icon Update**: Places accurate epicenter marker on the map
+- **Epicenter Bounding**: Automatically centers and zooms map to epicenter location
+- **Information Box Update**: Displays "Epicenter Confirmation" with earthquake details
+
+#### Data Processing
+
+The function specifically handles Destination-type reports which include:
+- Confirmed epicenter coordinates (latitude/longitude)
+- Earthquake magnitude and depth information
+- Timing information for the seismic event
+- Additional comments and context
+
+#### Map Visualization
+
+- **Focus on Epicenter**: Centers map view on the confirmed earthquake location
+- **Simplified Display**: Does not show individual station data (unlike DetailScale)
+- **Clear Presentation**: Emphasizes the confirmed epicenter location
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/updateInfoBox" title="updateInfoBox">
+    Used to display epicenter confirmation information
+  </Card>
+  <Card href="/docs/functions/updateEpicenterIcon" title="updateEpicenterIcon">
+    Updates the map with the confirmed epicenter location
+  </Card>
+  <Card href="/docs/functions/disarmIntList" title="disarmIntList">
+    Hides intensity list as individual station data is not available
+  </Card>
+</Cards>
+
+#### Source
+
+This function provides a focused view of confirmed earthquake epicenters without the complexity of detailed station-by-station intensity data.

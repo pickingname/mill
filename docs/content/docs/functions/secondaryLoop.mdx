@@ -1,0 +1,45 @@
+---
+title: secondaryLoop
+---
+
+This secondary loop fetches tsunami data (from /jma endpoints) and update in the map if available.
+
+`secondaryLoop()` → `{Promise<void>}`
+
+A specialized data processing loop that handles tsunami forecast data from JMA (Japan Meteorological Agency) endpoints, running independently of the main earthquake data loop.
+
+#### Returns
+
+Returns a promise that resolves when the epicenter icon is updated
+
+#### Workflow
+
+1. **Fetch Tsunami Data**: Retrieves data from `config.api.jmaTsunamiURL`
+2. **Change Detection**: Compares new tsunami data with previous data
+3. **Conditional Rendering**: 
+   - If tsunami data exists: Calls `renderTS()` to display tsunami information
+   - If no tsunami data: Calls `clearAllTsAssets()` to clean up existing displays
+
+#### Data Source
+
+- **Endpoint**: JMA tsunami forecast endpoints (`config.api.jmaTsunamiURL`)
+- **Data Type**: Tsunami forecast and warning information
+- **Update Frequency**: Controlled by `config.api.jmaTsunamiInterval`
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/renderTS" title="renderTS">
+    Called to render tsunami data when available
+  </Card>
+  <Card href="/docs/functions/clearAllTsAssets" title="clearAllTsAssets">
+    Called to clear tsunami displays when no data is available
+  </Card>
+  <Card href="/docs/functions/startMainLoop" title="startMainLoop">
+    Initiates and schedules this secondary loop
+  </Card>
+</Cards>
+
+#### Source
+
+The secondary loop operates on a different schedule than the main loop, allowing for independent tsunami data monitoring while maintaining efficient resource usage through change detection.

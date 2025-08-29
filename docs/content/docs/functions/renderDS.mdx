@@ -1,0 +1,66 @@
+---
+title: renderDS
+---
+
+Renders DetailScale earthquake reports with comprehensive visualization.
+
+`renderDS(data)` → `{Promise<void>}`
+
+Processes and displays detailed earthquake scale information including epicenter visualization, station data plotting, and intensity information. This function handles the most comprehensive earthquake report type.
+
+#### Parameters
+
+- `data` - The DetailScale data object to render
+
+#### Returns
+
+Returns a promise that resolves when the DetailScale is rendered
+
+#### Workflow
+
+1. **Audio Alert**: Plays DetailScale notification sound
+2. **Cleanup**: Clears previous 551-type displays using `clear551()`
+3. **UI Preparation**: Arms the intensity list for station data display
+4. **Information Update**: Updates the info box with earthquake details
+5. **Map Visualization**: Updates epicenter icon and positions map view
+6. **Station Plotting**: Displays seismic station data and intensity readings
+7. **List Population**: Updates intensity list with station-specific information
+
+#### Data Processing
+
+The function extracts and processes multiple data components:
+- **Hypocenter Information**: Location, magnitude, depth, and timing
+- **Station Data**: Individual seismic station readings and intensities
+- **Geographic Bounds**: Automatic map positioning based on affected area
+- **Maximum Intensity**: Overall earthquake intensity classification
+
+#### Map Updates
+
+- **Epicenter Icon**: Places and updates the earthquake epicenter marker
+- **Station Markers**: Displays individual seismic monitoring stations
+- **Auto-Bounds**: Automatically adjusts map view to show relevant area
+- **Intensity Visualization**: Color-coded display of earthquake intensity data
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/updateInfoBox" title="updateInfoBox">
+    Used to display earthquake information in the info panel
+  </Card>
+  <Card href="/docs/functions/armIntList" title="armIntList">
+    Enables the intensity list display for station data
+  </Card>
+  <Card href="/docs/functions/updateEpicenterIcon" title="updateEpicenterIcon">
+    Updates the map epicenter visualization
+  </Card>
+</Cards>
+
+#### Error Handling
+
+- **CSV Fetch Errors**: Handles failures when loading station reference data
+- **Data Validation**: Processes incomplete or malformed earthquake data
+- **Map Integration**: Manages Mapbox integration and rendering errors
+
+#### Source
+
+This function represents the most complex earthquake visualization in the system, providing detailed station-by-station intensity information along with comprehensive geographic and temporal context.

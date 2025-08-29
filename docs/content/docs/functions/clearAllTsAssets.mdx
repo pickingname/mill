@@ -1,0 +1,52 @@
+---
+title: clearAllTsAssets
+---
+
+Clears all tsunami-related assets and events, including layers and intervals.
+
+`clearAllTsAssets()` → `{void}`
+
+Removes all tsunami-related visual elements, data layers, and cleanup intervals from the map and interface. This function ensures a clean state when tsunami information is no longer relevant or available.
+
+#### Functionality
+
+- **Layer Cleanup**: Removes all tsunami-related map layers and visualizations
+- **Event Clearing**: Cancels any active tsunami-related intervals or timers
+- **Asset Removal**: Cleans up tsunami forecast data displays and markers
+- **State Reset**: Returns the application to a non-tsunami state
+
+#### Usage Context
+
+This function is typically called when:
+- Tsunami data is no longer available from the API
+- Transitioning between different types of earthquake/disaster data
+- Clearing outdated tsunami information to prevent confusion
+- Resetting the application state for new data processing
+
+#### Integration
+
+Works as part of the tsunami data management system, coordinating with:
+- Secondary data loop for tsunami monitoring
+- Tsunami rendering functions for display management
+- Map layer management for visual cleanup
+
+#### Related Functions
+
+<Cards>
+  <Card href="/docs/functions/renderTS" title="renderTS">
+    Displays tsunami information when data is available
+  </Card>
+  <Card href="/docs/functions/secondaryLoop" title="secondaryLoop">
+    Calls this function when no tsunami data is available
+  </Card>
+</Cards>
+
+#### Source
+
+```js title="map/renderConditions/tsunami_forecast/ts.js"
+export function clearAllTsAssets() {
+  // Implementation details for clearing tsunami layers and intervals
+}
+```
+
+This function ensures proper cleanup of tsunami-related resources and maintains application performance by removing unnecessary visual elements.
