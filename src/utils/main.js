@@ -30,7 +30,7 @@ showSidebar();
  *
  * @returns {Promise<void>} Returns a promise that resolves when the epicenter icon is updated.
  */
-export async function secondaryLoop() {
+export async function tsFetchLoop() {
   currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
   if (
     JSON.stringify(currentTsunamiData) === JSON.stringify(previousTsunamiData)
@@ -108,6 +108,6 @@ export function startMainLoop() {
   mainLoop().then();
   setInterval(mainLoop, config.api.interval);
 
-  secondaryLoop().then();
-  setInterval(secondaryLoop, config.api.jmaTsunamiInterval);
+  tsFetchLoop().then();
+  setInterval(tsFetchLoop, config.api.jmaTsunamiInterval);
 }
