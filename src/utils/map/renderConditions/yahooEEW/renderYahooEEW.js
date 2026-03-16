@@ -75,10 +75,6 @@ export async function renderYahooEEW(eewData) {
   const pRadius = parseFloat(psWaveItem.pRadius);
   const sRadius = parseFloat(psWaveItem.sRadius);
 
-  removeLayerAndSource("yahoo-eew-pwave");
-  removeLayerAndSource("yahoo-eew-swave");
-  removeLayerAndSource("yahoo-eew-epicenter");
-
   const bounds = new mapboxgl.LngLatBounds();
   bounds.extend(center);
 
@@ -88,20 +84,29 @@ export async function renderYahooEEW(eewData) {
     pWaveData.geometry.coordinates[0].forEach((coord) => {
       bounds.extend(coord);
     });
-    map.addSource("yahoo-eew-pwave", {
-      type: "geojson",
-      data: pWaveData,
-    });
-    map.addLayer({
-      id: "yahoo-eew-pwave",
-      type: "line",
-      source: "yahoo-eew-pwave",
-      paint: {
-        "line-color": "#35b4fb",
-        "line-width": 1,
-        "line-emissive-strength": 1,
-      },
-    });
+
+    if (map.getSource("yahoo-eew-pwave")) {
+      map.getSource("yahoo-eew-pwave").setData(pWaveData);
+    } else {
+      map.addSource("yahoo-eew-pwave", {
+        type: "geojson",
+        data: pWaveData,
+      });
+      map.addLayer({
+        id: "yahoo-eew-pwave",
+        type: "line",
+        source: "yahoo-eew-pwave",
+        paint: {
+          "line-color": "#35b4fb",
+          "line-width": 1,
+          "line-emissive-strength": 1,
+        },
+      });
+    }
+  } else if (map.getSource("yahoo-eew-pwave")) {
+    map
+      .getSource("yahoo-eew-pwave")
+      .setData({ type: "FeatureCollection", features: [] });
   }
 
   // Sw
@@ -110,20 +115,29 @@ export async function renderYahooEEW(eewData) {
     sWaveData.geometry.coordinates[0].forEach((coord) => {
       bounds.extend(coord);
     });
-    map.addSource("yahoo-eew-swave", {
-      type: "geojson",
-      data: sWaveData,
-    });
-    map.addLayer({
-      id: "yahoo-eew-swave",
-      type: "line",
-      source: "yahoo-eew-swave",
-      paint: {
-        "line-color": "#f6521f",
-        "line-width": 1,
-        "line-emissive-strength": 1,
-      },
-    });
+
+    if (map.getSource("yahoo-eew-swave")) {
+      map.getSource("yahoo-eew-swave").setData(sWaveData);
+    } else {
+      map.addSource("yahoo-eew-swave", {
+        type: "geojson",
+        data: sWaveData,
+      });
+      map.addLayer({
+        id: "yahoo-eew-swave",
+        type: "line",
+        source: "yahoo-eew-swave",
+        paint: {
+          "line-color": "#f6521f",
+          "line-width": 1,
+          "line-emissive-strength": 1,
+        },
+      });
+    }
+  } else if (map.getSource("yahoo-eew-swave")) {
+    map
+      .getSource("yahoo-eew-swave")
+      .setData({ type: "FeatureCollection", features: [] });
   }
 
   if (!map.hasImage("epicenter")) {
@@ -143,27 +157,33 @@ export async function renderYahooEEW(eewData) {
     });
   }
 
-  map.addSource("yahoo-eew-epicenter", {
-    type: "geojson",
-    data: {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: center,
-      },
+  const epicenterData = {
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: center,
     },
-  });
+  };
 
-  map.addLayer({
-    id: "yahoo-eew-epicenter",
-    type: "symbol",
-    source: "yahoo-eew-epicenter",
-    layout: {
-      "icon-image": map.hasImage("epicenter") ? "epicenter" : "",
-      "icon-size": 30 / 31,
-      "icon-allow-overlap": true,
-    },
-  });
+  if (map.getSource("yahoo-eew-epicenter")) {
+    map.getSource("yahoo-eew-epicenter").setData(epicenterData);
+  } else {
+    map.addSource("yahoo-eew-epicenter", {
+      type: "geojson",
+      data: epicenterData,
+    });
+
+    map.addLayer({
+      id: "yahoo-eew-epicenter",
+      type: "symbol",
+      source: "yahoo-eew-epicenter",
+      layout: {
+        "icon-image": map.hasImage("epicenter") ? "epicenter" : "",
+        "icon-size": 30 / 31,
+        "icon-allow-overlap": true,
+      },
+    });
+  }
 
   if (!bounds.isEmpty()) {
     currentYahooEEWBounds = bounds;
