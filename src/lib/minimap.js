@@ -15,7 +15,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
     id: "mapboxgl-minimap",
     width: "320px",
     height: "180px",
-    style: "mapbox://styles/mapbox/standard?optimize=true",
+    style: "mapbox://styles/mapbox/standard",
     center: [0, 0],
     zoom: 6,
 
@@ -203,7 +203,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
         !this._boundsAlmostEqual(
           this._lastFittedBounds,
           parentBounds,
-          opts.autoFitTolerance
+          opts.autoFitTolerance,
         )
       ) {
         var originalMaxZoom = miniMap.getMaxZoom();
@@ -268,7 +268,7 @@ Minimap.prototype = Object.assign({}, mapboxgl.NavigationControl.prototype, {
       "mapboxgl-ctrl-minimap mapboxgl-ctrl rounded-md minimap";
     container.setAttribute(
       "style",
-      "width: " + opts.width + "; height: " + opts.height + ";"
+      "width: " + opts.width + "; height: " + opts.height + ";",
     );
     container.addEventListener("contextmenu", this._preventDefault);
 

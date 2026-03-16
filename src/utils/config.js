@@ -29,12 +29,12 @@ export const config = {
     ],
   },
   api: {
-    base_url: import.meta.env.DEV
+    base_url: false
       ? "/assets/map/testData.json"
       : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
 
-    jmaTsunamiURL: import.meta.env.DEV
+    jmaTsunamiURL: false
       ? "/assets/map/testTsData.json"
       : "https://api.p2pquake.net/v2/jma/tsunami?limit=1",
     jmaTsunamiInterval: 10000,

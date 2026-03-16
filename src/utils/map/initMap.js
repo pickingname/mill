@@ -19,7 +19,7 @@ export function initMap() {
   map = new mapboxgl.Map({
     container: "map",
     attributionControl: false,
-    style: "mapbox://styles/mapbox/standard?optimize=true",
+    style: "mapbox://styles/mapbox/standard",
     worldview: "jp",
     language: "en",
     center: {
