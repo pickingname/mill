@@ -9,18 +9,18 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
-    "vite": "^7.0.0"
+    "@tailwindcss/postcss": "^4.2.1",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.1",
+    "vite": "^8.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
-      "esbuild"
+      "rolldown"
     ]
   },
   "dependencies": {
-    "mapbox-gl": "^3.13.0"
+    "mapbox-gl": "^3.20.0"
   }
 }
