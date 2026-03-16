@@ -9,7 +9,7 @@
  * @property {string} map.theme Theme for the map ('auto', 'dawn', 'day', 'dusk', 'night').
  *
  * @property {Object} api API configurations.
- * @property {string} api.base_url URL used to fetch p2pquake earthquake data.
+ * @property {string} api.baseURL URL used to fetch p2pquake earthquake data.
  * @property {number} api.interval Interval for fetching p2pquake earthquake data. Rate limited to 60 requests per minute.
  * @property {string} api.jmaTsunamiURL URL used to fetch p2pquake tsunami data.
  * @property {number} api.jmaTsunamiInterval Interval for fetching p2pquake tsunami data. Rate limited to 10 requests per minute.
@@ -29,7 +29,7 @@ export const config = {
     ],
   },
   api: {
-    base_url: false
+    baseURL: false
       ? "/assets/map/testData.json"
       : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
@@ -38,5 +38,10 @@ export const config = {
       ? "/assets/map/testTsData.json"
       : "https://api.p2pquake.net/v2/jma/tsunami?limit=1",
     jmaTsunamiInterval: 10000,
+
+    eewURL: true
+      ? "/assets/map/testEEWData.json"
+      : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/20240101160630.json",
+    eewInterval: 1000,
   },
 };
