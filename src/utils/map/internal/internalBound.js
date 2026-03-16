@@ -19,11 +19,11 @@ export function internalBound(bound) {
     if (bound && bound.getNorthEast && bound.getSouthWest) {
       mergedBounds = new mapboxgl.LngLatBounds(
         bound.getSouthWest(),
-        bound.getNorthEast()
+        bound.getNorthEast(),
       );
     } else {
       throw new Error(
-        "internalBound: Provided bound is not a valid LngLatBounds"
+        "internalBound: Provided bound is not a valid LngLatBounds",
       );
     }
   } else {
@@ -38,6 +38,6 @@ export function internalBound(bound) {
     duration: config.map.bound_duration,
     easing: (t) => 1 - Math.pow(1 - t, 5),
     linear: true,
-    maxZoom: 7,
+    maxZoom: 8,
   });
 }
