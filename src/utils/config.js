@@ -40,7 +40,7 @@ export const config = {
     jmaTsunamiInterval: 10000,
 
     eewURL: true
-      ? "/assets/map/testEEWData.json"
+      ? "http://localhost:6966/"
       : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/20240101160630.json",
     eewInterval: 1000,
   },

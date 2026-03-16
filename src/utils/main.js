@@ -109,10 +109,6 @@ export async function tsFetchLoop() {
  */
 export async function eewLoop() {
   currentEEWData = await fetchData(config.api.eewURL);
-  if (JSON.stringify(currentEEWData) === JSON.stringify(previousEEWData)) {
-    // it's looking like nothing
-    return;
-  }
 
   previousEEWData = JSON.parse(JSON.stringify(currentEEWData));
   renderYahooEEW(currentEEWData);

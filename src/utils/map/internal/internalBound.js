@@ -1,6 +1,7 @@
 import { config } from "../../config";
 import { map, mapboxgl } from "../initMap.js";
 import { getTsunamiBounds } from "../renderConditions/tsunami_forecast/ts.js";
+import { getYahooEEWBounds } from "../renderConditions/yahooEEW/renderYahooEEW.js";
 
 /**
  * Internal function to fit the map camera to a given bounds.
@@ -13,6 +14,7 @@ import { getTsunamiBounds } from "../renderConditions/tsunami_forecast/ts.js";
  */
 export function internalBound(bound) {
   const tsunamiBounds = getTsunamiBounds && getTsunamiBounds();
+  const yahooEEWBounds = getYahooEEWBounds && getYahooEEWBounds();
   let mergedBounds = bound;
 
   if (!bound || typeof bound.clone !== "function") {
@@ -33,6 +35,11 @@ export function internalBound(bound) {
     mergedBounds.extend(tsunamiBounds.getNorthEast());
     mergedBounds.extend(tsunamiBounds.getSouthWest());
   }
+  if (yahooEEWBounds && !yahooEEWBounds.isEmpty()) {
+    mergedBounds.extend(yahooEEWBounds.getNorthEast());
+    mergedBounds.extend(yahooEEWBounds.getSouthWest());
+  }
+
   map.fitBounds(mergedBounds, {
     padding: config.map.bound_padding,
     duration: config.map.bound_duration,

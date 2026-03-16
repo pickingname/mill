@@ -1,4 +1,7 @@
-import { map } from "../../initMap.js";
+import { map, mapboxgl } from "../../initMap.js";
+import { internalBound } from "../../internal/internalBound.js";
+
+let currentYahooEEWBounds = null;
 
 function parseCoordinate(coordStr) {
   if (!coordStr) return 0;
@@ -47,8 +50,13 @@ function removeLayerAndSource(id) {
   }
 }
 
+export function getYahooEEWBounds() {
+  return currentYahooEEWBounds;
+}
+
 export async function renderYahooEEW(eewData) {
   if (!eewData || !eewData.psWave || !eewData.hypoInfo) {
+    currentYahooEEWBounds = null;
     return;
   }
 
@@ -56,6 +64,7 @@ export async function renderYahooEEW(eewData) {
   const hypoItem = eewData.hypoInfo.items?.[0];
 
   if (!psWaveItem || !hypoItem) {
+    currentYahooEEWBounds = null;
     return;
   }
 
@@ -70,11 +79,18 @@ export async function renderYahooEEW(eewData) {
   removeLayerAndSource("yahoo-eew-swave");
   removeLayerAndSource("yahoo-eew-epicenter");
 
+  const bounds = new mapboxgl.LngLatBounds();
+  bounds.extend(center);
+
   // Pw
   if (!isNaN(pRadius) && pRadius > 0) {
+    const pWaveData = createGeoJSONCircle(center, pRadius);
+    pWaveData.geometry.coordinates[0].forEach((coord) => {
+      bounds.extend(coord);
+    });
     map.addSource("yahoo-eew-pwave", {
       type: "geojson",
-      data: createGeoJSONCircle(center, pRadius),
+      data: pWaveData,
     });
     map.addLayer({
       id: "yahoo-eew-pwave",
@@ -90,9 +106,13 @@ export async function renderYahooEEW(eewData) {
 
   // Sw
   if (!isNaN(sRadius) && sRadius > 0) {
+    const sWaveData = createGeoJSONCircle(center, sRadius);
+    sWaveData.geometry.coordinates[0].forEach((coord) => {
+      bounds.extend(coord);
+    });
     map.addSource("yahoo-eew-swave", {
       type: "geojson",
-      data: createGeoJSONCircle(center, sRadius),
+      data: sWaveData,
     });
     map.addLayer({
       id: "yahoo-eew-swave",
@@ -144,4 +164,11 @@ export async function renderYahooEEW(eewData) {
       "icon-allow-overlap": true,
     },
   });
+
+  if (!bounds.isEmpty()) {
+    currentYahooEEWBounds = bounds;
+    internalBound(bounds);
+  } else {
+    currentYahooEEWBounds = null;
+  }
 }
