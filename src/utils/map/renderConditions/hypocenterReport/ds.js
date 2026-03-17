@@ -11,6 +11,7 @@ import {
   armIntList,
   updateIntList,
 } from "../../../components/infoBox/updateIntList.js";
+import classifyIntensity from "../../../classification/classifyIntensity.js";
 
 /**
  * Helper function to update the epicenter icon on the map.
@@ -68,7 +69,9 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
  * @param {*} data Data containing station information.
  * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
  */
-export async function plotStations(data) {
+export async function plotStations(data, minimizedIcons = false) {
+  console.log(minimizedIcons);
+
   if (map.getLayer("stationsLayer")) {
     map.removeLayer("stationsLayer");
   }
@@ -144,6 +147,37 @@ export async function plotStations(data) {
 
     await Promise.all(iconPromises);
 
+    if (minimizedIcons) {
+      const smallIconPromises = [];
+      for (const scale of [10, 20]) {
+        const hasScale =
+          scaleValues.has(scale) || scaleValues.has(String(scale));
+        if (!hasScale) continue;
+        const smallIconName = `small-intensity-${scale}`;
+        if (!map.hasImage(smallIconName)) {
+          smallIconPromises.push(
+            new Promise((resolve) => {
+              map.loadImage(
+                `/assets/basemap/icons/smallIntensities/${scale}.png`,
+                (error, image) => {
+                  if (error) {
+                    console.warn(
+                      `[ds/plotStations] bad small scale image: ${scale}, `,
+                      error,
+                    );
+                  } else {
+                    map.addImage(smallIconName, image);
+                  }
+                  resolve();
+                },
+              );
+            }),
+          );
+        }
+      }
+      await Promise.all(smallIconPromises);
+    }
+
     for (const point of data.points) {
       const stationInfo = stationMap.get(point.addr);
 
@@ -182,12 +216,22 @@ export async function plotStations(data) {
         type: "symbol",
         source: "stationsLayer",
         layout: {
-          "icon-image": [
-            "concat",
-            "intensity-",
-            ["to-string", ["get", "scale"]],
-          ],
-          "icon-size": 20 / 30, // USAGE: mapIconSizePX / imageSizePX
+          "icon-image": minimizedIcons
+            ? [
+                "case",
+                ["in", ["get", "scale"], ["literal", [10, 20, "10", "20"]]],
+                ["concat", "small-intensity-", ["to-string", ["get", "scale"]]],
+                ["concat", "intensity-", ["to-string", ["get", "scale"]]],
+              ]
+            : ["concat", "intensity-", ["to-string", ["get", "scale"]]],
+          "icon-size": minimizedIcons
+            ? [
+                "case",
+                ["in", ["get", "scale"], ["literal", [10, 20, "10", "20"]]],
+                1, // small icon: native 7x7px
+                20 / 30, // normal icon: 20px display / 30px image
+              ]
+            : 20 / 30, // USAGE: mapIconSizePX / imageSizePX
           "icon-allow-overlap": true,
         },
         paint: {
@@ -195,6 +239,14 @@ export async function plotStations(data) {
           "text-halo-color": "#ffffff",
           "text-halo-width": 1,
           "symbol-sort": ["get", "scale"],
+          "icon-opacity": minimizedIcons
+            ? [
+                "case",
+                ["in", ["get", "scale"], ["literal", [10, 20, "10", "20"]]],
+                0.5, // <-- opacity
+                1,
+              ]
+            : 1,
         },
       },
       "epicenterIcon",
@@ -267,7 +319,11 @@ export async function renderDS(data) {
 
   await updateEpicenterIcon(epicenterLng, epicenterLat);
 
-  const stationCoordinates = await plotStations(data);
+  const minimizedIcons = ![1, 2, 3, 4, "1", "2", "3", "4"].includes(
+    classifyIntensity(data.earthquake.maxScale),
+  );
+
+  const stationCoordinates = await plotStations(data, minimizedIcons);
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
   const stationMap = await getStationMap();
   await updateIntList(data, stationMap);
