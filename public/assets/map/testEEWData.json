@@ -1,0 +1,43 @@
+{
+  "realTimeData": {
+    "dataTime": "2024-01-01T16:06:30+09:00",
+    "siteConfigId": "20220301000000",
+    "intensity": "ffcc"
+  },
+  "psWave": {
+    "items": [
+      {
+        "latitude": "N37.5",
+        "longitude": "E137.3",
+        "pRadius": "145.134",
+        "sRadius": "81.7795"
+      }
+    ]
+  },
+  "hypoInfo": {
+    "items": [
+      {
+        "reportTime": "2024-01-01T16:06:29+09:00",
+        "regionCode": "390",
+        "regionName": "石川県能登地方",
+        "longitude": "E137.3",
+        "isCancel": "false",
+        "depth": "10km",
+        "calcintensity": "6-",
+        "isFinal": "false",
+        "isTraining": "false",
+        "latitude": "N37.5",
+        "originTime": "2024-01-01T16:06:06+09:00",
+        "magnitude": "5.9",
+        "reportNum": "15",
+        "reportId": "20240101160608"
+      }
+    ]
+  },
+  "estShindo": null,
+  "copyright": [
+    "National Research Institute for Earth Science and Disaster Resilience",
+    "LY Corporation"
+  ],
+  "version": "2.0"
+}
