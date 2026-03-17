@@ -13,6 +13,7 @@ import {
   clearAllTsAssets,
   renderTS,
 } from "./map/renderConditions/tsunami_forecast/ts.js";
+import { fmtYahooURL } from "./map/renderConditions/yahooEEW/fmtYahooURL.js";
 import { renderYahooEEW } from "./map/renderConditions/yahooEEW/renderYahooEEW.js";
 
 let currentData = [];
@@ -108,7 +109,7 @@ export async function tsFetchLoop() {
  * @returns {Promise<void>} Returns a promise that resolves when the data fetching and rendering is complete or when there is no new data.
  */
 export async function eewLoop() {
-  currentEEWData = await fetchData(config.api.eewURL);
+  currentEEWData = await fetchData(fmtYahooURL(config.api.eewURL));
 
   previousEEWData = JSON.parse(JSON.stringify(currentEEWData));
   renderYahooEEW(currentEEWData);

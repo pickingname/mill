@@ -41,7 +41,8 @@ export const config = {
 
     eewURL: true
       ? "http://localhost:6966/"
-      : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/20240101/20240101160630.json",
+      : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/[D]/[DT].json",
     eewInterval: 1000,
+    eewDelay: 1500,
   },
 };
