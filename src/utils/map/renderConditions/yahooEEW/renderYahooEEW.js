@@ -1,147 +1,77 @@
 import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
+const earthRadius = 6371.0087714;
+const epicenterIconSize = 30 / 31;
+const emptyFeatureCollection = Object.freeze({
+  type: "FeatureCollection",
+  features: [],
+});
+
 let currentYahooEEWBounds = null;
+let epicenterImagePromise = null;
 
 function parseCoordinate(coordStr) {
-  if (!coordStr) return 0;
+  if (!coordStr) return null;
   const direction = coordStr.charAt(0);
   const value = parseFloat(coordStr.substring(1));
+  if (isNaN(value)) return null;
   return direction === "S" || direction === "W" ? -value : value;
 }
 
 function createGeoJSONCircle(center, radiusInKm, points = 64) {
   const coords = [];
-  const R = 6371.0087714;
-  const d = radiusInKm / R;
+  const d = radiusInKm / earthRadius;
   const lat1 = (center[1] * Math.PI) / 180;
   const lon1 = (center[0] * Math.PI) / 180;
+  const sinLat1 = Math.sin(lat1);
+  const cosLat1 = Math.cos(lat1);
+  const sinD = Math.sin(d);
+  const cosD = Math.cos(d);
 
   for (let i = 0; i <= points; i++) {
     const brng = ((i * 360) / points) * (Math.PI / 180);
-    const lat2 = Math.asin(
-      Math.sin(lat1) * Math.cos(d) +
-        Math.cos(lat1) * Math.sin(d) * Math.cos(brng),
-    );
+    const lat2 = Math.asin(sinLat1 * cosD + cosLat1 * sinD * Math.cos(brng));
     const lon2 =
       lon1 +
       Math.atan2(
-        Math.sin(brng) * Math.sin(d) * Math.cos(lat1),
-        Math.cos(d) - Math.sin(lat1) * Math.sin(lat2),
+        Math.sin(brng) * sinD * cosLat1,
+        cosD - sinLat1 * Math.sin(lat2),
       );
     coords.push([(lon2 * 180) / Math.PI, (lat2 * 180) / Math.PI]);
   }
 
   return {
     type: "Feature",
-    geometry: {
-      type: "Polygon",
-      coordinates: [coords],
-    },
+    geometry: { type: "Polygon", coordinates: [coords] },
+    properties: {},
   };
 }
 
-function removeLayerAndSource(id) {
-  if (map.getLayer(id)) {
-    map.removeLayer(id);
-  }
-  if (map.getSource(id)) {
-    map.removeSource(id);
+function extendBoundsWithCircle(center, radiusInKm, bounds) {
+  const d = radiusInKm / earthRadius;
+  const lat1 = (center[1] * Math.PI) / 180;
+  const lon1 = (center[0] * Math.PI) / 180;
+  const sinLat1 = Math.sin(lat1);
+  const cosLat1 = Math.cos(lat1);
+  const sinD = Math.sin(d);
+  const cosD = Math.cos(d);
+
+  for (const brng of [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2]) {
+    const lat2 = Math.asin(sinLat1 * cosD + cosLat1 * sinD * Math.cos(brng));
+    const lon2 =
+      lon1 +
+      Math.atan2(
+        Math.sin(brng) * sinD * cosLat1,
+        cosD - sinLat1 * Math.sin(lat2),
+      );
+    bounds.extend([(lon2 * 180) / Math.PI, (lat2 * 180) / Math.PI]);
   }
 }
 
-export function getYahooEEWBounds() {
-  return currentYahooEEWBounds;
-}
-
-export async function renderYahooEEW(eewData) {
-  if (!eewData || !eewData.psWave || !eewData.hypoInfo) {
-    currentYahooEEWBounds = null;
-    return;
-  }
-
-  const psWaveItem = eewData.psWave.items?.[0];
-  const hypoItem = eewData.hypoInfo.items?.[0];
-
-  if (!psWaveItem || !hypoItem) {
-    currentYahooEEWBounds = null;
-    return;
-  }
-
-  const epicenterLat = parseCoordinate(hypoItem.latitude);
-  const epicenterLng = parseCoordinate(hypoItem.longitude);
-  const center = [epicenterLng, epicenterLat];
-
-  const pRadius = parseFloat(psWaveItem.pRadius);
-  const sRadius = parseFloat(psWaveItem.sRadius);
-
-  const bounds = new mapboxgl.LngLatBounds();
-  bounds.extend(center);
-
-  // Pw
-  if (!isNaN(pRadius) && pRadius > 0) {
-    const pWaveData = createGeoJSONCircle(center, pRadius);
-    pWaveData.geometry.coordinates[0].forEach((coord) => {
-      bounds.extend(coord);
-    });
-
-    if (map.getSource("yahoo-eew-pwave")) {
-      map.getSource("yahoo-eew-pwave").setData(pWaveData);
-    } else {
-      map.addSource("yahoo-eew-pwave", {
-        type: "geojson",
-        data: pWaveData,
-      });
-      map.addLayer({
-        id: "yahoo-eew-pwave",
-        type: "line",
-        source: "yahoo-eew-pwave",
-        paint: {
-          "line-color": "#35b4fb",
-          "line-width": 1,
-          "line-emissive-strength": 1,
-        },
-      });
-    }
-  } else if (map.getSource("yahoo-eew-pwave")) {
-    map
-      .getSource("yahoo-eew-pwave")
-      .setData({ type: "FeatureCollection", features: [] });
-  }
-
-  // Sw
-  if (!isNaN(sRadius) && sRadius > 0) {
-    const sWaveData = createGeoJSONCircle(center, sRadius);
-    sWaveData.geometry.coordinates[0].forEach((coord) => {
-      bounds.extend(coord);
-    });
-
-    if (map.getSource("yahoo-eew-swave")) {
-      map.getSource("yahoo-eew-swave").setData(sWaveData);
-    } else {
-      map.addSource("yahoo-eew-swave", {
-        type: "geojson",
-        data: sWaveData,
-      });
-      map.addLayer({
-        id: "yahoo-eew-swave",
-        type: "line",
-        source: "yahoo-eew-swave",
-        paint: {
-          "line-color": "#f6521f",
-          "line-width": 1,
-          "line-emissive-strength": 1,
-        },
-      });
-    }
-  } else if (map.getSource("yahoo-eew-swave")) {
-    map
-      .getSource("yahoo-eew-swave")
-      .setData({ type: "FeatureCollection", features: [] });
-  }
-
-  if (!map.hasImage("epicenter")) {
-    await new Promise((resolve) => {
+function ensureEpicenterImage() {
+  if (!epicenterImagePromise) {
+    epicenterImagePromise = new Promise((resolve) => {
       map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
         if (error) {
           console.error(
@@ -151,44 +81,134 @@ export async function renderYahooEEW(eewData) {
           resolve();
           return;
         }
-        map.addImage("epicenter", image);
+        if (!map.hasImage("epicenter")) map.addImage("epicenter", image);
         resolve();
       });
     });
   }
+  return epicenterImagePromise;
+}
 
-  const epicenterData = {
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: center,
+function initSources() {
+  const waveLayerDefs = [
+    {
+      id: "yahoo-eew-pwave",
+      paint: {
+        "line-color": "#35b4fb",
+        "line-width": 1,
+        "line-emissive-strength": 1,
+      },
     },
-  };
+    {
+      id: "yahoo-eew-swave",
+      paint: {
+        "line-color": "#f6521f",
+        "line-width": 1,
+        "line-emissive-strength": 1,
+      },
+    },
+  ];
 
-  if (map.getSource("yahoo-eew-epicenter")) {
-    map.getSource("yahoo-eew-epicenter").setData(epicenterData);
-  } else {
+  for (const { id, paint } of waveLayerDefs) {
+    if (!map.getSource(id)) {
+      map.addSource(id, { type: "geojson", data: emptyFeatureCollection });
+      map.addLayer({ id, type: "line", source: id, paint });
+    }
+  }
+
+  if (!map.getSource("yahoo-eew-epicenter")) {
     map.addSource("yahoo-eew-epicenter", {
       type: "geojson",
-      data: epicenterData,
+      data: emptyFeatureCollection,
     });
-
     map.addLayer({
       id: "yahoo-eew-epicenter",
       type: "symbol",
       source: "yahoo-eew-epicenter",
       layout: {
-        "icon-image": map.hasImage("epicenter") ? "epicenter" : "",
-        "icon-size": 30 / 31,
+        "icon-image": "epicenter",
+        "icon-size": epicenterIconSize,
         "icon-allow-overlap": true,
       },
     });
   }
+}
 
-  if (!bounds.isEmpty()) {
-    currentYahooEEWBounds = bounds;
-    internalBound(bounds);
+function renderWave(id, center, radius, bounds) {
+  const src = map.getSource(id);
+  if (!src) return;
+
+  if (!isNaN(radius) && radius > 0) {
+    src.setData({
+      type: "FeatureCollection",
+      features: [createGeoJSONCircle(center, radius)],
+    });
+    extendBoundsWithCircle(center, radius, bounds);
   } else {
-    currentYahooEEWBounds = null;
+    src.setData(emptyFeatureCollection);
   }
+}
+
+export function getYahooEEWBounds() {
+  return currentYahooEEWBounds;
+}
+
+function clearEEWSources() {
+  ["yahoo-eew-pwave", "yahoo-eew-swave", "yahoo-eew-epicenter"].forEach(
+    (id) => {
+      const src = map.getSource(id);
+      if (src) src.setData(emptyFeatureCollection);
+    },
+  );
+  currentYahooEEWBounds = null;
+}
+
+export async function renderYahooEEW(eewData) {
+  if (!eewData || !eewData.psWave || !eewData.hypoInfo) {
+    clearEEWSources();
+    return;
+  }
+
+  const psWaveItem = eewData.psWave.items?.[0];
+  const hypoItem = eewData.hypoInfo.items?.[0];
+
+  if (!psWaveItem || !hypoItem) {
+    clearEEWSources();
+    return;
+  }
+
+  const epicenterLat = parseCoordinate(hypoItem.latitude);
+  const epicenterLng = parseCoordinate(hypoItem.longitude);
+
+  if (epicenterLat === null || epicenterLng === null) {
+    clearEEWSources();
+    return;
+  }
+
+  const center = [epicenterLng, epicenterLat];
+  const pRadius = parseFloat(psWaveItem.pRadius);
+  const sRadius = parseFloat(psWaveItem.sRadius);
+
+  await ensureEpicenterImage();
+  initSources();
+
+  const bounds = new mapboxgl.LngLatBounds();
+  bounds.extend(center);
+
+  renderWave("yahoo-eew-pwave", center, pRadius, bounds);
+  renderWave("yahoo-eew-swave", center, sRadius, bounds);
+
+  map.getSource("yahoo-eew-epicenter").setData({
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: center },
+        properties: {},
+      },
+    ],
+  });
+
+  currentYahooEEWBounds = bounds;
+  internalBound(bounds);
 }
