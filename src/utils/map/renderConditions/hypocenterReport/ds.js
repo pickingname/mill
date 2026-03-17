@@ -69,9 +69,7 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
  * @param {*} data Data containing station information.
  * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
  */
-export async function plotStations(data, minimizedIcons = false) {
-  console.log(minimizedIcons);
-
+export async function plotStations(data, minimizedScales = []) {
   if (map.getLayer("stationsLayer")) {
     map.removeLayer("stationsLayer");
   }
@@ -147,9 +145,9 @@ export async function plotStations(data, minimizedIcons = false) {
 
     await Promise.all(iconPromises);
 
-    if (minimizedIcons) {
+    if (minimizedScales.length > 0) {
       const smallIconPromises = [];
-      for (const scale of [10, 20]) {
+      for (const scale of minimizedScales) {
         const hasScale =
           scaleValues.has(scale) || scaleValues.has(String(scale));
         if (!hasScale) continue;
@@ -202,6 +200,11 @@ export async function plotStations(data, minimizedIcons = false) {
       }
     }
 
+    const isMinimized = minimizedScales.length > 0;
+    const minimizedLiteral = isMinimized
+      ? ["literal", [...minimizedScales, ...minimizedScales.map(String)]]
+      : null;
+
     map.addSource("stationsLayer", {
       type: "geojson",
       data: {
@@ -216,36 +219,31 @@ export async function plotStations(data, minimizedIcons = false) {
         type: "symbol",
         source: "stationsLayer",
         layout: {
-          "icon-image": minimizedIcons
+          "icon-image": isMinimized
             ? [
                 "case",
-                ["in", ["get", "scale"], ["literal", [10, 20, "10", "20"]]],
+                ["in", ["get", "scale"], minimizedLiteral],
                 ["concat", "small-intensity-", ["to-string", ["get", "scale"]]],
                 ["concat", "intensity-", ["to-string", ["get", "scale"]]],
               ]
             : ["concat", "intensity-", ["to-string", ["get", "scale"]]],
-          "icon-size": minimizedIcons
+          "icon-size": isMinimized
             ? [
                 "case",
-                ["in", ["get", "scale"], ["literal", [10, 20, "10", "20"]]],
+                ["in", ["get", "scale"], minimizedLiteral],
                 1, // small icon: native 7x7px
                 20 / 30, // normal icon: 20px display / 30px image
               ]
             : 20 / 30, // USAGE: mapIconSizePX / imageSizePX
           "icon-allow-overlap": true,
+          "symbol-sort-key": ["get", "scale"],
         },
         paint: {
           "text-color": "#000000",
           "text-halo-color": "#ffffff",
           "text-halo-width": 1,
-          "symbol-sort": ["get", "scale"],
-          "icon-opacity": minimizedIcons
-            ? [
-                "case",
-                ["in", ["get", "scale"], ["literal", [10, 20, "10", "20"]]],
-                0.5, // <-- opacity
-                1,
-              ]
+          "icon-opacity": isMinimized
+            ? ["case", ["in", ["get", "scale"], minimizedLiteral], 0.5, 1]
             : 1,
         },
       },
@@ -319,11 +317,23 @@ export async function renderDS(data) {
 
   await updateEpicenterIcon(epicenterLng, epicenterLat);
 
-  const minimizedIcons = ![1, 2, 3, 4, "1", "2", "3", "4"].includes(
-    classifyIntensity(data.earthquake.maxScale),
-  );
+  const maxScale = data.earthquake.maxScale;
+  const minimizedScales = ![1, 2, 3, 4, "1", "2", "3", "4"].includes(
+    classifyIntensity(maxScale),
+  )
+    ? [
+        10,
+        20,
+        ...(maxScale === 60 ||
+        maxScale === 70 ||
+        maxScale === "60" ||
+        maxScale === "70"
+          ? [30]
+          : []),
+      ]
+    : [];
 
-  const stationCoordinates = await plotStations(data, minimizedIcons);
+  const stationCoordinates = await plotStations(data, minimizedScales);
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
   const stationMap = await getStationMap();
   await updateIntList(data, stationMap);
