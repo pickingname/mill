@@ -19,16 +19,19 @@ import {
  * @param {*} epicenterLat Latitude of the epicenter
  */
 export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
-  if (!map.hasImage("epicenter")) {
+  if (!map.hasImage("oldEpicenter")) {
     await new Promise((resolve, reject) => {
-      map.loadImage("/assets/basemap/icons/epicenter.png", (error, image) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        map.addImage("epicenter", image);
-        resolve();
-      });
+      map.loadImage(
+        "/assets/basemap/icons/oldEpicenter.png",
+        (error, image) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          map.addImage("oldEpicenter", image);
+          resolve();
+        },
+      );
     });
   }
 
@@ -53,7 +56,7 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
     type: "symbol",
     source: "epicenterIcon",
     layout: {
-      "icon-image": "epicenter",
+      "icon-image": "oldEpicenter",
       "icon-size": 30 / 31, // USAGE: mapIconSizePX / imageSizePX
     },
   });
@@ -78,7 +81,7 @@ export async function plotStations(data) {
     if (!response.ok) {
       console.error("[ds/plotStations] bad stationRef data");
       throw new Error(
-        `[ds/plotStations] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`
+        `[ds/plotStations] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -111,7 +114,7 @@ export async function plotStations(data) {
                 console.warn(
                   `[ds/plotStations] bad scale image: ${scale}, `,
                   error,
-                  " using fallback"
+                  " using fallback",
                 );
                 map.loadImage(
                   "/assets/basemap/icons/intensities/invalid.png",
@@ -119,20 +122,20 @@ export async function plotStations(data) {
                     if (fallbackError) {
                       console.error(
                         `[ds/plotStations] failed to load fallback icon: ${iconName} `,
-                        fallbackError
+                        fallbackError,
                       );
                       reject(fallbackError);
                     } else {
                       map.addImage(iconName, fallbackImage);
                       resolve();
                     }
-                  }
+                  },
                 );
               } else {
                 map.addImage(iconName, image);
                 resolve();
               }
-            }
+            },
           );
         });
         iconPromises.push(iconPromise);
@@ -160,7 +163,7 @@ export async function plotStations(data) {
         stationCoordinates.push([stationInfo.long, stationInfo.lat]);
       } else {
         console.warn(
-          `[ds/plotStations] station not found in ref data: ${point.addr}`
+          `[ds/plotStations] station not found in ref data: ${point.addr}`,
         );
       }
     }
@@ -194,7 +197,7 @@ export async function plotStations(data) {
           "symbol-sort": ["get", "scale"],
         },
       },
-      "epicenterIcon"
+      "epicenterIcon",
     );
 
     return stationCoordinates;
@@ -221,7 +224,7 @@ export async function boundMarkers(epicenter, stationCoordinates) {
     }
   } else {
     console.warn(
-      "[ds] no station coordinates available for bounding, using epicenter only"
+      "[ds] no station coordinates available for bounding, using epicenter only",
     );
   }
 
@@ -257,7 +260,7 @@ export async function renderDS(data) {
     hyp.depth,
     data.earthquake.time,
     "",
-    data.earthquake.maxScale
+    data.earthquake.maxScale,
   );
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
