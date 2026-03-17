@@ -40,9 +40,9 @@ export const config = {
     jmaTsunamiInterval: 10000,
 
     eewURL: import.meta.env.DEV
-      ? "http://localhost:6966/"
+      ? "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/[D]/[DT].json"
       : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/[D]/[DT].json",
-    eewInterval: 1000,
-    eewDelay: 1500,
+    eewInterval: import.meta.env.DEV ? 5000 : 1000,
+    eewDelay: 2000,
   },
 };
