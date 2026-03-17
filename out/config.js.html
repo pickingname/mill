@@ -37,7 +37,7 @@
  * @property {string} map.theme Theme for the map ('auto', 'dawn', 'day', 'dusk', 'night').
  *
  * @property {Object} api API configurations.
- * @property {string} api.base_url URL used to fetch p2pquake earthquake data.
+ * @property {string} api.baseURL URL used to fetch p2pquake earthquake data.
  * @property {number} api.interval Interval for fetching p2pquake earthquake data. Rate limited to 60 requests per minute.
  * @property {string} api.jmaTsunamiURL URL used to fetch p2pquake tsunami data.
  * @property {number} api.jmaTsunamiInterval Interval for fetching p2pquake tsunami data. Rate limited to 10 requests per minute.
@@ -57,15 +57,21 @@ export const config = {
     ],
   },
   api: {
-    base_url: false
+    baseURL: import.meta.env.DEV
       ? "/assets/map/testData.json"
       : "https://api.p2pquake.net/v2/history?codes=551&amp;limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
 
-    jmaTsunamiURL: false
+    jmaTsunamiURL: import.meta.env.DEV
       ? "/assets/map/testTsData.json"
       : "https://api.p2pquake.net/v2/jma/tsunami?limit=1",
     jmaTsunamiInterval: 10000,
+
+    eewURL: import.meta.env.DEV
+      ? "http://localhost:6966/"
+      : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/[D]/[DT].json",
+    eewInterval: 1000,
+    eewDelay: 1500,
   },
 };
 </code></pre>
@@ -78,13 +84,13 @@ export const config = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#secondaryLoop">secondaryLoop</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearEEWSources">clearEEWSources</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#createGeoJSONCircle">createGeoJSONCircle</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#eewLoop">eewLoop</a></li><li><a href="global.html#ensureEpicenterImage">ensureEpicenterImage</a></li><li><a href="global.html#extendBoundsWithCircle">extendBoundsWithCircle</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#getYahooEEWBounds">getYahooEEWBounds</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#initSources">initSources</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#parseCoordinate">parseCoordinate</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#renderWave">renderWave</a></li><li><a href="global.html#renderYahooEEW">renderYahooEEW</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#tsFetchLoop">tsFetchLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Mar 16 2026 17:36:41 GMT+0700 (Indochina Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Mar 17 2026 20:29:37 GMT+0700 (Indochina Time)
 </footer>
 
 <script> prettyPrint(); </script>
