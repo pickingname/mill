@@ -1,4 +1,32 @@
-import { map, mapboxgl } from "../../initMap.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: map/renderConditions/yahooEEW/renderYahooEEW.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: map/renderConditions/yahooEEW/renderYahooEEW.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { map, mapboxgl } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 const earthRadius = 6371.0087714;
@@ -48,7 +76,7 @@ function createGeoJSONCircle(center, radiusInKm, points = 64) {
   const sinD = Math.sin(d);
   const cosD = Math.cos(d);
 
-  for (let i = 0; i <= points; i++) {
+  for (let i = 0; i &lt;= points; i++) {
     const brng = ((i * 360) / points) * (Math.PI / 180);
     const lat2 = Math.asin(sinLat1 * cosD + cosLat1 * sinD * Math.cos(brng));
     const lon2 =
@@ -104,7 +132,7 @@ function extendBoundsWithCircle(center, radiusInKm, bounds) {
  *
  * @private
  *
- * @returns {Promise<void>} Resolves when the image is loaded and added to the map, or if it already exists
+ * @returns {Promise&lt;void>} Resolves when the image is loaded and added to the map, or if it already exists
  */
 function ensureEpicenterImage() {
   if (!epicenterImagePromise) {
@@ -194,7 +222,7 @@ function renderWave(id, center, radius, bounds) {
   const src = map.getSource(id);
   if (!src) return;
 
-  if (!isNaN(radius) && radius > 0) {
+  if (!isNaN(radius) &amp;&amp; radius > 0) {
     src.setData({
       type: "FeatureCollection",
       features: [createGeoJSONCircle(center, radius)],
@@ -236,7 +264,7 @@ function clearEEWSources() {
  *
  * @param {Object} eewData JSON data containing EEW information
  *
- * @returns {Promise<void>}
+ * @returns {Promise&lt;void>}
  */
 export async function renderYahooEEW(eewData) {
   if (!eewData || !eewData.psWave || !eewData.hypoInfo) {
@@ -287,3 +315,26 @@ export async function renderYahooEEW(eewData) {
   currentYahooEEWBounds = bounds;
   internalBound(bounds);
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#armIntList">armIntList</a></li><li><a href="global.html#armTsComponent">armTsComponent</a></li><li><a href="global.html#boundEpicenter">boundEpicenter</a></li><li><a href="global.html#boundMarkers">boundMarkers</a></li><li><a href="global.html#classifyData">classifyData</a></li><li><a href="global.html#clearAllTsAssets">clearAllTsAssets</a></li><li><a href="global.html#clearEEWSources">clearEEWSources</a></li><li><a href="global.html#clearTsunamiLayers">clearTsunamiLayers</a></li><li><a href="global.html#createGeoJSONCircle">createGeoJSONCircle</a></li><li><a href="global.html#disarmIntList">disarmIntList</a></li><li><a href="global.html#disarmTsComponent">disarmTsComponent</a></li><li><a href="global.html#eewLoop">eewLoop</a></li><li><a href="global.html#ensureEpicenterImage">ensureEpicenterImage</a></li><li><a href="global.html#extendBoundsWithCircle">extendBoundsWithCircle</a></li><li><a href="global.html#fetchData">fetchData</a></li><li><a href="global.html#getPrefectureMap">getPrefectureMap</a></li><li><a href="global.html#getYahooEEWBounds">getYahooEEWBounds</a></li><li><a href="global.html#hideInfoBox">hideInfoBox</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#initSources">initSources</a></li><li><a href="global.html#internalBound">internalBound</a></li><li><a href="global.html#mainLoop">mainLoop</a></li><li><a href="global.html#parseCoordinate">parseCoordinate</a></li><li><a href="global.html#plotRegions">plotRegions</a></li><li><a href="global.html#plotStations">plotStations</a></li><li><a href="global.html#renderDE">renderDE</a></li><li><a href="global.html#renderDS">renderDS</a></li><li><a href="global.html#renderSP">renderSP</a></li><li><a href="global.html#renderTS">renderTS</a></li><li><a href="global.html#renderWave">renderWave</a></li><li><a href="global.html#renderYahooEEW">renderYahooEEW</a></li><li><a href="global.html#setTheme">setTheme</a></li><li><a href="global.html#showInfoBox">showInfoBox</a></li><li><a href="global.html#startMainLoop">startMainLoop</a></li><li><a href="global.html#tsFetchLoop">tsFetchLoop</a></li><li><a href="global.html#updateEpicenterIcon">updateEpicenterIcon</a></li><li><a href="global.html#updateInfoBox">updateInfoBox</a></li><li><a href="global.html#updateIntList">updateIntList</a></li><li><a href="global.html#updateTsunamiSidebar">updateTsunamiSidebar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Mar 17 2026 20:29:37 GMT+0700 (Indochina Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
