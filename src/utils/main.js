@@ -13,11 +13,15 @@ import {
   clearAllTsAssets,
   renderTS,
 } from "./map/renderConditions/tsunami_forecast/ts.js";
+import { fmtYahooURL } from "./map/renderConditions/yahooEEW/fmtYahooURL.js";
+import { renderYahooEEW } from "./map/renderConditions/yahooEEW/renderYahooEEW.js";
 
 let currentData = [];
 let previousData = [];
 let currentTsunamiData = [];
 let previousTsunamiData = [];
+let currentEEWData = [];
+let previousEEWData = [];
 
 let currentDataType;
 
@@ -26,35 +30,12 @@ autoTheme();
 showSidebar();
 
 /**
- * This secondary loop fetches tsunami data (from /jma endpoints) and update in the map if available.
- *
- * @returns {Promise<void>} Returns a promise that resolves when the epicenter icon is updated.
- */
-export async function secondaryLoop() {
-  currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
-  if (
-    JSON.stringify(currentTsunamiData) === JSON.stringify(previousTsunamiData)
-  ) {
-    // it's looking like nothing
-    return;
-  }
-
-  previousTsunamiData = JSON.parse(JSON.stringify(currentTsunamiData));
-
-  if (currentTsunamiData.length > 0) {
-    renderTS(currentTsunamiData[0]);
-  } else {
-    clearAllTsAssets();
-  }
-}
-
-/**
  * This main loop fetches data from the API and renders it based on the data type.
  *
  * @returns {Promise<void>} Returns a promise that resolves when the main loop completes.
  */
 export async function mainLoop() {
-  currentData = await fetchData(config.api.base_url);
+  currentData = await fetchData(config.api.baseURL);
 
   if (JSON.stringify(currentData) === JSON.stringify(previousData)) {
     // it's looking like nothing
@@ -100,6 +81,41 @@ export async function mainLoop() {
 }
 
 /**
+ * This secondary loop fetches tsunami data (from /jma endpoints) and updates the map if available.
+ *
+ * @returns {Promise<void>} Returns a promise that resolves when the data fetching and rendering is complete or when there is no new data.
+ */
+export async function tsFetchLoop() {
+  currentTsunamiData = await fetchData(config.api.jmaTsunamiURL);
+  if (
+    JSON.stringify(currentTsunamiData) === JSON.stringify(previousTsunamiData)
+  ) {
+    // it's looking like nothing
+    return;
+  }
+
+  previousTsunamiData = JSON.parse(JSON.stringify(currentTsunamiData));
+
+  if (currentTsunamiData.length > 0) {
+    renderTS(currentTsunamiData[0]);
+  } else {
+    clearAllTsAssets();
+  }
+}
+
+/**
+ * This tertiary loop fetches EEW data and updates the map if available.
+ *
+ * @returns {Promise<void>} Returns a promise that resolves when the data fetching and rendering is complete or when there is no new data.
+ */
+export async function eewLoop() {
+  currentEEWData = await fetchData(fmtYahooURL(config.api.eewURL));
+
+  previousEEWData = JSON.parse(JSON.stringify(currentEEWData));
+  renderYahooEEW(currentEEWData);
+}
+
+/**
  * This function starts the main loop and sets up intervals for data fetching.
  *
  * @returns {void}
@@ -108,6 +124,9 @@ export function startMainLoop() {
   mainLoop().then();
   setInterval(mainLoop, config.api.interval);
 
-  secondaryLoop().then();
-  setInterval(secondaryLoop, config.api.jmaTsunamiInterval);
+  tsFetchLoop().then();
+  setInterval(tsFetchLoop, config.api.jmaTsunamiInterval);
+
+  eewLoop().then();
+  setInterval(eewLoop, config.api.eewInterval);
 }
