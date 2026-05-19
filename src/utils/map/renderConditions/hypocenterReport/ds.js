@@ -68,7 +68,7 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
  *
  * @param {*} data Data containing station information.
  * @param {Array} minimizedScales Scales that should use small icons.
- * @param {Map} stationMap Optional preloaded station map.
+ * @param {Map|null} stationMap Optional preloaded station map.
  * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
  */
 export async function plotStations(
