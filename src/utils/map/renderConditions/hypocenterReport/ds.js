@@ -67,9 +67,15 @@ export async function updateEpicenterIcon(epicenterLng, epicenterLat) {
  * Iterate and plots the stations with it's intensity on the map.
  *
  * @param {*} data Data containing station information.
+ * @param {Array} minimizedScales Scales that should use small icons.
+ * @param {Map|null} stationMap Optional preloaded station map.
  * @returns {Promise<Array>} Returns a promise that resolves to an array of station coordinates.
  */
-export async function plotStations(data, minimizedScales = []) {
+export async function plotStations(
+  data,
+  minimizedScales = [],
+  stationMap = null,
+) {
   if (map.getLayer("stationsLayer")) {
     map.removeLayer("stationsLayer");
   }
@@ -78,22 +84,7 @@ export async function plotStations(data, minimizedScales = []) {
   }
 
   try {
-    const response = await fetch("/assets/comparision/stationRef.csv");
-    if (!response.ok) {
-      console.error("[ds/plotStations] bad stationRef data");
-      throw new Error(
-        `[ds/plotStations] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    const csvText = await response.text();
-    const stationMap = new Map();
-
-    const lines = csvText.trim().split("\n");
-    for (let i = 0; i < lines.length; i++) {
-      const [name, , , lat, long] = lines[i].split(",");
-      stationMap.set(name, { lat: parseFloat(lat), long: parseFloat(long) });
-    }
+    const resolvedStationMap = stationMap ?? (await getStationMap());
 
     const features = [];
     const iconPromises = [];
@@ -177,7 +168,7 @@ export async function plotStations(data, minimizedScales = []) {
     }
 
     for (const point of data.points) {
-      const stationInfo = stationMap.get(point.addr);
+      const stationInfo = resolvedStationMap.get(point.addr);
 
       if (stationInfo) {
         features.push({
@@ -333,9 +324,13 @@ export async function renderDS(data) {
       ]
     : [];
 
-  const stationCoordinates = await plotStations(data, minimizedScales);
-  await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
   const stationMap = await getStationMap();
+  const stationCoordinates = await plotStations(
+    data,
+    minimizedScales,
+    stationMap,
+  );
+  await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
   await updateIntList(data, stationMap);
   intDetailSubtitleSelector(data.issue.type);
 
@@ -345,7 +340,10 @@ export async function renderDS(data) {
 async function getStationMap() {
   const response = await fetch("/assets/comparision/stationRef.csv");
   if (!response.ok) {
-    throw new Error(`Failed to fetch stationRef.csv: ${response.status}`);
+    console.error("[ds/getStationMap] bad stationRef data");
+    throw new Error(
+      `[ds/getStationMap] failed to fetch stationRef.csv: ${response.status} ${response.statusText}`,
+    );
   }
   const csvText = await response.text();
   const stationMap = new Map();
