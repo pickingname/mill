@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.1",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.1",
-    "vite": "^8.0.0"
+    "@tailwindcss/postcss": "^4.3.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^4.3.0",
+    "vite": "^8.0.13"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -21,6 +21,6 @@
     ]
   },
   "dependencies": {
-    "mapbox-gl": "^3.20.0"
+    "mapbox-gl": "^3.24.0"
   }
 }
