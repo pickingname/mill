@@ -1,4 +1,4 @@
-import { map, mapboxgl } from "../../initMap.js";
+import { map, mapboxgl, mapLoaded } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 const earthRadius = 6371.0087714;
@@ -264,6 +264,7 @@ export async function renderYahooEEW(eewData) {
   const pRadius = parseFloat(psWaveItem.pRadius);
   const sRadius = parseFloat(psWaveItem.sRadius);
 
+  await mapLoaded;
   await ensureEpicenterImage();
   initSources();
 

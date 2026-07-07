@@ -5,7 +5,7 @@ import { updateEpicenterIcon } from "./ds";
 import playSound from "../../../sound/playSound";
 import { disarmIntList } from "../../../components/infoBox/updateIntList";
 import { config } from "../../../config";
-import { map } from "../../initMap";
+import { map, mapLoaded } from "../../initMap";
 
 /**
  * Custom epicenter / bounding function for Foreign reports.
@@ -45,16 +45,9 @@ export async function boundEpicenter(epicenterLng, epicenterLat) {
  */
 export default async function renderFO(data) {
   playSound("detailScale", 0.5);
-  clear551();
   disarmIntList();
 
   const hyp = data.earthquake.hypocenter;
-
-  const epicenterLat = hyp.latitude;
-  const epicenterLng = hyp.longitude;
-
-  await updateEpicenterIcon(epicenterLng, epicenterLat);
-  await boundEpicenter(epicenterLng, epicenterLat);
 
   updateInfoBox(
     "Foreign Earthquake Report",
@@ -65,4 +58,13 @@ export default async function renderFO(data) {
     data.comments.freeFormComment,
     data.earthquake.maxScale
   );
+
+  await mapLoaded;
+  clear551();
+
+  const epicenterLat = hyp.latitude;
+  const epicenterLng = hyp.longitude;
+
+  await updateEpicenterIcon(epicenterLng, epicenterLat);
+  await boundEpicenter(epicenterLng, epicenterLat);
 }

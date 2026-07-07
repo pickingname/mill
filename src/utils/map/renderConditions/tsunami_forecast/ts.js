@@ -1,5 +1,5 @@
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, mapboxgl, mapLoaded } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 
 let tsunamiFlashInterval = null;
@@ -151,11 +151,12 @@ export function clearAllTsAssets() {
  */
 export async function renderTS(data) {
   if (data.cancelled || data === "[]") {
-    clearAllTsAssets();
+    disarmTsComponent();
+    await mapLoaded;
+    clearTsunamiLayers();
     return;
   }
   playSound("tsReport", 0.5);
-  clearTsunamiLayers();
 
   try {
     const response = await fetch("/assets/comparision/tsunami_areas.geojson");
@@ -167,6 +168,46 @@ export async function renderTS(data) {
     }
 
     const tsunamiAreasGeoJSON = await response.json();
+
+    // Initialize sidebar containers if not exist
+    [
+      "tsunami-major-warning-list",
+      "tsunami-warning-list",
+      "tsunami-watch-list",
+    ].forEach((id) => {
+      if (!document.getElementById(id)) {
+        const h3 = Array.from(document.querySelectorAll("#sidebar h3")).find(
+          (h) =>
+            h.textContent &&
+            h.textContent.includes(
+              id.includes("major")
+                ? "Major Warning"
+                : id.includes("warning")
+                ? "Warning"
+                : "Watch"
+            )
+        );
+        if (
+          h3 &&
+          h3.parentElement &&
+          !h3.parentElement.nextElementSibling?.querySelector(`#${id}`)
+        ) {
+          const sect = h3.parentElement.parentElement;
+          const div = document.createElement("div");
+          div.id = id;
+          div.className = "space-y-1";
+          sect.appendChild(div);
+        }
+      }
+    });
+
+    // Update UI immediately
+    updateTsunamiSidebar(data.areas || [], tsunamiAreasGeoJSON.features);
+    armTsComponent();
+
+    // MAP LOGIC
+    await mapLoaded;
+    clearTsunamiLayers();
 
     const areaNameMap = new Map();
     tsunamiAreasGeoJSON.features.forEach((feature) => {
@@ -219,7 +260,6 @@ export async function renderTS(data) {
     if (matchedFeatures.length === 0) {
       console.warn("[ts/renderTS] no matching areas found in geojson");
       currentTsunamiBounds = null;
-      disarmTsComponent();
       return;
     }
 
@@ -253,14 +293,6 @@ export async function renderTS(data) {
       },
     });
 
-    if (tsunamiFlashInterval) {
-      clearInterval(tsunamiFlashInterval);
-      tsunamiFlashInterval = null;
-    }
-    if (tsunamiFlashTimeout) {
-      clearTimeout(tsunamiFlashTimeout);
-      tsunamiFlashTimeout = null;
-    }
     function setTsunamiLayerVisibility(vis) {
       if (map.getLayer("tsunamiAreas")) {
         map.setLayoutProperty(
@@ -307,38 +339,6 @@ export async function renderTS(data) {
     console.info(
       `[ts/renderTS] job rendered ${matchedFeatures.length} tsunami areas`
     );
-    [
-      "tsunami-major-warning-list",
-      "tsunami-warning-list",
-      "tsunami-watch-list",
-    ].forEach((id) => {
-      if (!document.getElementById(id)) {
-        const h3 = Array.from(document.querySelectorAll("#sidebar h3")).find(
-          (h) =>
-            h.textContent &&
-            h.textContent.includes(
-              id.includes("major")
-                ? "Major Warning"
-                : id.includes("warning")
-                ? "Warning"
-                : "Watch"
-            )
-        );
-        if (
-          h3 &&
-          h3.parentElement &&
-          !h3.parentElement.nextElementSibling?.querySelector(`#${id}`)
-        ) {
-          const sect = h3.parentElement.parentElement;
-          const div = document.createElement("div");
-          div.id = id;
-          div.className = "space-y-1";
-          sect.appendChild(div);
-        }
-      }
-    });
-    updateTsunamiSidebar(data.areas || [], tsunamiAreasGeoJSON.features);
-    armTsComponent();
   } catch (error) {
     console.error(
       "[ts/forecastComponent] error rendering tsunami data: ",

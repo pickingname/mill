@@ -4,7 +4,7 @@ import {
 } from "../../../components/infoBox/infoBoxController";
 import clear551 from "../../internal/clear551";
 import { updateEpicenterIcon } from "../hypocenterReport/ds";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, mapboxgl, mapLoaded } from "../../initMap.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
 import {
@@ -28,17 +28,40 @@ import { getPrefectureMap } from "../hypocenterReport/sp.js";
  */
 export default async function renderEEW(data) {
   playSound("eew", 0.5);
-  clear551();
   armIntList();
 
   const hyp = data.earthquake.hypocenter;
-  const epicenterLat = hyp.latitude;
-  const epicenterLng = hyp.longitude;
-  await updateEpicenterIcon(epicenterLng, epicenterLat);
+  
+  updateInfoBox(
+    "Earthquake Early Warning",
+    hyp.name,
+    hyp.magnitude,
+    hyp.depth,
+    data.earthquake.originTime,
+    "",
+    "--"
+  );
 
   let areaCoordinates = [];
   try {
     const prefectureMap = await getPrefectureMap();
+    
+    const points = (data.areas || []).map((area) => ({
+      addr: area.name,
+      scale: parseInt(area.scaleTo, 10),
+      pref: area.pref,
+      isArea: true,
+    }));
+    await updateIntList({ points }, prefectureMap);
+    intDetailSubtitleSelector("eew");
+
+    await mapLoaded;
+    clear551();
+    
+    const epicenterLat = hyp.latitude;
+    const epicenterLng = hyp.longitude;
+    await updateEpicenterIcon(epicenterLng, epicenterLat);
+
     const features = [];
     const iconPromises = [];
     const loadedIcons = new Set();
@@ -84,6 +107,7 @@ export default async function renderEEW(data) {
       }
     }
     await Promise.all(iconPromises);
+    
     for (const area of data.areas || []) {
       const areaName = area.name;
       const scaleTo = parseInt(area.scaleTo, 10);
@@ -106,6 +130,7 @@ export default async function renderEEW(data) {
         console.warn(`[renderEEW] area not found in ref data: ${areaName}`);
       }
     }
+    
     map.addSource("eewAreasSource", {
       type: "geojson",
       data: {
@@ -113,6 +138,7 @@ export default async function renderEEW(data) {
         features: features,
       },
     });
+    
     map.addLayer(
       {
         id: "eewAreasLayer",
@@ -134,34 +160,15 @@ export default async function renderEEW(data) {
       "epicenterIcon"
     );
 
-    const points = (data.areas || []).map((area) => ({
-      addr: area.name,
-      scale: parseInt(area.scaleTo, 10),
-      pref: area.pref,
-      isArea: true,
-    }));
-    await updateIntList({ points }, prefectureMap);
-    intDetailSubtitleSelector("eew"); // there's no data.issue.type header for this type of report
+    const bounds = new mapboxgl.LngLatBounds();
+    bounds.extend([epicenterLng, epicenterLat]);
+    if (areaCoordinates && areaCoordinates.length > 0) {
+      areaCoordinates.forEach((coord) => {
+        bounds.extend(coord);
+      });
+    }
+    internalBound(bounds);
   } catch (error) {
     console.error("[renderEEW] error plotting areas: ", error);
   }
-
-  const bounds = new mapboxgl.LngLatBounds();
-  bounds.extend([epicenterLng, epicenterLat]);
-  if (areaCoordinates && areaCoordinates.length > 0) {
-    areaCoordinates.forEach((coord) => {
-      bounds.extend(coord);
-    });
-  }
-  internalBound(bounds);
-
-  updateInfoBox(
-    "Earthquake Early Warning",
-    hyp.name,
-    hyp.magnitude,
-    hyp.depth,
-    data.earthquake.originTime,
-    "",
-    "--"
-  );
 }

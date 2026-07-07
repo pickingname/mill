@@ -28,6 +28,7 @@ let currentDataType;
 initMap();
 autoTheme();
 showSidebar();
+startMainLoop();
 
 /**
  * This main loop fetches data from the API and renders it based on the data type.

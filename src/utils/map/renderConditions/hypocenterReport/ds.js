@@ -3,7 +3,7 @@ import {
   intDetailSubtitleSelector,
   updateInfoBox,
 } from "../../../components/infoBox/infoBoxController.js";
-import { map } from "../../initMap.js";
+import { map, mapLoaded } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 import playSound from "../../../sound/playSound.js";
@@ -290,7 +290,6 @@ export async function boundMarkers(epicenter, stationCoordinates) {
  */
 export async function renderDS(data) {
   playSound("detailScale", 0.5);
-  clear551();
   armIntList();
 
   const hyp = data.earthquake.hypocenter;
@@ -303,6 +302,14 @@ export async function renderDS(data) {
     "",
     data.earthquake.maxScale,
   );
+
+  const stationMap = await getStationMap();
+  await updateIntList(data, stationMap);
+  intDetailSubtitleSelector(data.issue.type);
+
+  await mapLoaded;
+  clear551();
+
   const epicenterLat = hyp.latitude;
   const epicenterLng = hyp.longitude;
 
@@ -324,15 +331,12 @@ export async function renderDS(data) {
       ]
     : [];
 
-  const stationMap = await getStationMap();
   const stationCoordinates = await plotStations(
     data,
     minimizedScales,
     stationMap,
   );
   await boundMarkers(data.earthquake.hypocenter, stationCoordinates);
-  await updateIntList(data, stationMap);
-  intDetailSubtitleSelector(data.issue.type);
 
   console.info("[ds] renderDS completed");
 }

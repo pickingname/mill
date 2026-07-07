@@ -7,7 +7,7 @@ import {
   updateIntList,
 } from "../../../components/infoBox/updateIntList.js";
 import playSound from "../../../sound/playSound.js";
-import { map, mapboxgl } from "../../initMap.js";
+import { map, mapboxgl, mapLoaded } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
 import { internalBound } from "../../internal/internalBound.js";
 
@@ -189,7 +189,6 @@ export async function boundRegions(prefectureCoordinates) {
  */
 export async function renderSP(data) {
   playSound("scalePrompt", 0.5);
-  clear551();
   armIntList();
   updateInfoBox(
     "Flash Report",
@@ -203,7 +202,11 @@ export async function renderSP(data) {
   intDetailSubtitleSelector(data.issue.type);
 
   const prefectureMap = await getPrefectureMap();
+  await updateIntList(data, prefectureMap);
+
+  await mapLoaded;
+  clear551();
+
   const prefectureCoordinates = await plotRegions(data, prefectureMap);
   await boundRegions(prefectureCoordinates);
-  await updateIntList(data, prefectureMap);
 }

@@ -1,9 +1,13 @@
 import mapboxgl from "mapbox-gl";
 import Minimap from "../../lib/minimap.js";
 import getMapPreset from "../date/getMapPreset.js";
-import { startMainLoop } from "../main.js";
 
 let map;
+
+let mapResolve;
+export const mapLoaded = new Promise((resolve) => {
+  mapResolve = resolve;
+});
 
 /**
  * Initializes the Mapbox map with the specified configuration.
@@ -84,7 +88,7 @@ export function initMap() {
 
   map.on("load", async () => {
     map.resize();
-    startMainLoop();
+    mapResolve();
   });
 }
 

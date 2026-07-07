@@ -30,7 +30,7 @@ export const config = {
   },
   api: {
     baseURL: import.meta.env.DEV
-      ? "/assets/map/testData.json"
+      ? "https://api-v2-sandbox.p2pquake.net/v2/history?codes=551&limit=1"
       : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
 
