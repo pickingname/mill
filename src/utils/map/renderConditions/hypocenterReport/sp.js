@@ -9,7 +9,7 @@ import {
 import playSound from "../../../sound/playSound.js";
 import { map, mapboxgl, mapLoaded } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
-import { internalBound } from "../../internal/internalBound.js";
+import { handleP2PQuakeCameraBound } from "../yahooEEW/renderYahooEEW.js";
 
 /**
  * Get mappings for the prefecture data (like lat,lon) from a CSV file.
@@ -167,7 +167,7 @@ export async function boundRegions(prefectureCoordinates) {
       bounds.extend(coord);
     });
 
-    internalBound(bounds);
+    handleP2PQuakeCameraBound(bounds);
   } catch (error) {
     console.error("[sp/boundRegions] error setting map bounds: ", error);
   }

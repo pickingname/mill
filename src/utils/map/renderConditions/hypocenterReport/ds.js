@@ -5,7 +5,7 @@ import {
 } from "../../../components/infoBox/infoBoxController.js";
 import { map, mapLoaded } from "../../initMap.js";
 import clear551 from "../../internal/clear551.js";
-import { internalBound } from "../../internal/internalBound.js";
+import { handleP2PQuakeCameraBound } from "../yahooEEW/renderYahooEEW.js";
 import playSound from "../../../sound/playSound.js";
 import {
   armIntList,
@@ -269,7 +269,7 @@ export async function boundMarkers(epicenter, stationCoordinates) {
     );
   }
 
-  internalBound(bounds);
+  handleP2PQuakeCameraBound(bounds);
 }
 
 /**

@@ -5,7 +5,8 @@ import { updateEpicenterIcon } from "./ds";
 import playSound from "../../../sound/playSound";
 import { disarmIntList } from "../../../components/infoBox/updateIntList";
 import { config } from "../../../config";
-import { map, mapLoaded } from "../../initMap";
+import { mapLoaded } from "../../initMap";
+import { handleP2PQuakeCameraBound } from "../yahooEEW/renderYahooEEW";
 
 /**
  * Custom epicenter / bounding function for Foreign reports.
@@ -20,13 +21,7 @@ export async function boundEpicenter(epicenterLng, epicenterLat) {
   for (const coord of config.map.main_bounds) {
     bounds.extend(coord);
   }
-
-  map.fitBounds(bounds, {
-    padding: config.map.bound_padding,
-    duration: config.map.bound_duration,
-    easing: (t) => 1 - Math.pow(1 - t, 5),
-    linear: true,
-  });
+  handleP2PQuakeCameraBound(bounds);
 }
 /**
  * A part of the main rendering logic for Foreign report (FO) on response code 551.

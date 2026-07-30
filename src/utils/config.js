@@ -29,20 +29,20 @@ export const config = {
     ],
   },
   api: {
-    baseURL: import.meta.env.DEV
+    baseURL: false
       ? "https://api-v2-sandbox.p2pquake.net/v2/history?codes=551&limit=1"
       : "https://api.p2pquake.net/v2/history?codes=551&limit=1", // 60 リクエスト/分 (IP アドレス毎)
     interval: 5000,
 
-    jmaTsunamiURL: import.meta.env.DEV
+    jmaTsunamiURL: false
       ? "/assets/map/testTsData.json"
       : "https://api.p2pquake.net/v2/jma/tsunami?limit=1",
     jmaTsunamiInterval: 10000,
 
-    eewURL: import.meta.env.DEV
+    eewURL: false
       ? "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/[D]/[DT].json"
       : "https://weather-kyoshin.east.edge.storage-yahoo.jp/RealTimeData/[D]/[DT].json",
-    eewInterval: import.meta.env.DEV ? 5000 : 1000,
+    eewInterval: false ? 5000 : 1000,
     eewDelay: 2000,
   },
 };

@@ -10,6 +10,9 @@ const emptyFeatureCollection = Object.freeze({
 
 let currentYahooEEWBounds = null;
 let epicenterImagePromise = null;
+let isYahooEEWActive = false;
+let latestP2PQuakeBounds = null;
+let pendingP2PQuakeBounds = null;
 
 /**
  * Parses a coordinate string and converts it into decimal degrees.
@@ -206,6 +209,77 @@ function renderWave(id, center, radius, bounds) {
 }
 
 /**
+ * Clones a bounds object so stored camera targets do not get mutated by later callers.
+ *
+ * @private
+ *
+ * @param {mapboxgl.LngLatBounds} bounds Bounds to clone
+ *
+ * @returns {mapboxgl.LngLatBounds|null} A cloned bounds instance, or null when no bounds were provided
+ */
+function cloneBounds(bounds) {
+  if (!bounds) return null;
+  if (typeof bounds.clone === "function") {
+    return bounds.clone();
+  }
+  if (bounds.getSouthWest && bounds.getNorthEast) {
+    return new mapboxgl.LngLatBounds(
+      bounds.getSouthWest(),
+      bounds.getNorthEast(),
+    );
+  }
+  return null;
+}
+
+/**
+ * Binds the camera to the most recent P2PQuake bounds if EEW has already stopped.
+ * While EEW is active, we keep the latest P2PQuake bounds queued so the camera can
+ * switch to them as soon as the EEW stops.
+ *
+ * @param {mapboxgl.LngLatBounds} bounds P2PQuake bounds to consider for camera binding
+ *
+ * @returns {void}
+ */
+export function handleP2PQuakeCameraBound(bounds) {
+  const storedBounds = cloneBounds(bounds);
+  if (!storedBounds) return;
+
+  // Always remember the latest P2PQuake bounds so the next EEW stop can use the
+  // most recent earthquake position, even if no new P2PQuake update arrives.
+  latestP2PQuakeBounds = storedBounds;
+
+  // When Yahoo EEW is active, defer the camera move and keep only the newest
+  // P2PQuake bounds in the pending slot.
+  if (isYahooEEWActive) {
+    pendingP2PQuakeBounds = storedBounds;
+    return;
+  }
+
+  pendingP2PQuakeBounds = null;
+  internalBound(storedBounds);
+}
+
+/**
+ * Fits the camera to the latest P2PQuake bounds after the EEW stops.
+ * If a P2PQuake update arrived during the EEW, use that pending data. Otherwise
+ * fall back to the current latest P2PQuake bounds.
+ *
+ * @private
+ *
+ * @returns {void}
+ */
+function bindLatestP2PQuakeAfterEEWStop() {
+  const boundsToBind = pendingP2PQuakeBounds || latestP2PQuakeBounds;
+
+  isYahooEEWActive = false;
+  pendingP2PQuakeBounds = null;
+
+  if (boundsToBind) {
+    internalBound(boundsToBind);
+  }
+}
+
+/**
  * Returns the current bounds of the Yahoo EEW data on the map.
  *
  * @returns {mapboxgl.LngLatBounds|null} Current bounds of the Yahoo EEW layer
@@ -241,6 +315,9 @@ function clearEEWSources() {
 export async function renderYahooEEW(eewData) {
   if (!eewData || !eewData.psWave || !eewData.hypoInfo) {
     clearEEWSources();
+    // EEW has stopped, so hand camera control back to the most recent P2PQuake
+    // bounds and clear the stored EEW-active state.
+    bindLatestP2PQuakeAfterEEWStop();
     return;
   }
 
@@ -249,6 +326,7 @@ export async function renderYahooEEW(eewData) {
 
   if (!psWaveItem || !hypoItem) {
     clearEEWSources();
+    bindLatestP2PQuakeAfterEEWStop();
     return;
   }
 
@@ -257,8 +335,13 @@ export async function renderYahooEEW(eewData) {
 
   if (epicenterLat === null || epicenterLng === null) {
     clearEEWSources();
+    bindLatestP2PQuakeAfterEEWStop();
     return;
   }
+
+  // Mark EEW as active as soon as valid EEW data is present so incoming P2PQuake
+  // updates are queued instead of stealing the camera while the warning is active.
+  isYahooEEWActive = true;
 
   const center = [epicenterLng, epicenterLat];
   const pRadius = parseFloat(psWaveItem.pRadius);
